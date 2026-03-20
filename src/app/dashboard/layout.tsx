@@ -71,9 +71,9 @@ const siteMap = [
   {
     label: "Phase 4: SYNDICATE",
     items: [
-      { name: "Cap Table Simulator", href: "/dashboard/cap-table", icon: Table2, soon: true },
-      { name: "Term Sheet Analyzer", href: "/dashboard/term-sheet", icon: FileSearch, soon: true },
-      { name: "Investor CRM", href: "/dashboard/crm", icon: Kanban, soon: true },
+      { name: "Cap Table Simulator", href: "/dashboard/cap-table", icon: Table2 },
+      { name: "Term Sheet Analyzer", href: "/dashboard/term-sheet", icon: FileSearch },
+      { name: "Investor CRM", href: "/dashboard/crm", icon: Kanban },
     ],
   },
   {
