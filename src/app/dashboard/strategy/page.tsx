@@ -180,8 +180,8 @@ export default function FundraisingStrategyPage() {
                 <div className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] mb-1">What Are Capital Efficiency Milestones?</div>
                 <p className="text-xs text-[#b0d0e0] leading-relaxed">
                   These are the <strong className="text-white">specific, measurable goals</strong> this raise of <strong className="text-white">RM {raiseAmount.toLocaleString()}</strong> is designed to achieve <em>before</em> your next fundraise.
-                  Each milestone must be verifiable by an investor (e.g. "RM 1M ARR", "10 enterprise contracts signed", "FDA approval received").
-                  They answer the investor question: <em className="text-[#ffd800]">"If I give you this money, what will you have achieved when you come back to us?"</em>
+                  Each milestone must be verifiable by an investor (e.g. &quot;RM 1M ARR&quot;, &quot;10 enterprise contracts signed&quot;, &quot;FDA approval received&quot;).
+                  They answer the investor question: <em className="text-[#ffd800]">&quot;If I give you this money, what will you have achieved when you come back to us?&quot;</em>
                 </p>
               </div>
             </div>
