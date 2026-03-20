@@ -1,120 +1,113 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Clock, FileText, ChevronRight } from "lucide-react";
+import { CheckCircle2, Circle, Lock, ArrowRight, PlayCircle, FileText, Download } from "lucide-react";
 import Link from "next/link";
 
 const steps = [
   {
-    id: 1,
-    title: "1. Corporate Structure & IP",
-    status: "completed",
-    tasks: ["Incorporate as Delaware C-Corp", "Assign IP to the company", "Set up option pool (20%)"]
-  },
-  {
-    id: 2,
-    title: "2. Financial Foundations",
+    phase: "Phase 1: Readiness",
+    title: "Financial Model & Data Room",
     status: "in-progress",
-    tasks: ["Clean up P&L statements", "Create 24-month financial model", "Establish automated book-keeping"]
+    description: "Build a robust 24-month financial model and structure your initial corporate documents.",
+    action: "Complete Financial Lesson",
+    time: "Est: 2 weeks"
   },
   {
-    id: 3,
-    title: "3. The Pitch Assets",
-    status: "pending",
-    tasks: ["Draft 10-slide deck", "Create 1-page executive summary", "Record 3-minute pitch video"]
+    phase: "Phase 2: Narrative",
+    title: "Pitch Deck & Executive Summary",
+    status: "locked",
+    description: "Translate your traction into a compelling narrative for early-stage investors.",
+    action: "Unlock after Phase 1",
+    time: "Est: 3 weeks"
   },
   {
-    id: 4,
-    title: "4. The Data Room",
-    status: "pending",
-    tasks: ["Upload cap table", "Upload legal formations", "Upload material contracts"]
+    phase: "Phase 3: Outreach",
+    title: "Investor Targeting & CRM",
+    status: "locked",
+    description: "Identify 50+ right-fit investors and begin warm outbound sequencing.",
+    action: "Unlock after Phase 2",
+    time: "Est: 1 month"
+  },
+  {
+    phase: "Phase 4: Execution",
+    title: "Term Sheets & Due Diligence",
+    status: "locked",
+    description: "Navigate term sheets, coordinate legal due diligence, and close the round.",
+    action: "Unlock after Phase 3",
+    time: "Est: 2-3 months"
   }
 ];
 
-export default function FundraisingRoadmap() {
+export default function RoadmapPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6 lg:p-10">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+    <div className="max-w-4xl mx-auto text-[#022f42] p-6 lg:p-10 text-[#022f42]">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#022f42]">
           Your Fundraising Roadmap
         </h1>
-        <p className="text-slate-400 mt-2">
-          A step-by-step guide to becoming investor-ready based on your current stage.
+        <p className="text-[#1e4a62] mt-2 text-lg">
+          A step-by-step curriculum to close your Seed round, tailored to your fundability score.
         </p>
       </div>
 
-      <div className="relative">
-        {/* Connection Line */}
-        <div className="absolute left-6 top-8 bottom-8 w-px bg-slate-800 ml-[-0.5px] z-0 hidden md:block" />
+      <div className="relative border-l-4 border-[rgba(2,47,66,0.12)] ml-4 space-y-12 pb-12">
+        {steps.map((step, idx) => (
+          <div key={idx} className="relative pl-8 md:pl-12">
+            {/* Timeline Node */}
+            <div className={`absolute -left-[22px] top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[#f2f6fa] shadow-sm ${
+              step.status === 'completed' ? 'bg-green-500 text-white' : 
+              step.status === 'in-progress' ? 'bg-[#ffd800] text-[#022f42]' : 
+              'bg-[#e2e8f0] text-[#64748b]'
+            }`}>
+              {step.status === 'completed' ? <CheckCircle2 className="w-5 h-5" /> : 
+               step.status === 'in-progress' ? <PlayCircle className="w-5 h-5" fill="currentColor" /> : 
+               <Lock className="w-4 h-4" />}
+            </div>
 
-        <div className="space-y-8 relative z-10">
-          {steps.map((step, index) => (
-            <motion.div 
-              key={step.id} 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`glass-card p-6 md:ml-12 border ${
-                step.status === 'in-progress' 
-                  ? 'border-blaze-500/50 shadow-lg shadow-blaze-500/5' 
-                  : 'border-slate-800'
-              }`}
-            >
-              {/* Desktop Status Icon Indicator */}
-              <div className="absolute left-0 mt-1 md:-ml-12 hidden md:flex items-center justify-center w-12 bg-slate-950">
-                {step.status === 'completed' && <CheckCircle2 className="w-8 h-8 text-green-500 bg-slate-950" />}
-                {step.status === 'in-progress' && <Clock className="w-8 h-8 text-blaze-400 bg-slate-950" />}
-                {step.status === 'pending' && <Circle className="w-8 h-8 text-slate-700 bg-slate-950" />}
-              </div>
-
-              <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                <h3 className={`text-xl font-semibold flex items-center ${
-                  step.status === 'in-progress' ? 'text-blaze-300' : 'text-slate-200'
+            {/* Content Card */}
+            <div className={`bg-white p-6 md:p-8 border ${
+              step.status === 'in-progress' ? 'border-[#ffd800] shadow-[0_25px_45px_-15px_rgba(255,216,0,0.15)] ring-1 ring-[#ffd800]' : 
+              'border-[rgba(2,47,66,0.12)] shadow-sm opacity-75'
+            }`}>
+              <div className="flex justify-between items-start mb-2">
+                <span className={`text-xs font-bold uppercase tracking-widest ${
+                  step.status === 'in-progress' ? 'text-[#022f42] bg-[#ffd800] px-2 py-0.5' : 'text-[#64748b]'
                 }`}>
-                  <span className="md:hidden mr-3">
-                    {step.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                    {step.status === 'in-progress' && <Clock className="w-6 h-6 text-blaze-400" />}
-                    {step.status === 'pending' && <Circle className="w-6 h-6 text-slate-700" />}
-                  </span>
-                  {step.title}
-                </h3>
-                {step.status === 'in-progress' && (
-                  <span className="mt-2 md:mt-0 px-3 py-1 bg-blaze-500/10 text-blaze-400 rounded-full text-xs font-semibold tracking-wide uppercase self-start">
-                    Current Focus
-                  </span>
-                )}
+                  {step.phase}
+                </span>
+                <span className="text-xs font-bold text-[#1e4a62] uppercase tracking-wider">{step.time}</span>
               </div>
-
-              <div className="space-y-3">
-                {step.tasks.map((task, i) => (
-                  <div key={i} className="flex items-start group">
-                    <button className="mt-0.5 mr-3 flex-shrink-0 text-slate-600 group-hover:text-blaze-400 transition-colors">
-                      {step.status === 'completed' ? (
-                        <CheckCircle2 className="w-5 h-5 text-green-500/70" />
-                      ) : (
-                        <Circle className="w-5 h-5" />
-                      )}
-                    </button>
-                    <span className={`text-sm ${step.status === 'completed' ? 'text-slate-500 line-through' : 'text-slate-300'}`}>
-                      {task}
-                    </span>
+              <h3 className={`text-2xl font-bold mt-3 mb-3 ${step.status === 'locked' ? 'text-[#1e4a62]' : 'text-[#022f42]'}`}>
+                {step.title}
+              </h3>
+              <p className="text-[#1e4a62] mb-6 leading-relaxed">
+                {step.description}
+              </p>
+              
+              {step.status === 'in-progress' ? (
+                <div className="space-y-4">
+                  <div className="bg-[#f2f6fa] border border-[rgba(2,47,66,0.12)] p-4 flex items-center justify-between group cursor-pointer hover:border-[#ffd800] transition-colors">
+                    <div className="flex items-center">
+                      <FileText className="w-5 h-5 text-[#022f42] mr-3" />
+                      <div>
+                        <div className="font-bold text-[#022f42] text-sm">Download Financial Template</div>
+                        <div className="text-xs text-[#1e4a62] mt-0.5">XLSX • 2.4MB</div>
+                      </div>
+                    </div>
+                    <Download className="w-4 h-4 text-[#1e4a62] group-hover:text-[#022f42]" />
                   </div>
-                ))}
-              </div>
-
-              {step.status === 'in-progress' && (
-                <div className="mt-8 pt-5 border-t border-slate-800 flex flex-wrap gap-4">
-                  <Link href="/education" className="text-sm font-medium text-slate-400 hover:text-white flex items-center transition-colors">
-                    <FileText className="w-4 h-4 mr-2" /> Read: Financial Model Lesson
-                  </Link>
-                  <button className="text-sm font-medium text-blaze-400 hover:text-blaze-300 flex items-center transition-colors">
-                    Download Finance Template <ChevronRight className="w-4 h-4 ml-1" />
+                  <button className="w-full sm:w-auto px-6 py-3 bg-[#022f42] text-white hover:bg-[#ffd800] hover:text-[#022f42] font-bold uppercase tracking-widest transition-all text-xs flex items-center justify-center border-2 border-[#022f42] hover:border-[#ffd800]">
+                    {step.action} <ArrowRight className="w-4 h-4 ml-2" />
                   </button>
                 </div>
+              ) : (
+                <button disabled className="px-6 py-3 bg-[#f2f6fa] text-[#1e4a62] font-bold uppercase tracking-widest text-xs flex items-center border border-[rgba(2,47,66,0.12)]">
+                  <Lock className="w-3 h-3 mr-2" /> {step.action}
+                </button>
               )}
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
