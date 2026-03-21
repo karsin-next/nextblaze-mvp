@@ -143,7 +143,7 @@ export default function PainExplorerPage() {
                 </motion.div>
               </AnimatePresence>
 
-              <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 bg-gradient-to-t from-white via-white to-transparent flex items-center justify-between mt-10">
+              <div className="mt-12 pt-6 border-t border-[#1e4a62]/10 flex items-center justify-between w-full">
                 <button
                   onClick={handlePrev}
                   disabled={step === 0}

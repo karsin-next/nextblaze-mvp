@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, CheckCircle2, ChevronRight, ExternalLink, Users, 
-  Map as MapIcon, Target, Tag, AlertCircle, Sparkles, ArrowRight
+  Map as MapIcon, Target, Tag, AlertCircle, Sparkles, ArrowRight, BookOpen, Info
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,8 +19,21 @@ export default function PersonaBuilderPage() {
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
   const [isGenerated, setIsGenerated] = useState(false);
+  const [liveInsight, setLiveInsight] = useState("Select your customer profile tags to generate strategic Go-To-Market insights.");
 
-  const toggleSelection = (item: string, list: string[], setList: (val: string[]) => void) => {
+  const toggleSelection = (item: string, list: string[], setList: (val: string[]) => void, type: "demo"|"channel"|"trigger") => {
+    // Generate AI Insight
+    if (type === "demo") {
+      if (item.includes("Enterprise")) setLiveInsight("AI Insight: Enterprise B2B implies 6-12 month sales cycles. Investors will expect strong outbound sales strategies.");
+      else if (item.includes("SMB")) setLiveInsight("AI Insight: B2B SMB relies on high-velocity sales. Self-serve onboarding is critical.");
+      else if (item.includes("B2C")) setLiveInsight("AI Insight: B2C requires massive scale to reach profitability. Expect deep scrutiny on Customer Acquisition Cost (CAC).");
+    } else if (type === "channel") {
+      if (item.includes("Cold")) setLiveInsight("AI Insight: Cold outbound is scalable but requires significant SDR headcount logic in your financials.");
+      else if (item.includes("Ads")) setLiveInsight("AI Insight: Paid acquisition is risky at early stages without a proven Life Time Value (LTV) > 3x CAC.");
+    } else if (type === "trigger") {
+      setLiveInsight("AI Insight: Identifying a hard trigger (like a regulatory change) proves this is a 'must-have' rather than a 'nice-to-have'.");
+    }
+
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item));
     } else {
@@ -46,9 +59,29 @@ export default function PersonaBuilderPage() {
           {/* Builder State */}
           <div className={`bg-white p-8 md:p-10 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#022f42] rounded-sm transition-all ${isGenerated ? 'opacity-50 pointer-events-none grayscale-[50%]' : ''}`}>
             
-            <div className="flex items-center gap-2 mb-8 border-b pb-4 border-[#1e4a62]/10">
-              <Users className="w-5 h-5 text-[#ffd800]" />
-              <h2 className="text-xl font-black text-[#022f42]">Construct Ideal Customer Profile (ICP)</h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4 border-[#1e4a62]/10">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#ffd800]" />
+                <h2 className="text-xl font-black text-[#022f42]">Construct Ideal Customer Profile (ICP)</h2>
+              </div>
+              <div className="bg-[#f2f6fa] border border-[#1e4a62]/10 px-3 py-1.5 rounded-sm flex items-center gap-2 text-xs font-bold text-[#1e4a62]">
+                <BookOpen className="w-3 h-3 text-[#ffd800]" /> Sourced from Y Combinator Playbooks
+              </div>
+            </div>
+
+            {/* Sourcing & Methodology Note */}
+            <div className="mb-6 p-4 border border-blue-100 bg-blue-50/50 rounded-sm text-sm text-[#022f42]/80 flex items-start gap-3 relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-1 h-full bg-blue-400"></div>
+               <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+               <div>
+                 <strong>Why these tags?</strong> The firmographic and psychographic segmentations below are extracted directly from Tier 1 venture capital Go-To-Market (GTM) evaluation matrixes. <a href="https://www.ycombinator.com/library/4x-how-to-get-your-first-10-customers" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline ml-1 hover:text-[#ffd800]">Read external citation.</a>
+               </div>
+            </div>
+
+            {/* Live AI Insight Bar */}
+            <div className="mb-8 p-3 bg-emerald-50 border border-emerald-200 rounded-sm flex items-center gap-3 transition-colors shadow-inner">
+              <Sparkles className="w-4 h-4 text-emerald-500 animate-pulse shrink-0" />
+              <p className="text-sm font-bold text-emerald-900">{liveInsight}</p>
             </div>
 
             <div className="space-y-8">
@@ -74,7 +107,7 @@ export default function PersonaBuilderPage() {
                   {demographicOptions.map((tag) => (
                      <button
                        key={tag}
-                       onClick={() => toggleSelection(tag, selectedDemographics, setSelectedDemographics)}
+                       onClick={() => toggleSelection(tag, selectedDemographics, setSelectedDemographics, "demo")}
                        className={`px-4 py-2 border text-sm font-bold rounded-sm transition-colors ${
                          selectedDemographics.includes(tag) 
                           ? "bg-[#022f42] text-white border-[#022f42]" 
@@ -97,7 +130,7 @@ export default function PersonaBuilderPage() {
                   {channelOptions.map((tag) => (
                      <button
                        key={tag}
-                       onClick={() => toggleSelection(tag, selectedChannels, setSelectedChannels)}
+                       onClick={() => toggleSelection(tag, selectedChannels, setSelectedChannels, "channel")}
                        className={`px-4 py-2 border text-sm font-bold rounded-sm transition-colors ${
                          selectedChannels.includes(tag) 
                           ? "bg-[#022f42] text-white border-[#022f42]" 
@@ -120,7 +153,7 @@ export default function PersonaBuilderPage() {
                   {triggerOptions.map((tag) => (
                      <button
                        key={tag}
-                       onClick={() => toggleSelection(tag, selectedTriggers, setSelectedTriggers)}
+                       onClick={() => toggleSelection(tag, selectedTriggers, setSelectedTriggers, "trigger")}
                        className={`px-4 py-2 border text-sm font-bold rounded-sm transition-colors ${
                          selectedTriggers.includes(tag) 
                           ? "bg-[#ffd800] text-[#022f42] border-[#ffd800]" 
@@ -205,7 +238,7 @@ export default function PersonaBuilderPage() {
                   <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-sm font-bold text-amber-900">AI Look-Alike Suggestion</h4>
-                    <p className="text-xs text-amber-800 mt-1">Based on targeting {selectedDemographics.join(', ')} via {selectedChannels[0]}, similar startups also found success targeting <strong>Mid-Market Operations</strong> via <strong>Webinars</strong>. Consider expanding your TAM horizontally.</p>
+                    <p className="text-xs text-amber-800 mt-1">Based on targeting {selectedDemographics.join(', ')} via {selectedChannels[0]}, similar startups also found success targeting <strong>Mid-Market Operations</strong> via <strong>Webinars</strong>. Consider expanding your Total Addressable Market (TAM) horizontally.</p>
                   </div>
                 </div>
                 
