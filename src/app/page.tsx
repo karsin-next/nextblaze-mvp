@@ -26,13 +26,23 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex-1 min-w-[300px]">
-            <div className="border-2 border-[#ffd800] shadow-[0_25px_45px_-15px_rgba(2,47,66,0.15)] bg-[#022f42] aspect-video w-full flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center cursor-pointer hover:bg-white/30 transition-all backdrop-blur-sm">
-                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-2"></div>
+            <div className="border-2 border-[#ffd800] shadow-[0_25px_45px_-15px_rgba(2,47,66,0.15)] bg-[#022f42] aspect-video w-full relative overflow-hidden group">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover opacity-60"
+              >
+                <source src="/assets/videos/hero-placeholder.mp4" type="video/mp4" />
+                <source src="/assets/videos/hero.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-16 h-16 rounded-full bg-[#ffd800]/20 flex items-center justify-center cursor-pointer hover:bg-[#ffd800]/40 transition-all backdrop-blur-sm border border-[#ffd800]/30 group-hover:scale-110 pointer-events-auto">
+                  <PlayCircle className="w-8 h-8 text-[#ffd800]" />
                 </div>
               </div>
-              <div className="text-[#ffd800] font-bold text-2xl tracking-widest opacity-20">NEXTBLAZE ASIA</div>
+              <div className="absolute bottom-4 right-4 text-[#ffd800] font-black text-xs tracking-[0.3em] opacity-40 uppercase">NextBlaze Preview</div>
             </div>
           </div>
         </div>

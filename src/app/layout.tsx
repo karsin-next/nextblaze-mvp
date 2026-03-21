@@ -16,8 +16,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "FundabilityOS | AI-Powered Investor Readiness",
+  title: "NextBlaze | AI-Powered Investor Readiness",
   description: "Scale your deep tech across Asia. FundabilityOS provides an AI FundabilityOS to assess and optimize your capital readiness, backed by RM 60.8M value created.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -40,4 +45,3 @@ export default function RootLayout({
     </html>
   );
 }
-
