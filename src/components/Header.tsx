@@ -20,11 +20,15 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-[#022f42] py-3 px-6 md:px-8 border-b-[3px] border-[#ffd800] w-full">
       <div className="max-w-[1280px] mx-auto flex items-center justify-between">
         <div className="logo">
-          <Link href="/" className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="NextBlaze Logo" className="h-8 md:h-10 w-auto group-hover:scale-105 transition-transform" />
-            <div className="flex flex-col">
+          <Link href="/" className="flex items-center gap-3 group">
+            <img 
+              src="/logo.png" 
+              alt="NextBlaze Logo" 
+              className="h-10 md:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300" 
+            />
+            <div className="flex flex-col border-l border-white/20 pl-3">
               <span className="text-white font-black text-lg md:text-xl tracking-tight leading-none uppercase">NextBlaze</span>
-              <span className="text-[#ffd800] text-[9px] font-black uppercase tracking-[0.2em] -mt-0.5">SaaS Solutions</span>
+              <span className="text-[#ffd800] text-[9px] font-black uppercase tracking-[0.2em] mt-0.5">SaaS Solutions</span>
             </div>
           </Link>
         </div>
