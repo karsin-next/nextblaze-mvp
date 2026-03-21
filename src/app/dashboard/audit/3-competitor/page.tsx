@@ -4,63 +4,49 @@ import { useState, useEffect, useRef } from "react";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Shield, AlertCircle, ArrowRight, ExternalLink, ChevronRight, 
-  Swords, Crosshair, Sparkles, GripHorizontal, Plus, Info, BookOpen, Trash2
+  ArrowRight, ArrowLeft, Shield, CheckCircle2, AlertCircle, Info, 
+  Target, Crosshair, Sparkles, Plus, Trash2, Activity, Link as LinkIcon, Save, Check
 } from "lucide-react";
 import Link from "next/link";
 
-type Factor = { id: string, text: string };
-type Quadrant = "AVAILABLE" | "S" | "W" | "O" | "T";
+type Competitor = { id: string; name: string; type: string; desc: string; x: number; y: number };
+type Dimension = { id: string; name: string; you: string; [compId: string]: string };
 
-const INITIAL_FACTORS: Factor[] = [
-  { id: "f1", text: "Proprietary Tech" },
-  { id: "f2", text: "First-Mover" },
-  { id: "f3", text: "High Margin" },
-  { id: "f4", text: "Small Team" },
-  { id: "f5", text: "Slow Sales Cycle" },
-  { id: "f6", text: "Limited Cash" },
-  { id: "f7", text: "New Regulation" },
-  { id: "f8", text: "Growing Market" },
-  { id: "f9", text: "Economic Downturn" },
-  { id: "f10", text: "Low Barrier to Entry" }
-];
+export default function CompetitorAnalysisPage() {
+  const [step, setStep] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
 
-export default function SwotAnalyzerPage() {
-  const [step, setStep] = useState<"swot" | "grid" | "result">("swot");
-
-  // Drag and Drop State
-  const [factors, setFactors] = useState<Record<Quadrant, Factor[]>>({
-    AVAILABLE: INITIAL_FACTORS,
-    S: [], W: [], O: [], T: []
+  // Data State
+  const [data, setData] = useState({
+    competitors: [] as Competitor[],
+    you: { x: 70, y: 70 },
+    dimensions: [
+      { id: "d1", name: "Price", you: "" },
+      { id: "d2", name: "Features", you: "" },
+      { id: "d3", name: "Target Customer", you: "" }
+    ] as Dimension[],
+    moats: { ip: 1, network: 1, brand: 1, scale: 1 },
+    uvp: { customer: "", problem: "", benefit: "", diff: "" },
+    finalSummary: ""
   });
-  
-  const [customInput, setCustomInput] = useState("");
-  const [draggedItem, setDraggedItem] = useState<{item: Factor, source: Quadrant} | null>(null);
-  const [liveInsight, setLiveInsight] = useState("Drag factors into the quadrants below to automatically generate strategic VC insights.");
 
-  // Grid State
-  const [competitors, setCompetitors] = useState([
-    { id: "c1", name: "Competitor A", price: 20, features: 30 },
-    { id: "c2", name: "Competitor B", price: 80, features: 60 }
-  ]);
-  const [you, setYou] = useState({ price: 60, features: 85 });
-  const [newCompName, setNewCompName] = useState("");
+  const [newComp, setNewComp] = useState({ name: "", type: "Direct Competitor", desc: "" });
+  const [newDim, setNewDim] = useState("");
   const gridRef = useRef<HTMLDivElement>(null);
 
-  // Persistence
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [aiFlags, setAiFlags] = useState({ step1: "", step2: "", step3: "", step4: "", step5: "" });
 
+  // Persistence
   useEffect(() => {
-    const saved = localStorage.getItem("audit_1_1_3");
+    const saved = localStorage.getItem("audit_1_1_3_v2");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.factors) setFactors(parsed.factors);
-        if (parsed.competitors) setCompetitors(parsed.competitors);
-        if (parsed.you) setYou(parsed.you);
+        if (parsed.data) setData(parsed.data);
         if (parsed.step) setStep(parsed.step);
       } catch (e) {
-        console.error("Failed to load audit 1.1.3", e);
+        console.error("Failed to load audit 1.1.3 v2", e);
       }
     }
     setIsLoaded(true);
@@ -68,414 +54,417 @@ export default function SwotAnalyzerPage() {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem("audit_1_1_3", JSON.stringify({
-        factors, competitors, you, step
-      }));
+      localStorage.setItem("audit_1_1_3_v2", JSON.stringify({ data, step }));
     }
-  }, [factors, competitors, you, step, isLoaded]);
+  }, [data, step, isLoaded]);
 
-  const isSwotReady = factors.S.length > 0 && factors.W.length > 0 && (factors.O.length > 0 || factors.T.length > 0);
-
-  // SWOT Drag Handlers
-  const handleDragStart = (item: Factor, source: Quadrant) => setDraggedItem({ item, source });
+  // Calculations
+  const moatScore = Math.round(((data.moats.ip + data.moats.network + data.moats.brand + data.moats.scale) / 40) * 100);
   
-  const handleDrop = (e: React.DragEvent, target: Quadrant) => {
-    e.preventDefault();
-    if (!draggedItem || draggedItem.source === target) return;
+  let moatLabel = "";
+  if (moatScore >= 80) moatLabel = "Defensible Moat – Investor Confidence High";
+  else if (moatScore >= 50) moatLabel = "Emerging Moat – Needs Development";
+  else if (moatScore >= 20) moatLabel = "Weak Moat – Competitors Can Catch Up";
+  else moatLabel = "No Moat – High Risk";
 
-    setFactors(prev => {
-      const newSourceList = prev[draggedItem.source].filter(f => f.id !== draggedItem.item.id);
-      const newTargetList = [...prev[target], draggedItem.item];
-      
-      if (target === "S" && draggedItem.item.text.includes("Tech")) {
-        setLiveInsight("AI Insight: Proprietary Tech is a strong internal moat. VCs will expect to see IP or trade secrets backing this up.");
-      } else if (target === "W" && draggedItem.item.text.includes("Cash")) {
-        setLiveInsight("AI Insight: Limited cash is a standard weakness at early stages. Focus your pitch on high capital efficiency.");
-      } else if (target === "T") {
-        setLiveInsight("AI Insight: Identifying threats proves self-awareness. Do not hide from macroeconomic downturns in your deck.");
-      }
-
-      return { ...prev, [draggedItem.source]: newSourceList, [target]: newTargetList };
-    });
-    setDraggedItem(null);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
-
-  const addCustomFactor = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customInput.trim()) return;
-    const newItem = { id: Date.now().toString(), text: customInput };
-    setFactors(prev => ({ ...prev, AVAILABLE: [newItem, ...prev.AVAILABLE] }));
-    setCustomInput("");
-  };
-
-  const addCompetitor = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCompName.trim()) return;
-    setCompetitors([...competitors, { id: Date.now().toString(), name: newCompName, price: 50, features: 50 }]);
-    setNewCompName("");
+  // Handlers - STEP 1
+  const addCompetitor = () => {
+    if (!newComp.name.trim()) return;
+    const cid = "c" + Date.now();
+    setData(prev => ({
+      ...prev,
+      competitors: [...prev.competitors, { ...newComp, id: cid, x: 50, y: 50 }],
+      dimensions: prev.dimensions.map(d => ({ ...d, [cid]: "" }))
+    }));
+    setNewComp({ name: "", type: "Direct Competitor", desc: "" });
   };
 
   const removeCompetitor = (id: string) => {
-    setCompetitors(competitors.filter(c => c.id !== id));
+    setData(prev => {
+      const newComps = prev.competitors.filter(c => c.id !== id);
+      const newDims = prev.dimensions.map(d => {
+        const copy = { ...d };
+        delete copy[id];
+        return copy;
+      });
+      return { ...prev, competitors: newComps, dimensions: newDims };
+    });
   };
 
-  // Grid Drag Handlers
+  useEffect(() => {
+    if (data.competitors.length === 0) setAiFlags(p => ({ ...p, step1: "You haven't listed any competitors. Missing a key competitor makes you look naive to investors." }));
+    else if (!data.competitors.find(c => c.type === "Indirect Competitor")) setAiFlags(p => ({ ...p, step1: "You haven't included any indirect competitors – think about alternative ways customers solve this problem (e.g. spreadsheets)." }));
+    else setAiFlags(p => ({ ...p, step1: `You listed ${data.competitors.length} competitors. That's a good start. Are there any large incumbents who could enter this space?` }));
+  }, [data.competitors]);
+
+  // Handlers - STEP 2 Grid
   const handleGridDragEnd = (event: any, info: any, type: "you" | "competitor", id?: string) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
-    
-    // Calculate new percentage based on drop position relative to grid
-    // info.point.x, info.point.y are screen coordinates of pointer
-    let rawX = info.point.x - rect.left;
-    let rawY = info.point.y - rect.top;
-    
-    // clamp to 0 - width/height
-    rawX = Math.max(0, Math.min(rawX, rect.width));
-    rawY = Math.max(0, Math.min(rawY, rect.height));
-
+    let rawX = Math.max(0, Math.min(info.point.x - rect.left, rect.width));
+    let rawY = Math.max(0, Math.min(info.point.y - rect.top, rect.height));
     const percentX = Math.round((rawX / rect.width) * 100);
-    // Y is inverted (0 is top, 100 is bottom), but our grid visualizes 0 as bottom (low price) and 100 as top (high price)
     const percentY = 100 - Math.round((rawY / rect.height) * 100);
 
     if (type === "you") {
-      setYou({ features: percentX, price: percentY });
+      setData(prev => ({ ...prev, you: { x: percentX, y: percentY } }));
     } else if (type === "competitor" && id) {
-      setCompetitors(comps => comps.map(c => c.id === id ? { ...c, features: percentX, price: percentY } : c));
+      setData(prev => ({
+        ...prev,
+        competitors: prev.competitors.map(c => c.id === id ? { ...c, x: percentX, y: percentY } : c)
+      }));
     }
   };
 
-  const getDifferentiationScore = () => {
-    let score = you.features;
-    if (you.price > 70 && you.features < 50) score -= 30;
-    if (factors.O.length > 1) score += 10;
-    if (factors.S.find(f => f.text.includes("Tech"))) score += 10;
-    return Math.min(Math.max(score, 10), 99);
+  useEffect(() => {
+    if (data.you.x > 80 && data.you.y > 80) setAiFlags(p => ({...p, step2: "There's whitespace in the Premium/Advanced quadrant – but ensure customers have the budget for this."}));
+    else if (data.competitors.some(c => Math.abs(c.x - data.you.x) < 10 && Math.abs(c.y - data.you.y) < 10)) {
+       setAiFlags(p => ({...p, step2: "You're positioning yourself directly against a competitor. What makes you different enough to win?"}));
+    } else setAiFlags(p => ({...p, step2: "Your position is in a unique whitespace – make sure you can defend it."}));
+  }, [data.you, data.competitors]);
+
+  // Handlers - STEP 3 Matrix
+  const addDimension = () => {
+    if (!newDim.trim()) return;
+    setData(prev => ({
+      ...prev,
+      dimensions: [...prev.dimensions, { id: "d" + Date.now(), name: newDim, you: "" }]
+    }));
+    setNewDim("");
+  };
+
+  const updateMatrix = (dimId: string, compId: string | "you", val: string) => {
+    setData(prev => ({
+      ...prev,
+      dimensions: prev.dimensions.map(d => d.id === dimId ? { ...d, [compId]: val } : d)
+    }));
+  };
+
+  useEffect(() => {
+    const filledYou = data.dimensions.filter(d => d.you && d.you.length > 3);
+    if (filledYou.length === 0) setAiFlags(p => ({...p, step3: "You listed no advantages in any dimension – investors will see you as a me-too product."}));
+    else if (filledYou.length === 1 && filledYou[0].name === "Price") setAiFlags(p => ({...p, step3: "Your only differentiator is price. This is rarely a sustainable advantage. Add non-price features."}));
+    else setAiFlags(p => ({...p, step3: `You have strong differentiation points. Highlight "${filledYou[0]?.name || 'these'}" in your pitch.`}));
+  }, [data.dimensions]);
+
+  // Handlers - STEP 4 Moat
+  useEffect(() => {
+    if (moatScore >= 80) setAiFlags(p => ({...p, step4: "Your Moat Strength Score is excellent. You are highly defensible against incumbents."}));
+    else if (data.moats.network < 3 && data.moats.ip < 3) setAiFlags(p => ({...p, step4: "Your IP and Network Effects are weak. Consider how you could introduce community features or proprietary data."}));
+    else setAiFlags(p => ({...p, step4: `Your Moat Strength Score is ${moatScore}% – consider focusing on improving your weakest moats to scale safely.`}));
+  }, [data.moats, moatScore]);
+
+  // Handlers - STEP 5 UVP
+  useEffect(() => {
+    const defaultUVP = `For ${data.uvp.customer || "[target customer]"} who are struggling with ${data.uvp.problem || "[problem]"}, our solution ${data.uvp.benefit || "[provides benefit]"}. Unlike ${data.competitors.length > 0 ? data.competitors.map(c=>c.name).join(' & ') : "[competitors]"}, we ${data.uvp.diff || "[key differentiator]"}.`;
+    
+    // Only auto-update if the user hasn't explicitly edited the final string by hand
+    if (!data.finalSummary || data.finalSummary.includes("[target customer]") || data.finalSummary.includes("[competitors]")) {
+      setData(prev => ({...prev, finalSummary: defaultUVP}));
+    }
+  }, [data.uvp, data.competitors]);
+
+  const handleSaveAndContinue = () => {
+    setSavedSuccess(true);
+    setTimeout(() => {
+      window.location.href = "/dashboard/audit/4-product";
+    }, 1000);
   };
 
   if (!isLoaded) return null;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="1.1.3 SWOT & Moat Analyzer"
-        title="SWOT & Moat Analyzer"
-        description="Assess your competitive landscape (Strengths, Weaknesses, Opportunities, Threats) and differentiate your unique value proposition."
+        badge="1.1.3 Competitor Analysis"
+        title="UVP & Moat Analyzer"
+        description="Understand the competitive landscape, articulate a clear differentiator, and identify sustainable advantages (moats) that protect your business."
       />
+
+      {/* Progress Bar */}
+      <div className="bg-white shadow-sm border border-gray-100 p-4 mb-6 rounded-sm flex items-center justify-between">
+        <div className="flex gap-2">
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-indigo-500' : 'bg-gray-200'}`} />
+          ))}
+        </div>
+        <span className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest">Workshop Step {step} of 5</span>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         
-        {/* Main Interactive Area */}
-        <div className="flex-1 space-y-6">
-          
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
           <AnimatePresence mode="wait">
-            {/* STEP 1: SWOT */}
-            {step === "swot" && (
-              <motion.div 
-                key="swot"
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#022f42] rounded-sm"
-              >
-                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4 border-[#1e4a62]/10">
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-[#ffd800]" />
-                    <h2 className="text-xl font-black text-[#022f42]">Drag-and-Drop SWOT Framework</h2>
+            
+            {/* STEP 1: Identification */}
+            {step === 1 && (
+              <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="Include 3-5 competitors. Missing a key competitor makes you look naive.">
+                  Who&apos;s Already There? <Info className="w-4 h-4 text-gray-400" />
+                </h2>
+                <p className="text-[#1e4a62] mb-6 text-sm">List your direct and indirect competitors. We will map these in the next steps.</p>
+                
+                <div className="space-y-4 mb-8">
+                  <div className="flex flex-col lg:flex-row gap-3">
+                    <input type="text" value={newComp.name} onChange={e=>setNewComp({...newComp, name: e.target.value})} placeholder="Competitor Name (e.g. Salesforce)" className="p-3 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 flex-1 font-bold text-sm" />
+                    <select value={newComp.type} onChange={e=>setNewComp({...newComp, type: e.target.value})} className="p-3 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 text-sm">
+                      <option>Direct Competitor</option><option>Indirect Competitor</option><option>Potential Future Competitor</option>
+                    </select>
                   </div>
-                  <div className="bg-[#f2f6fa] border border-[#1e4a62]/10 px-3 py-1.5 rounded-sm flex items-center gap-2 text-xs font-bold text-[#1e4a62]">
-                    <BookOpen className="w-3 h-3 text-[#ffd800]" /> Sourced from Harvard Business Review
-                  </div>
+                  <input type="text" value={newComp.desc} onChange={e=>setNewComp({...newComp, desc: e.target.value})} placeholder="Briefly describe their approach or how they solve the problem..." className="w-full p-3 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 text-sm" />
+                  <button onClick={addCompetitor} className="bg-[#1e4a62] text-white px-6 py-2 rounded-sm font-bold text-sm uppercase tracking-widest hover:bg-[#022f42] transition-colors flex items-center gap-2">
+                    <Plus className="w-4 h-4"/> Add Competitor
+                  </button>
                 </div>
 
-                <div className="mb-6 p-4 border border-blue-100 bg-blue-50/50 rounded-sm text-sm text-[#022f42]/80 flex items-start gap-3 relative overflow-hidden">
-                   <div className="absolute top-0 left-0 w-1 h-full bg-blue-400"></div>
-                   <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                   <div>
-                     <strong>Why these options?</strong> The suggested factors below are derived from standard institutional VC evaluation matrixes. Selecting these standardizes your risk profile for analysts. <a href="https://hbr.org/topic/strategy" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline ml-1 hover:text-[#ffd800]">Read external citation.</a>
-                   </div>
-                </div>
-
-                <div className="mb-8 p-3 bg-emerald-50 border border-emerald-200 rounded-sm flex items-center gap-3 transition-colors shadow-inner">
-                  <Sparkles className="w-4 h-4 text-emerald-500 animate-pulse shrink-0" />
-                  <p className="text-sm font-bold text-emerald-900">{liveInsight}</p>
-                </div>
-
-                <div className="mb-8 bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-4 rounded-sm"
-                     onDrop={(e) => handleDrop(e, "AVAILABLE")} onDragOver={handleDragOver}>
-                  <div className="text-xs font-black uppercase tracking-widest text-[#1e4a62]/60 mb-3">Available Factors Bank (Drag from here)</div>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4 min-h-[40px]">
-                    {factors.AVAILABLE.map(f => (
-                      <div key={f.id} draggable onDragStart={() => handleDragStart(f, "AVAILABLE")}
-                        className="bg-white border border-[#1e4a62]/20 px-3 py-1.5 rounded-sm text-sm font-bold text-[#022f42] shadow-sm cursor-grab active:cursor-grabbing flex items-center gap-2 hover:border-[#ffd800] transition-colors">
-                        <GripHorizontal className="w-3 h-3 text-gray-400" /> {f.text}
+                <div className="space-y-3 mb-8">
+                  {data.competitors.map(c => (
+                    <div key={c.id} className="p-4 border border-gray-200 rounded-sm flex items-start justify-between bg-gray-50/50">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-bold text-[#022f42]">{c.name}</span>
+                          <span className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-sm bg-indigo-100 text-indigo-800">{c.type}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{c.desc}</p>
                       </div>
-                    ))}
-                    {factors.AVAILABLE.length === 0 && <span className="text-xs text-gray-400 italic mt-2">All suggested factors used.</span>}
+                      <button onClick={() => removeCompetitor(c.id)} className="text-rose-400 hover:text-rose-600"><Trash2 className="w-4 h-4"/></button>
+                    </div>
+                  ))}
+                  {data.competitors.length === 0 && <div className="p-8 text-center border-2 border-dashed border-gray-200 text-gray-400 text-sm font-bold rounded-sm">No competitors added yet.</div>}
+                </div>
+
+                <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
+                  <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
+                  <p className="text-sm text-emerald-900 font-medium">{aiFlags.step1 || "Awaiting inputs..."}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 2: Positioning Map */}
+            {step === 2 && (
+              <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="This map helps you see whitespace. Investors love clear whitespace positioning.">
+                  Where Do You Fit? Map Your Position <Info className="w-4 h-4 text-gray-400" />
+                </h2>
+                <p className="text-[#1e4a62] mb-8 text-sm">Physically drag the competitor bubbles (and your own yellow beacon) onto the coordinate grid below to map out the market whitespace.</p>
+                
+                <div className="min-h-[450px] border-2 border-[#1e4a62]/20 rounded-sm relative bg-[#f2f6fa]/50 flex items-center justify-center overflow-hidden mb-8" ref={gridRef}>
+                  {/* Axes lines */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-full h-0.5 bg-gray-300"></div>
+                    <div className="h-full w-0.5 bg-gray-300 absolute"></div>
+                  </div>
+                  {/* Axis Labels */}
+                  <span className="absolute top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#022f42] uppercase tracking-widest bg-white px-3 py-1 shadow-sm rounded-sm">High Price / Enterprise</span>
+                  <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#022f42] uppercase tracking-widest bg-white px-3 py-1 shadow-sm rounded-sm">Low Price / Mass Market</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#022f42] uppercase tracking-widest bg-white px-3 py-1 shadow-sm rounded-sm" style={{writingMode: 'vertical-rl'}}>Broad Features / Complex</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#022f42] uppercase tracking-widest bg-white px-3 py-1 shadow-sm rounded-sm transform rotate-180" style={{writingMode: 'vertical-rl'}}>Niche / Simple</span>
+
+                  {data.competitors.map((comp) => (
+                    <motion.div 
+                      key={comp.id} drag dragMomentum={false}
+                      whileDrag={{ scale: 1.1, zIndex: 50, shadow: "0px 10px 20px rgba(0,0,0,0.1)" }}
+                      onDragEnd={(e, info) => handleGridDragEnd(e, info, "competitor", comp.id)}
+                      className="absolute px-4 py-2 rounded-full bg-white text-xs font-bold text-gray-700 cursor-grab active:cursor-grabbing shadow-md border-2 border-gray-200"
+                      style={{ left: `${comp.x}%`, top: `${100 - comp.y}%`, x: '-50%', y: '-50%' }}
+                    >
+                      {comp.name}
+                    </motion.div>
+                  ))}
+
+                  <motion.div 
+                    drag dragMomentum={false}
+                    whileDrag={{ scale: 1.1, zIndex: 60, shadow: "0px 10px 20px rgba(0,0,0,0.2)" }}
+                    onDragEnd={(e, info) => handleGridDragEnd(e, info, "you")}
+                    className="absolute px-5 py-2.5 rounded-full bg-[#ffd800] text-sm font-black text-[#022f42] cursor-grab active:cursor-grabbing shadow-lg border-2 border-[#022f42] z-40 flex items-center gap-1"
+                    style={{ left: `${data.you.x}%`, top: `${100 - data.you.y}%`, x: '-50%', y: '-50%' }}
+                  >
+                     <Sparkles className="w-3 h-3"/> YOU
+                  </motion.div>
+                </div>
+
+                <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
+                  <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
+                  <p className="text-sm text-emerald-900 font-medium">{aiFlags.step2}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 3: Matrix */}
+            {step === 3 && (
+              <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="The goal is to identify at least 2-3 dimensions where you are clearly better.">
+                  Why Will Customers Choose You? <Info className="w-4 h-4 text-gray-400" />
+                </h2>
+                <p className="text-[#1e4a62] mb-8 text-sm">Compare your startup across key dimensions. Being cheaper alone is rarely a sustainable moat.</p>
+                
+                <div className="overflow-x-auto mb-8 relative border border-gray-200 rounded-sm">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-[#f2f6fa] text-[#022f42] uppercase font-black text-xs">
+                      <tr>
+                        <th className="px-6 py-4 border-b border-r border-gray-200 bg-[#e2ebf3]">Dimension</th>
+                        <th className="px-6 py-4 border-b border-r border-gray-200 bg-[#ffd800]/20 text-center text-[#022f42]">✨ YOU</th>
+                        {data.competitors.map(c => <th key={c.id} className="px-6 py-4 border-b border-r border-gray-200 text-center text-gray-500 font-bold">{c.name}</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.dimensions.map(dim => (
+                        <tr key={dim.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="px-6 py-3 border-r border-gray-200 font-bold text-[#1e4a62] whitespace-nowrap bg-white">{dim.name}</td>
+                          <td className="px-2 py-2 border-r border-gray-200 bg-[#fffdf0]">
+                            <input type="text" value={dim.you} onChange={e => updateMatrix(dim.id, "you", e.target.value)} placeholder="Your advantage..." className="w-full p-2 bg-transparent outline-none focus:border-b-2 focus:border-[#ffd800] text-center" />
+                          </td>
+                          {data.competitors.map(c => (
+                            <td key={c.id} className="px-2 py-2 border-r border-gray-200">
+                              <input type="text" value={dim[c.id] || ""} onChange={e => updateMatrix(dim.id, c.id, e.target.value)} placeholder="..." className="w-full p-2 bg-transparent outline-none focus:border-b-2 focus:border-gray-300 text-center text-gray-600" />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="flex gap-2 mb-8">
+                  <input type="text" value={newDim} onChange={e=>setNewDim(e.target.value)} placeholder="Add dimension (e.g. Speed, Integrations)" className="p-3 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 text-sm w-64" />
+                  <button onClick={addDimension} className="bg-gray-100 text-[#022f42] px-4 py-2 rounded-sm font-bold text-sm uppercase tracking-widest hover:bg-gray-200 transition-colors flex items-center gap-2">
+                    <Plus className="w-4 h-4"/> Add Custom Dimension
+                  </button>
+                </div>
+
+                <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
+                  <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
+                  <p className="text-sm text-emerald-900 font-medium">{aiFlags.step3}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 4: Moat Workshop */}
+            {step === 4 && (
+              <motion.div key="s4" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-indigo-600 rounded-sm">
+                <div className="absolute top-0 right-0 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] px-3 py-1 pb-1.5 rounded-bl-sm">The Moat Workshop</div>
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="Investors assess whether you have sustainable advantages that competitors cannot easily copy.">
+                  Build Your Moat <Info className="w-4 h-4 text-gray-400" />
+                </h2>
+                <p className="text-[#1e4a62] mb-8 text-sm">Assess your defensibility against the four canonical venture-scale moats.</p>
+                
+                <div className="space-y-6 mb-10">
+                  {/* IP */}
+                  <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
+                    <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
+                       <span title="Patents, trademarks, trade secrets, proprietary tech.">1. Intellectual Property (IP) Moat</span>
+                       <span className="text-indigo-600 font-black">{data.moats.ip}</span>
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-4">Patents, trademarks, proprietary tech or algorithms that cannot be replicated.</p>
+                    <input type="range" min="1" max="10" value={data.moats.ip} onChange={e => setData({...data, moats: {...data.moats, ip: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                  </div>
+                  
+                  {/* Network */}
+                  <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
+                    <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
+                       <span title="Your product becomes more valuable as more people use it.">2. Network Effects Moat</span>
+                       <span className="text-indigo-600 font-black">{data.moats.network}</span>
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-4">The product mathematically becomes more valuable as more users join (e.g. marketplaces, social graphs).</p>
+                    <input type="range" min="1" max="10" value={data.moats.network} onChange={e => setData({...data, moats: {...data.moats, network: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
                   </div>
 
-                  <form onSubmit={addCustomFactor} className="flex gap-2">
-                    <input type="text" value={customInput} onChange={e => setCustomInput(e.target.value)} placeholder="Type a custom strategic factor..." className="text-sm p-2 flex-1 border border-[#1e4a62]/20 rounded-sm outline-none focus:border-[#ffd800]" />
-                    <button type="submit" className="bg-[#1e4a62] text-white px-3 py-1.5 rounded-sm hover:bg-[#022f42] transition-colors"><Plus className="w-4 h-4"/></button>
-                  </form>
+                  {/* Brand Tracking */}
+                  <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
+                    <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
+                       <span title="Customers stick with you because of high switching costs or data lock-in.">3. Brand & Switching Costs</span>
+                       <span className="text-indigo-600 font-black">{data.moats.brand}</span>
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-4">Deep data integrations, team retraining costs, or immense brand loyalty that prevents churn.</p>
+                    <input type="range" min="1" max="10" value={data.moats.brand} onChange={e => setData({...data, moats: {...data.moats, brand: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                  </div>
+
+                  {/* Scale */}
+                  <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
+                    <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
+                       <span title="Your cost structure allows you to offer significantly better prices.">4. Scale & Cost Moat</span>
+                       <span className="text-indigo-600 font-black">{data.moats.scale}</span>
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-4">Operational efficiency, distribution hacks, or economies of scale competitors cannot match.</p>
+                    <input type="range" min="1" max="10" value={data.moats.scale} onChange={e => setData({...data, moats: {...data.moats, scale: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                  </div>
                 </div>
+
+                <div className={`p-6 rounded-sm border-2 text-center transition-colors cursor-help ${
+                  moatScore >= 80 ? 'border-emerald-500 bg-emerald-50' : moatScore >= 50 ? 'border-[#ffd800] bg-[#fffdf0]' : 'border-rose-400 bg-rose-50'
+                }`} title="Calculated as the cumulative defensibility against the canonical 4 moats. Investors use this to assess long-term survival.">
+                  <div className="text-sm font-black uppercase tracking-widest text-opacity-80 mb-1">Live Moat Strength Score</div>
+                  <div className={`text-6xl font-black mb-2`}>{moatScore}%</div>
+                  <div className={`font-bold`}>{moatLabel}</div>
+                </div>
+
+                <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
+                  <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
+                  <p className="text-sm text-emerald-900 font-medium">{aiFlags.step4}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 5: UVP Summary */}
+            {step === 5 && (
+              <motion.div key="s5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-emerald-500 rounded-sm">
+                <h2 className="text-3xl font-black text-[#022f42] mb-2 text-center" title="Your UVP is the first thing investors read. Make it specific.">
+                  Your UVP in One Sentence
+                </h2>
+                <p className="text-[#1e4a62] mb-8 text-sm text-center">Refine your auto-generated Unique Value Proposition based on your map and matrix data.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {/* S */}
-                  <div className="bg-emerald-50/50 border-2 border-emerald-100 p-4 rounded-sm min-h-[120px] transition-colors hover:border-emerald-300"
-                       onDrop={(e) => handleDrop(e, "S")} onDragOver={handleDragOver}>
-                    <label className="flex justify-between items-center text-xs font-black text-emerald-900 mb-3 uppercase tracking-widest">
-                      <span>Strengths (Internal)</span>
-                      <span className="bg-emerald-200 text-emerald-900 px-1.5 rounded-sm">{factors.S.length}</span>
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      {factors.S.map(f => (
-                        <div key={f.id} draggable onDragStart={() => handleDragStart(f, "S")} className="bg-emerald-500 text-white px-3 py-2 text-sm font-bold rounded-sm shadow-sm cursor-grab flex items-center justify-between">
-                          {f.text} <GripHorizontal className="w-3 h-3 opacity-50" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* W */}
-                  <div className="bg-rose-50/50 border-2 border-rose-100 p-4 rounded-sm min-h-[120px] transition-colors hover:border-rose-300"
-                       onDrop={(e) => handleDrop(e, "W")} onDragOver={handleDragOver}>
-                    <label className="flex justify-between items-center text-xs font-black text-rose-900 mb-3 uppercase tracking-widest">
-                      <span>Weaknesses (Internal)</span>
-                      <span className="bg-rose-200 text-rose-900 px-1.5 rounded-sm">{factors.W.length}</span>
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      {factors.W.map(f => (
-                        <div key={f.id} draggable onDragStart={() => handleDragStart(f, "W")} className="bg-rose-500 text-white px-3 py-2 text-sm font-bold rounded-sm shadow-sm cursor-grab flex items-center justify-between">
-                          {f.text} <GripHorizontal className="w-3 h-3 opacity-50" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* O */}
-                  <div className="bg-sky-50/50 border-2 border-sky-100 p-4 rounded-sm min-h-[120px] transition-colors hover:border-sky-300"
-                       onDrop={(e) => handleDrop(e, "O")} onDragOver={handleDragOver}>
-                    <label className="flex justify-between items-center text-xs font-black text-sky-900 mb-3 uppercase tracking-widest">
-                      <span>Opportunities (External)</span>
-                      <span className="bg-sky-200 text-sky-900 px-1.5 rounded-sm">{factors.O.length}</span>
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      {factors.O.map(f => (
-                        <div key={f.id} draggable onDragStart={() => handleDragStart(f, "O")} className="bg-sky-500 text-white px-3 py-2 text-sm font-bold rounded-sm shadow-sm cursor-grab flex items-center justify-between">
-                          {f.text} <GripHorizontal className="w-3 h-3 opacity-50" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* T */}
-                  <div className="bg-amber-50/50 border-2 border-amber-100 p-4 rounded-sm min-h-[120px] transition-colors hover:border-amber-300"
-                       onDrop={(e) => handleDrop(e, "T")} onDragOver={handleDragOver}>
-                    <label className="flex justify-between items-center text-xs font-black text-amber-900 mb-3 uppercase tracking-widest">
-                      <span>Threats (External)</span>
-                      <span className="bg-amber-200 text-amber-900 px-1.5 rounded-sm">{factors.T.length}</span>
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      {factors.T.map(f => (
-                        <div key={f.id} draggable onDragStart={() => handleDragStart(f, "T")} className="bg-amber-500 text-white px-3 py-2 text-sm font-bold rounded-sm shadow-sm cursor-grab flex items-center justify-between">
-                          {f.text} <GripHorizontal className="w-3 h-3 opacity-50" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <input type="text" value={data.uvp.customer} onChange={e=>setData({...data, uvp: {...data.uvp, customer: e.target.value}})} placeholder="Target Customer (e.g. SMB Finance Leaders)" className="p-3 border-2 border-gray-200 rounded-sm outline-none text-sm" />
+                  <input type="text" value={data.uvp.problem} onChange={e=>setData({...data, uvp: {...data.uvp, problem: e.target.value}})} placeholder="Their Problem (e.g. to reduce churn manually)" className="p-3 border-2 border-gray-200 rounded-sm outline-none text-sm" />
+                  <input type="text" value={data.uvp.benefit} onChange={e=>setData({...data, uvp: {...data.uvp, benefit: e.target.value}})} placeholder="Benefit Provided (e.g. provides AI churn prediction)" className="p-3 border-2 border-gray-200 rounded-sm outline-none text-sm" />
+                  <input type="text" value={data.uvp.diff} onChange={e=>setData({...data, uvp: {...data.uvp, diff: e.target.value}})} placeholder="Key Differentiator (e.g. deliver results in 1 week)" className="p-3 border-2 border-gray-200 rounded-sm outline-none text-sm" />
+                </div>
+                
+                <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8">
+                  <label className="block text-xs font-black text-[#1e4a62]/60 uppercase tracking-widest mb-3">Editable Pitch Fragment (UVP)</label>
+                  <textarea 
+                    value={data.finalSummary}
+                    onChange={(e) => setData({...data, finalSummary: e.target.value})}
+                    className="w-full bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm focus:border-emerald-500 outline-none text-[#022f42] font-medium text-lg min-h-[140px] leading-relaxed shadow-sm"
+                  />
                 </div>
 
-                <button
-                  onClick={() => setStep("grid")}
-                  disabled={!isSwotReady}
-                  className={`w-full py-4 font-bold text-sm tracking-widest uppercase transition-all shadow-sm rounded-sm flex items-center justify-center gap-2 ${
-                    !isSwotReady 
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                      : "bg-[#022f42] text-white hover:bg-[#1b4f68] hover:shadow-md"
-                  }`}
-                >
-                  Continue to Positioning Map <ArrowRight className="w-4 h-4" />
-                </button>
-              </motion.div>
-            )}
-
-            {/* STEP 2: 2x2 GRID */}
-            {step === "grid" && (
-              <motion.div 
-                key="grid"
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#022f42] rounded-sm"
-              >
-                <div className="flex items-center gap-2 mb-8 border-b pb-4 border-[#1e4a62]/10">
-                  <Crosshair className="w-5 h-5 text-[#ffd800]" />
-                  <h2 className="text-xl font-black text-[#022f42]">Competitive Positioning Map</h2>
+                <div className="bg-emerald-50 border border-emerald-200 p-5 rounded-sm mb-10">
+                  <h4 className="text-sm font-bold text-emerald-900 mb-2">Automated Defensibility Summary:</h4>
+                  <p className="text-sm text-emerald-800 italic">&quot;Our competitive advantage defends against {data.competitors.length} competitors. With a Moat Strength Score of {moatScore}%, we are positioned to deeply protect our whitespace using our highest rated advantages.&quot;</p>
                 </div>
 
-                <div className="mb-6 p-3 bg-[#f2f6fa] border-l-[4px] border-l-[#ffd800] rounded-r-sm flex items-start gap-3">
-                  <Sparkles className="w-4 h-4 text-[#ffd800] mt-0.5 shrink-0" />
-                  <p className="text-sm font-medium text-[#1e4a62]"><strong>AI Assistant:</strong> Add competitors and drag their dots directly on the map. Mapping your position visually against competitors isolates your unique white space in the market.</p>
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-8 mb-10">
-                  
-                  {/* Graph Render */}
-                  <div className="flex-[2] min-h-[400px] border-2 border-[#1e4a62]/20 rounded-sm relative bg-white flex items-center justify-center p-4 overflow-hidden" ref={gridRef}>
-                    {/* Axes lines */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-full h-0.5 bg-gray-200"></div>
-                      <div className="h-full w-0.5 bg-gray-200 absolute"></div>
-                    </div>
-                    {/* Axis Labels */}
-                    <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2">Premium Price</span>
-                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2">Low Price</span>
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2" style={{writingMode: 'vertical-rl'}}>Advanced Features</span>
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-2 transform rotate-180" style={{writingMode: 'vertical-rl'}}>Basic Features</span>
-
-                    {/* Draggable Points */}
-                    {competitors.map((comp) => (
-                      <motion.div 
-                        key={comp.id}
-                        drag
-                        dragMomentum={false}
-                        whileDrag={{ scale: 1.2, zIndex: 50 }}
-                        onDragEnd={(e, info) => handleGridDragEnd(e, info, "competitor", comp.id)}
-                        className="absolute w-4 h-4 rounded-full bg-gray-400 cursor-grab active:cursor-grabbing flex flex-col items-center justify-center shadow-md border-2 border-white group"
-                        style={{ left: `${comp.features}%`, top: `${100 - comp.price}%`, margin: '-8px 0 0 -8px' }}
-                      >
-                        <span className="absolute -top-7 text-[10px] font-bold text-white bg-gray-700 px-2 py-0.5 shadow-sm rounded-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{comp.name}</span>
-                      </motion.div>
-                    ))}
-
-                    <motion.div 
-                      drag
-                      dragMomentum={false}
-                      whileDrag={{ scale: 1.2, zIndex: 60 }}
-                      onDragEnd={(e, info) => handleGridDragEnd(e, info, "you")}
-                      className="absolute w-6 h-6 rounded-full bg-[#ffd800] border-2 border-[#022f42] cursor-grab active:cursor-grabbing flex flex-col items-center justify-center shadow-lg group z-10"
-                      style={{ left: `${you.features}%`, top: `${100 - you.price}%`, margin: '-12px 0 0 -12px' }}
-                    >
-                       <span className="absolute -top-8 text-xs font-black text-[#022f42] whitespace-nowrap bg-[#ffd800] px-2 py-0.5 shadow-md rounded-sm pointer-events-none">YOU</span>
-                    </motion.div>
-                  </div>
-
-                  {/* Competitor List Mgmt */}
-                  <div className="flex-1 space-y-4">
-                    <div className="bg-[#f2f6fa] p-4 rounded-sm border border-[#1e4a62]/10">
-                      <h4 className="font-bold text-[#022f42] text-sm mb-3">Map Competitors</h4>
-                      <p className="text-xs text-[#1e4a62] mb-4">Add your main competitors below, then literally drag their dots (and your yellow dot) into position on the map.</p>
-                      
-                      <form onSubmit={addCompetitor} className="flex gap-2 mb-4">
-                        <input type="text" value={newCompName} onChange={e => setNewCompName(e.target.value)} placeholder="e.g. SalesForce" className="w-full text-sm p-2 border border-[#1e4a62]/20 rounded-sm outline-none focus:border-[#ffd800]" />
-                        <button type="submit" className="bg-[#1e4a62] text-white px-3 py-1.5 rounded-sm hover:bg-[#022f42] transition-colors"><Plus className="w-4 h-4"/></button>
-                      </form>
-
-                      <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2">
-                        {competitors.map(c => (
-                          <div key={c.id} className="flex items-center justify-between bg-white border border-[#1e4a62]/10 p-2 rounded-sm text-sm">
-                            <span className="font-bold text-[#1e4a62] truncate mr-2">{c.name}</span>
-                            <button onClick={() => removeCompetitor(c.id)} className="text-rose-400 hover:text-rose-600 transition-colors shrink-0"><Trash2 className="w-4 h-4"/></button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div className="flex gap-4">
-                  <button onClick={() => setStep("swot")} className="px-6 py-4 font-bold text-sm tracking-widest uppercase transition-colors border-2 border-[#1e4a62]/20 text-[#1e4a62] hover:bg-[#f2f6fa] rounded-sm">
-                    Back
-                  </button>
-                  <button onClick={() => setStep("result")} className="flex-1 py-4 font-bold text-sm tracking-widest uppercase transition-all shadow-sm rounded-sm flex items-center justify-center gap-2 bg-[#ffd800] text-[#022f42] hover:bg-[#fff09e] hover:shadow-md">
-                    <Sparkles className="w-4 h-4" /> Generate Moat Analysis
+                <div className="flex justify-center">
+                  <button onClick={handleSaveAndContinue} className={`px-12 py-5 font-black uppercase tracking-widest transition-all rounded-sm flex items-center gap-2 shadow-lg ${savedSuccess ? 'bg-green-500 text-white' : 'bg-[#ffd800] hover:bg-[#ffe24d] text-[#022f42]'}`}>
+                    {savedSuccess ? <><Check className="w-5 h-5"/> Saved Component</> : <><Save className="w-5 h-5"/> Save UVP & Continue</>}
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 3: RESULTS */}
-            {step === "result" && (
-              <motion.div 
-                key="result"
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="bg-white p-8 md:p-10 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-emerald-500 rounded-sm"
-              >
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-gray-100 pb-8">
-                  <div>
-                    <h2 className="text-3xl font-black text-[#022f42] mb-2">Competitive Moat Analysis</h2>
-                    <p className="text-[#1e4a62]">Your strategic differentiators have been processed.</p>
-                  </div>
-                  <div className="bg-[#f2f6fa] p-4 rounded-sm border border-[#1e4a62]/10 min-w-[150px] text-center shadow-inner">
-                    <div className="text-[10px] uppercase font-black tracking-widest text-[#1e4a62] mb-1">Differentiation Score</div>
-                    <div className="text-4xl font-black text-[#022f42]">{getDifferentiationScore()}<span className="text-xl text-gray-400">/100</span></div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="bg-emerald-50 border border-emerald-200 p-6 rounded-sm relative">
-                    <h4 className="flex items-center gap-2 text-emerald-800 font-bold mb-3">
-                      <Sparkles className="w-5 h-5 text-emerald-600" /> AI Strategic Commentary
-                    </h4>
-                    <p className="text-[#022f42] font-medium leading-relaxed">
-                      &quot;Your strengths in <span className="bg-white px-1 underline decoration-emerald-300">internal operations</span> align perfectly with the external market trend regarding <span className="bg-white px-1 underline decoration-emerald-300">opportunities</span>.
-                      <br/><br/>
-                      By positioning yourself with higher features than <strong>{competitors[0]?.name || "most competitors"}</strong>, you carve out a highly defensible &apos;white space&apos; in the premium-tier market. Highlight this alignment in your pitch.&quot;
-                    </p>
-                  </div>
-
-                  {factors.O.length <= 1 && (
-                    <div className="bg-rose-50 border border-rose-200 p-5 rounded-sm">
-                      <h4 className="flex items-center gap-2 text-rose-800 font-bold mb-2">
-                        <AlertCircle className="w-4 h-4 text-rose-600" /> Vulnerability Flagged
-                      </h4>
-                      <p className="text-sm text-rose-700">
-                        You listed very few specific Opportunities. External tailwinds (e.g. changing laws, market shifts) are critical elements for growth stories. VCs back companies riding massive waves, not just building good surfboards.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="pt-6 flex gap-4">
-                    <button onClick={() => setStep("grid")} className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest border border-[#1e4a62]/20 px-6 py-3 hover:bg-[#f2f6fa] transition-colors rounded-sm">
-                      Edit Data
-                    </button>
-                    <button onClick={() => {setStep("swot"); setFactors({AVAILABLE: INITIAL_FACTORS, S: [], W: [], O: [], T: []}); localStorage.removeItem("audit_1_1_3");}} className="text-sm font-bold text-rose-600 uppercase tracking-widest border border-rose-200 px-6 py-3 hover:bg-rose-50 transition-colors rounded-sm">
-                      Reset Module
-                    </button>
-                    <Link href="/dashboard/audit/4-product" className="bg-[#022f42] text-white px-6 py-3 font-bold text-sm uppercase tracking-widest w-full text-center hover:bg-[#1b4f68] transition-colors shadow-md rounded-sm">
-                      Next: 1.1.4 Product Readiness
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            )}
           </AnimatePresence>
 
+          {/* Navigation Controls */}
+          {step < 5 && (
+            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
+              <button
+                onClick={() => setStep(s => Math.max(1, s - 1))}
+                className={`font-bold text-sm tracking-widest uppercase flex items-center gap-2 transition-colors ${step === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[#1e4a62] hover:text-[#022f42]'}`}
+                disabled={step === 1}
+              >
+                <ArrowLeft className="w-4 h-4"/> Back
+              </button>
+              <button
+                onClick={() => setStep(s => Math.min(5, s + 1))}
+                className="bg-[#022f42] text-white px-8 py-3 font-bold text-sm tracking-widest uppercase rounded-sm hover:bg-[#1b4f68] transition-colors flex items-center gap-2 shadow-md"
+              >
+                Next Workshop Step <ArrowRight className="w-4 h-4"/>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Actionable Sidebar (Content Backbone) */}
-        <div className="lg:w-[350px] space-y-4">
-          <div className="bg-[#022f42] text-white p-6 rounded-sm shadow-md">
-            <h3 className="flex items-center gap-2 font-bold mb-4 text-[#ffd800]">
-              <Swords className="w-5 h-5" /> VC Perspective
-            </h3>
-            <p className="text-sm text-[#b0d0e0] leading-relaxed mb-4">
-              Investors aren&apos;t just looking for your features; they are looking for your <strong>Moat</strong>.
-            </p>
-            <div className="space-y-3">
-              <div className="text-xs bg-white/5 p-3 rounded-sm border border-white/10 group hover:border-[#ffd800]/50 transition-colors">
-                <span className="font-bold text-white block mb-1 flex items-center gap-1">What is a Moat? <Info className="w-3 h-3"/></span>
-                <span className="text-white/60">A moat is the structural advantage that prevents competitors from eating your lunch (e.g., Network Effects, High Switching Costs, IP).</span>
-              </div>
-            </div>
-          </div>
-
-          <Link href="/dashboard/academy/building-a-sustainable-moat" className="group block bg-white border border-[#1e4a62]/10 p-5 rounded-sm hover:border-[#ffd800] hover:shadow-md transition-all">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] bg-[#ffd800]/10 px-2 py-0.5 rounded-sm">Academy Guide</span>
-              <ExternalLink className="w-3 h-3 text-[#1e4a62]/40 group-hover:text-[#ffd800]" />
-            </div>
-            <h4 className="font-bold text-[#022f42] group-hover:text-[#1b4f68] mb-1">Building a Sustainable Moat (5-min Case Study)</h4>
-            <p className="text-xs text-[#1e4a62] flex items-center gap-1">Read the methodology <ChevronRight className="w-3 h-3" /></p>
-          </Link>
-        </div>
       </div>
     </div>
   );
