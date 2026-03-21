@@ -1,258 +1,409 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Lightbulb, AlertCircle, BarChart3, CheckCircle2, ChevronRight, Info, ExternalLink } from "lucide-react";
+import { 
+  ArrowRight, ArrowLeft, Lightbulb, AlertCircle, CheckCircle2, ChevronRight, 
+  Info, ExternalLink, Activity, Target, Save, Check
+} from "lucide-react";
 import Link from "next/link";
 
-const questions = [
-  {
-    id: "target",
-    question: "Who exactly is experiencing this pain?",
-    helper: "Investors need to calculate your Total Addressable Market (TAM). The more specific you are (e.g., 'B2B SaaS Founders' vs 'Businesses'), the more accurate your TAM calculation will be in later modules.",
-    type: "text",
-    placeholder: "e.g., Mid-market logistics managers...",
-  },
-  {
-    id: "frequency",
-    question: "How often does this problem occur?",
-    helper: "Frequency is a key indicator of pain. Daily problems are painkillers; yearly problems are vitamins.",
-    type: "choice",
-    options: ["Multiple times a day", "Daily or Weekly", "Monthly or rarely"],
-  },
-  {
-    id: "workaround",
-    question: "How are they solving it today (the workaround)?",
-    helper: "If they have a workaround, your solution must be 10x better to force a switch.",
-    type: "choice",
-    options: ["Using a direct competitor", "Manual in-house workaround (Excel/Paper)", "They do nothing (unsolved)"],
-  },
-  {
-    id: "impact",
-    question: "What is the quantifiable impact of this problem?",
-    helper: "Time lost, money wasted, or revenue missed. Investors only care about quantifiable pain.",
-    type: "text",
-    placeholder: "e.g., Losing $5k per month in wasted inventory...",
-  }
-];
-
 export default function PainExplorerPage() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [completed, setCompleted] = useState(false);
+  const [step, setStep] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
 
-  const currentQ = questions[step];
+  // Form State
+  const [data, setData] = useState({
+    problemDesc: "",
+    whoTitle: "",
+    whoCompany: "",
+    whoDay: "",
+    currentSolution: "",
+    missingSolution: "",
+    intensity: 5,
+    frequency: 5,
+    alternatives: 5,
+    finalSummary: ""
+  });
 
-  const handleNext = () => {
-    if (step < questions.length - 1) setStep(step + 1);
-    else setCompleted(true);
+  const [aiFlags, setAiFlags] = useState({
+    step1: "",
+    step2: "",
+    step3: "",
+    step4: "",
+    step5: ""
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem("audit_1_1_1_v2");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setData(parsed.data || data);
+        if (parsed.step) setStep(parsed.step);
+      } catch (e) {
+        console.error("Failed to load audit 1.1.1 v2", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("audit_1_1_1_v2", JSON.stringify({ data, step }));
+    }
+  }, [data, step, isLoaded]);
+
+  // Live AI Feedback Handlers
+  const handleProblemDescChange = (val: string) => {
+    setData(prev => ({ ...prev, problemDesc: val }));
+    if (val.length < 20) setAiFlags(p => ({ ...p, step1: "Too vague – investors won't understand the pain." }));
+    else if (!val.includes("struggle") && !val.includes("waste") && !val.includes("cannot") && !val.includes("hard")) {
+      setAiFlags(p => ({ ...p, step1: "Consider adding a verb that describes the struggle (e.g., 'struggle to', 'cannot', 'waste time')." }));
+    } else {
+      setAiFlags(p => ({ ...p, step1: "Good – you described a quantifiable struggle." }));
+    }
   };
 
-  const handlePrev = () => {
-    if (step > 0) setStep(step - 1);
+  const handleWhoChange = (field: string, val: string) => {
+    const newData = { ...data, [field]: val };
+    setData(newData);
+    if (!newData.whoTitle) {
+      setAiFlags(p => ({ ...p, step2: "You haven't specified a decision-maker – investors will ask who signs the cheque." }));
+    } else {
+      setAiFlags(p => ({ ...p, step2: "Strong! Investors love specific B2B titles." }));
+    }
   };
 
-  // Simulated AI Assessment Calculation
+  const handleSolutionChange = (val: string) => {
+    setData(prev => ({ ...prev, currentSolution: val, missingSolution: "" }));
+    if (val === "Use a competitor product") {
+      setAiFlags(p => ({ ...p, step3: "If customers are already using a competitor, your differentiator needs to be clear – we'll help in Module 1.1.3." }));
+    } else if (val === "Manual workaround") {
+      setAiFlags(p => ({ ...p, step3: "Manual workarounds are great! It proves they care enough to try, but lack the right software." }));
+    } else {
+      setAiFlags(p => ({ ...p, step3: "" }));
+    }
+  };
+
+  const generateSummary = () => {
+    const freqWords = data.frequency > 7 ? "daily" : data.frequency > 4 ? "regularly" : "occasionally";
+    const altWords = data.alternatives > 7 ? "highly inadequate" : data.alternatives > 4 ? "tolerable but flawed" : "mostly functional";
+    const intWords = data.intensity > 7 ? "severe operational pain and lost revenue" : "noticeable friction in their workflow";
+    
+    return `${data.whoTitle || "[Customer]"} at ${data.whoCompany || "[Company]"} experiences the problem of ${data.problemDesc.substring(0, 50) || "[problem]"} ${freqWords}. The current alternatives are ${altWords}, and the problem causes ${intWords}. We are building a solution to replace their current ${data.currentSolution || "workarounds"}.`;
+  };
+
+  useEffect(() => {
+    if (step === 5 && !data.finalSummary) {
+      setData(prev => ({ ...prev, finalSummary: generateSummary() }));
+    }
+  }, [step]);
+
+  // Math calculated to give 0-100 based on founder specs (Higher Intensity & Frequency & Bad Alerts = High Score)
   const getSeverityScore = () => {
-    let score = 50; // Base score
-    if (answers.frequency === "Multiple times a day") score += 25;
-    if (answers.frequency === "Daily or Weekly") score += 15;
-    if (answers.workaround === "Manual in-house workaround (Excel/Paper)") score += 15;
-    if (answers.workaround === "They do nothing (unsolved)") score -= 10; // Harder to educate market
-    if (answers.impact?.length > 10) score += 10;
-    return Math.min(score, 100);
+    // Spec requested: (Intensity x Frequency) / (Alternatives + 1). 
+    // We invert alternative's denominator impact so 10 (no good solutions) = High score.
+    const altFactor = 11 - data.alternatives; // if alt=10 (bad), altFactor=1.
+    const raw = (data.intensity * data.frequency) / (altFactor);
+    // Max raw: (10 * 10) / 1 = 100.
+    return Math.min(Math.round(raw), 100);
   };
+
+  const score = getSeverityScore();
+  let scoreLabel = "";
+  if (score >= 80) scoreLabel = "Critical Problem – Investors will pay attention";
+  else if (score >= 50) scoreLabel = "Significant Problem – Worth Solving";
+  else if (score >= 20) scoreLabel = "Moderate Problem – Needs Stronger Justification";
+  else scoreLabel = "Low Severity – May Be Hard to Fund";
+
+  // AI Feedback on Sliders
+  useEffect(() => {
+    let msg = "";
+    if (score >= 80) msg = "Your severity score is excellent – this is a strong signal to investors. This is a clear painkiller opportunity.";
+    else if (data.intensity >= 8) msg = "At level 8+, investors see this as a 'painkiller'. But ensure frequency is high enough to justify subscription pricing.";
+    else if (data.intensity <= 4) msg = "At level 4 or below, this is a 'vitamin' – nice to have but very hard to sell in a B2B market.";
+    setAiFlags(p => ({ ...p, step4: msg }));
+  }, [data.intensity, data.frequency, data.alternatives, score]);
+
+  const handleSaveAndContinue = () => {
+    setSavedSuccess(true);
+    setTimeout(() => {
+      window.location.href = "/dashboard/audit/2-customer";
+    }, 1000);
+  };
+
+  if (!isLoaded) return null;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="1.1.1"
-        title="Pain & Need Explorer"
-        description="Understand if your solution tackles a real, painful problem that customers are willing to pay to fix. Your answers shape the 'problem' section of your investor pitch."
+        badge="1.1.1 Problem Explorer"
+        title="Pain & Need Explorer Workshop"
+        description="Core Philosophy: Investors don't invest in solutions; they invest in problems worth solving. This module ensures you can communicate your problem with extreme rigor."
       />
+
+      {/* Progress Bar */}
+      <div className="bg-white shadow-sm border border-gray-100 p-4 mb-6 rounded-sm flex items-center justify-between">
+        <div className="flex gap-2">
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-[#ffd800]' : 'bg-gray-200'}`} />
+          ))}
+        </div>
+        <span className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest">Step {step} of 5</span>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         
         {/* Main Interactive Area */}
         <div className="flex-1">
-          {!completed ? (
-            <div className="bg-white p-8 md:p-10 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#022f42] rounded-sm relative overflow-hidden min-h-[400px]">
-              
-              {/* Progress Bar */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#f2f6fa]">
-                <motion.div 
-                  className="h-full bg-[#ffd800]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(step / questions.length) * 100}%` }}
+          <AnimatePresence mode="wait">
+            
+            {/* STEP 1 */}
+            {step === 1 && (
+              <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="Be specific. Instead of 'cash flow problems', say 'SMEs don't know their runway until it's too late'.">
+                  Describe the Problem <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                </h2>
+                <p className="text-[#1e4a62] mb-6 text-sm">Provide the qualitative foundation. (Max 250 characters)</p>
+                
+                <textarea 
+                  value={data.problemDesc}
+                  onChange={(e) => handleProblemDescChange(e.target.value)}
+                  maxLength={250}
+                  className="w-full p-4 border-2 border-[#1e4a62]/20 rounded-sm focus:border-[#ffd800] focus:ring-0 outline-none min-h-[150px] resize-none text-[#022f42] font-medium"
+                  placeholder="Example: Early-stage SaaS founders struggle to build investor-ready financial models without spending weeks in spreadsheets."
                 />
-              </div>
+                <div className="text-right text-xs text-gray-400 mt-2 font-bold">{data.problemDesc.length}/250</div>
 
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-sm font-bold text-[#022f42]/40 tracking-widest uppercase">
-                  Question {step + 1} of {questions.length}
-                </span>
-                <span className="bg-[#f2f6fa] text-[#022f42] text-xs px-2 py-1 rounded-sm font-bold flex items-center gap-1">
-                  <Lightbulb className="w-3 h-3 text-[#ffd800]" /> Diagnostics
-                </span>
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={step}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <h2 className="text-2xl md:text-3xl font-black text-[#022f42] mb-3 leading-tight">
-                    {currentQ.question}
-                  </h2>
-                  <p className="text-[#1e4a62] mb-8 text-sm md:text-base flex items-start gap-2 bg-[#f2f6fa] p-3 border-l-2 border-[#1e4a62]/20">
-                    <Info className="w-4 h-4 mt-0.5 shrink-0 text-[#1b4f68]" />
-                    {currentQ.helper}
-                  </p>
-
-                  <div className="space-y-3">
-                    {currentQ.type === "text" ? (
-                      <textarea
-                        className="w-full p-4 border-2 border-[#1e4a62]/20 rounded-sm focus:border-[#ffd800] focus:ring-0 outline-none transition-colors min-h-[120px] text-[#022f42]"
-                        placeholder={currentQ.placeholder}
-                        value={answers[currentQ.id] || ""}
-                        onChange={(e) => setAnswers({ ...answers, [currentQ.id]: e.target.value })}
-                      />
-                    ) : (
-                      currentQ.options?.map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => setAnswers({ ...answers, [currentQ.id]: opt })}
-                          className={`w-full text-left p-4 min-h-[4rem] border-2 rounded-sm transition-all duration-200 font-medium whitespace-normal break-words ${
-                            answers[currentQ.id] === opt 
-                              ? "border-[#ffd800] bg-[#ffd800]/5 text-[#022f42] shadow-sm transform scale-[1.01]" 
-                              : "border-[#1e4a62]/10 text-[#1e4a62] hover:border-[#1e4a62]/30 hover:bg-[#f2f6fa]"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            {opt}
-                            {answers[currentQ.id] === opt && <CheckCircle2 className="w-5 h-5 text-[#ffd800]" />}
-                          </div>
-                        </button>
-                      ))
-                    )}
+                {aiFlags.step1 && (
+                  <div className={`mt-6 p-4 rounded-sm flex gap-3 items-start border ${data.problemDesc.length > 20 && !aiFlags.step1.includes("vague") ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
+                    <Activity className={`w-5 h-5 mt-0.5 ${data.problemDesc.length > 20 && !aiFlags.step1.includes("vague") ? 'text-emerald-500' : 'text-amber-500'}`} />
+                    <div>
+                      <h4 className={`text-sm font-bold ${data.problemDesc.length > 20 && !aiFlags.step1.includes("vague") ? 'text-emerald-900' : 'text-amber-900'}`}>Live AI Feedback</h4>
+                      <p className={`text-sm ${data.problemDesc.length > 20 && !aiFlags.step1.includes("vague") ? 'text-emerald-800' : 'text-amber-800'}`}>{aiFlags.step1}</p>
+                    </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                )}
+              </motion.div>
+            )}
 
-              <div className="mt-12 pt-6 border-t border-[#1e4a62]/10 flex items-center justify-between w-full">
-                <button
-                  onClick={handlePrev}
-                  disabled={step === 0}
-                  className={`flex items-center gap-2 font-bold text-sm tracking-widest uppercase transition-colors ${step === 0 ? "text-gray-300 cursor-not-allowed" : "text-[#1e4a62] hover:text-[#022f42]"}`}
-                >
-                  <ArrowLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={!answers[currentQ.id]}
-                  className={`flex items-center gap-2 px-6 py-2.5 font-bold text-sm tracking-widest uppercase transition-all shadow-sm ${
-                    !answers[currentQ.id] 
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                      : "bg-[#022f42] text-white hover:bg-[#1b4f68] hover:shadow-md"
-                  }`}
-                >
-                  {step === questions.length - 1 ? "Analyze" : "Next"} <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-
-            </div>
-          ) : (
-            /* Results State */
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white p-8 md:p-10 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#ffd800] rounded-sm"
-            >
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-gray-100 pb-8">
-                <div>
-                  <h2 className="text-3xl font-black text-[#022f42] mb-2">Pain Analysis Complete</h2>
-                  <p className="text-[#1e4a62]">Your problem statement has been simulated against venture benchmarks.</p>
-                </div>
-                <div className="bg-[#f2f6fa] p-4 rounded-sm border border-[#1e4a62]/10 min-w-[150px] text-center">
-                  <div className="text-[10px] uppercase font-black tracking-widest text-[#1e4a62] mb-1">Severity Score</div>
-                  <div className="text-4xl font-black text-[#022f42]">{getSeverityScore()}<span className="text-xl text-gray-400">/100</span></div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="bg-[#ffd800]/10 border border-[#ffd800]/30 p-5 rounded-sm relative">
-                  <div className="absolute -top-3 left-4 bg-[#ffd800] text-[#022f42] text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
-                    AI Problem Statement
+            {/* STEP 2 */}
+            {step === 2 && (
+              <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="The more specific you are, the more credible your story becomes. 'CFOs of mid-market SaaS companies' is better than 'businesses'.">
+                  Who Experiences This Problem? <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                </h2>
+                <p className="text-[#1e4a62] mb-6 text-sm">Customer Definition. Be highly specific about the decision-maker.</p>
+                
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-bold text-[#022f42] mb-2">Job Title / Role (The Buyer)</label>
+                    <input type="text" value={data.whoTitle} onChange={(e) => handleWhoChange("whoTitle", e.target.value)} placeholder="e.g. VP of Logistics, CFO, Engineering Manager" className="w-full p-3 border-2 border-[#1e4a62]/20 rounded-sm focus:border-[#ffd800] outline-none text-[#022f42] font-medium" />
                   </div>
-                  <p className="text-[#022f42] font-medium leading-relaxed mt-2">
-                    &quot;We are solving a high-frequency problem for <strong className="bg-[#ffd800]/30 px-1">{answers.target}</strong> who currently rely on <strong className="bg-[#ffd800]/30 px-1">{answers.workaround.toLowerCase()}</strong>. Left unsolved, this results in <strong className="bg-[#ffd800]/30 px-1">{answers.impact}</strong>.&quot;
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border border-green-100 bg-green-50/50 p-5 rounded-sm">
-                    <h4 className="flex items-center gap-2 text-green-800 font-bold mb-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-600" /> VC Positive Signals
-                    </h4>
-                    <p className="text-sm text-green-700">
-                      {answers.frequency.includes("Daily") ? "The daily frequency makes this a clear 'Painkiller' rather than a 'Vitamin'." : "The quantifiable financial impact is clear."}
-                    </p>
+                  <div>
+                    <label className="block text-sm font-bold text-[#022f42] mb-2">Company Size / Industry</label>
+                    <input type="text" value={data.whoCompany} onChange={(e) => handleWhoChange("whoCompany", e.target.value)} placeholder="e.g. Mid-market Series B tech companies" className="w-full p-3 border-2 border-[#1e4a62]/20 rounded-sm focus:border-[#ffd800] outline-none text-[#022f42] font-medium" />
                   </div>
-                  <div className="border border-amber-100 bg-amber-50/50 p-5 rounded-sm">
-                    <h4 className="flex items-center gap-2 text-amber-800 font-bold mb-2">
-                      <AlertCircle className="w-4 h-4 text-amber-600" /> Potential Red Flags
-                    </h4>
-                    <p className="text-sm text-amber-700">
-                      {answers.workaround === "They do nothing (unsolved)" 
-                        ? "Because they currently 'do nothing', you will face high customer education costs to convince them this is a problem worth paying for." 
-                        : "Ensure your solution is quantifiably 10x better than their current workaround, or switching costs will kill adoption."}
-                    </p>
+                  <div>
+                    <label className="block text-sm font-bold text-[#022f42] mb-2">Typical day-to-day scenario</label>
+                    <textarea value={data.whoDay} onChange={(e) => handleWhoChange("whoDay", e.target.value)} placeholder="e.g. They spend their mornings compiling reports manually across 3 disparate systems..." className="w-full p-3 border-2 border-[#1e4a62]/20 rounded-sm focus:border-[#ffd800] outline-none text-[#022f42] font-medium h-24 resize-none" />
                   </div>
                 </div>
 
-                <div className="pt-6 flex gap-4">
-                  <button onClick={() => {setStep(0); setCompleted(false); setAnswers({});}} className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest border border-[#1e4a62]/20 px-6 py-3 hover:bg-[#f2f6fa] transition-colors rounded-sm">
-                    Retake Assessment
+                {aiFlags.step2 && (
+                  <div className={`mt-6 p-4 rounded-sm flex gap-3 items-start border ${!data.whoTitle ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'}`}>
+                    <AlertCircle className={`w-5 h-5 mt-0.5 ${!data.whoTitle ? 'text-rose-500' : 'text-emerald-500'}`} />
+                    <div>
+                      <h4 className={`text-sm font-bold ${!data.whoTitle ? 'text-rose-900' : 'text-emerald-900'}`}>Live AI Flag</h4>
+                      <p className={`text-sm ${!data.whoTitle ? 'text-rose-800' : 'text-emerald-800'}`}>{aiFlags.step2}</p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* STEP 3 */}
+            {step === 3 && (
+              <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="Investors want to know if there's already a solution – and if so, why it's not good enough.">
+                  Current Solutions & Alternatives <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                </h2>
+                <p className="text-[#1e4a62] mb-6 text-sm">How do customers currently solve this problem in the market today?</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  {["They ignore it (live with the pain)", "Manual workaround", "Use a competitor product", "Use a non-obvious substitute", "Other"].map(opt => (
+                     <button
+                       key={opt}
+                       onClick={() => handleSolutionChange(opt)}
+                       className={`p-4 text-left border-2 rounded-sm font-bold text-sm transition-all flex items-center justify-between ${
+                         data.currentSolution === opt ? "border-[#ffd800] bg-[#ffd800]/10 text-[#022f42]" : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                       }`}
+                     >
+                       {opt}
+                       {data.currentSolution === opt && <CheckCircle2 className="w-4 h-4 text-[#ffd800]"/>}
+                     </button>
+                  ))}
+                </div>
+
+                {data.currentSolution === "Use a competitor product" && (
+                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6">
+                    <label className="block text-sm font-bold text-[#022f42] mb-2 ml-1">What&apos;s missing from that solution?</label>
+                    <textarea value={data.missingSolution} onChange={(e) => setData({...data, missingSolution: e.target.value})} placeholder="e.g. It's built for enterprise, so it's far too expensive and complex for SMBs..." className="w-full p-4 border-2 border-indigo-200 rounded-sm focus:border-indigo-500 outline-none text-[#022f42] font-medium" />
+                  </motion.div>
+                )}
+
+                {data.currentSolution === "Manual workaround" && (
+                  <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} className="mb-6">
+                    <label className="block text-sm font-bold text-[#022f42] mb-2 ml-1">What makes the manual process painful?</label>
+                    <textarea value={data.missingSolution} onChange={(e) => setData({...data, missingSolution: e.target.value})} placeholder="e.g. Spreadsheets crash, data gets corrupted, takes 3 analysts full time..." className="w-full p-4 border-2 border-indigo-200 rounded-sm focus:border-indigo-500 outline-none text-[#022f42] font-medium" />
+                  </motion.div>
+                )}
+
+                {aiFlags.step3 && (
+                  <div className={`p-4 rounded-sm flex gap-3 items-start border bg-emerald-50 border-emerald-200`}>
+                    <Activity className={`w-5 h-5 mt-0.5 text-emerald-500`} />
+                    <div>
+                      <h4 className={`text-sm font-bold text-emerald-900`}>Strategic Context</h4>
+                      <p className={`text-sm text-emerald-800`}>{aiFlags.step3}</p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* STEP 4 */}
+            {step === 4 && (
+              <motion.div key="s4" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-indigo-600 rounded-sm overflow-hidden relative">
+                <div className="absolute top-0 right-0 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] px-3 py-1 pb-1.5 rounded-bl-sm">The Pain Workshop</div>
+                <h2 className="text-2xl font-black text-[#022f42] mb-2">Visual Ranking (Severity)</h2>
+                <p className="text-[#1e4a62] mb-8 text-sm">Dial in the raw metrics of your market opportunity.</p>
+                
+                <div className="space-y-8 mb-10">
+                  {/* Gauge 1 */}
+                  <div className="bg-[#f2f6fa] p-5 rounded-sm border border-[#1e4a62]/10 group">
+                    <div className="flex justify-between items-center mb-2">
+                       <h4 className="font-bold text-[#022f42] flex items-center gap-2 cursor-help" title="If this problem isn't fixed, does the business lose customers? Money? Reputation?">
+                         Problem Intensity <Info className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                       </h4>
+                       <span className={`font-black text-xl ${data.intensity > 7 ? 'text-red-500' : data.intensity > 4 ? 'text-amber-500' : 'text-emerald-500'}`}>{data.intensity}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs font-bold text-gray-400 mb-2">
+                      <span>1 (Minor annoyance)</span>
+                      <input type="range" min="1" max="10" value={data.intensity} onChange={e => setData({...data, intensity: parseInt(e.target.value)})} className="flex-1 accent-indigo-600" />
+                      <span>10 (Crippling risk)</span>
+                    </div>
+                  </div>
+
+                  {/* Gauge 2 */}
+                  <div className="bg-[#f2f6fa] p-5 rounded-sm border border-[#1e4a62]/10 group">
+                    <div className="flex justify-between items-center mb-2">
+                       <h4 className="font-bold text-[#022f42] flex items-center gap-2 cursor-help" title="A problem that happens daily creates urgency. A yearly problem may not justify a dedicated SaaS solution.">
+                         Frequency <Info className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                       </h4>
+                       <span className="font-black text-xl text-indigo-600">{data.frequency}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs font-bold text-gray-400 mb-2">
+                      <span>1 (Once a year)</span>
+                      <input type="range" min="1" max="10" value={data.frequency} onChange={e => setData({...data, frequency: parseInt(e.target.value)})} className="flex-1 accent-indigo-600" />
+                      <span>10 (Multiple times a day)</span>
+                    </div>
+                  </div>
+
+                  {/* Gauge 3 */}
+                  <div className="bg-[#f2f6fa] p-5 rounded-sm border border-[#1e4a62]/10 group">
+                    <div className="flex justify-between items-center mb-2">
+                       <h4 className="font-bold text-[#022f42] flex items-center gap-2 cursor-help" title="If existing solutions are terrible, your opportunity is huge. If they're good, you need a 10x improvement.">
+                         Alternatives Quality <Info className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                       </h4>
+                       <span className={`font-black text-xl ${data.alternatives > 7 ? 'text-emerald-500' : 'text-amber-500'}`}>{data.alternatives}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs font-bold text-gray-400 mb-2">
+                      <span>1 (Perfectly solved)</span>
+                      <input type="range" min="1" max="10" value={data.alternatives} onChange={e => setData({...data, alternatives: parseInt(e.target.value)})} className="flex-1 accent-indigo-600" />
+                      <span>10 (No good solution exists)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Score Render */}
+                <div className={`p-6 rounded-sm border-2 text-center transition-colors cursor-help ${
+                  score >= 80 ? 'border-red-500 bg-red-50' : score >= 50 ? 'border-amber-500 bg-amber-50' : 'border-[#1e4a62]/20 bg-[#f2f6fa]'
+                }`} title="Calculated using: (Intensity × Frequency) heavily weighted against the inadequacy of exiting Alternatives. Higher is better.">
+                  <div className="text-sm font-black uppercase tracking-widest text-[#1e4a62] mb-1">Live Problem Severity Score</div>
+                  <div className={`text-6xl font-black mb-2 ${score >= 80 ? 'text-red-600' : score >= 50 ? 'text-amber-600' : 'text-[#022f42]'}`}>{score}</div>
+                  <div className={`font-bold ${score >= 80 ? 'text-red-800' : score >= 50 ? 'text-amber-800' : 'text-[#1e4a62]'}`}>{scoreLabel}</div>
+                </div>
+
+                {aiFlags.step4 && (
+                  <div className="mt-6 p-4 rounded-sm flex gap-3 items-start border bg-emerald-50 border-emerald-200">
+                    <Target className="w-5 h-5 mt-0.5 text-emerald-500" />
+                    <div>
+                      <h4 className="text-sm font-bold text-emerald-900">AI Venture Analysis</h4>
+                      <p className="text-sm text-emerald-800">{aiFlags.step4}</p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* STEP 5 */}
+            {step === 5 && (
+              <motion.div key="s5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-emerald-500 rounded-sm">
+                <h2 className="text-3xl font-black text-[#022f42] mb-2 text-center">Summary & Investor-Ready Statement</h2>
+                <p className="text-[#1e4a62] mb-8 text-sm text-center">Review and refine your auto-generated problem statement for the Executive Summary.</p>
+                
+                <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8">
+                  <label className="block text-xs font-black text-[#1e4a62]/60 uppercase tracking-widest mb-3">Editable Pitch Fragment</label>
+                  <textarea 
+                    value={data.finalSummary}
+                    onChange={(e) => setData({...data, finalSummary: e.target.value})}
+                    className="w-full bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm focus:border-emerald-500 outline-none text-[#022f42] font-medium text-lg min-h-[180px] leading-relaxed shadow-sm"
+                  />
+                </div>
+
+                <div className="bg-emerald-50 border border-emerald-200 p-5 rounded-sm mb-10 flex gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-emerald-900">Formatting Complete</h4>
+                    <p className="text-sm text-emerald-800">Your statement is strong. This text will now automatically pipe into your <strong>Investor Snapshot (Module 4.2)</strong> and the <strong>Gap Analysis Report (Module 1.3)</strong> if your score is below threshold.</p>
+                    <p className="text-sm text-emerald-800 mt-2 italic">Consider adding a direct quote from a customer interview to make the execution even more compelling.</p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <button onClick={handleSaveAndContinue} className={`px-12 py-5 font-black uppercase tracking-widest transition-all rounded-sm flex items-center gap-2 shadow-lg ${savedSuccess ? 'bg-green-500 text-white' : 'bg-[#ffd800] hover:bg-[#ffe24d] text-[#022f42]'}`}>
+                    {savedSuccess ? <><Check className="w-5 h-5"/> Saved Successfully</> : <><Save className="w-5 h-5"/> Save & Continue</>}
                   </button>
-                  <Link href="/dashboard/audit/2-customer" className="bg-[#022f42] text-white px-6 py-3 font-bold text-sm uppercase tracking-widest w-full text-center hover:bg-[#1b4f68] transition-colors shadow-md rounded-sm">
-                    Continue to 1.1.2 Personas
-                  </Link>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
+
+          </AnimatePresence>
+
+          {/* Navigation Controls */}
+          {step < 5 && (
+            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
+              <button
+                onClick={() => setStep(s => Math.max(1, s - 1))}
+                className={`font-bold text-sm tracking-widest uppercase flex items-center gap-2 transition-colors ${step === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[#1e4a62] hover:text-[#022f42]'}`}
+                disabled={step === 1}
+              >
+                <ArrowLeft className="w-4 h-4"/> Back
+              </button>
+              
+              <button
+                onClick={() => setStep(s => Math.min(5, s + 1))}
+                className="bg-[#022f42] text-white px-8 py-3 font-bold text-sm tracking-widest uppercase rounded-sm hover:bg-[#1b4f68] transition-colors flex items-center gap-2 shadow-md"
+              >
+                Next Step <ArrowRight className="w-4 h-4"/>
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Actionable Sidebar (Content Backbone) */}
-        <div className="lg:w-[350px] space-y-4">
-          <div className="bg-[#022f42] text-white p-6 rounded-sm shadow-md">
-            <h3 className="flex items-center gap-2 font-bold mb-4 text-[#ffd800]">
-              <BarChart3 className="w-5 h-5" /> VC Perspective
-            </h3>
-            <p className="text-sm text-[#b0d0e0] leading-relaxed mb-4">
-              Investors evaluate the problem before anything else. If the pain isn&apos;t acute, they won&apos;t care about your solution.
-            </p>
-            <div className="space-y-3">
-              <div className="text-xs bg-white/5 p-3 rounded-sm border border-white/10">
-                <span className="font-bold text-white block mb-1">Painkiller vs. Vitamin</span>
-                <span className="text-white/60">If customers already have a workaround, your product must be 10x better, or they won&apos;t adopt it.</span>
-              </div>
-            </div>
-          </div>
-
-          <Link href="/dashboard/academy/the-problem-slide-that-wins" className="group block bg-white border border-[#1e4a62]/10 p-5 rounded-sm hover:border-[#ffd800] hover:shadow-md transition-all">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] bg-[#ffd800]/10 px-2 py-0.5 rounded-sm">Academy Guide</span>
-              <ExternalLink className="w-3 h-3 text-[#1e4a62]/40 group-hover:text-[#ffd800]" />
-            </div>
-            <h4 className="font-bold text-[#022f42] group-hover:text-[#1b4f68] mb-1">The Problem Slide That Wins</h4>
-            <p className="text-xs text-[#1e4a62] flex items-center gap-1">Read the methodology <ChevronRight className="w-3 h-3" /></p>
-          </Link>
-        </div>
       </div>
     </div>
   );

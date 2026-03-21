@@ -20,6 +20,34 @@ export default function PersonaBuilderPage() {
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
   const [isGenerated, setIsGenerated] = useState(false);
   const [liveInsight, setLiveInsight] = useState("Select your customer profile tags to generate strategic Go-To-Market insights.");
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("audit_1_1_2");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.demographics) setSelectedDemographics(parsed.demographics);
+        if (parsed.channels) setSelectedChannels(parsed.channels);
+        if (parsed.triggers) setSelectedTriggers(parsed.triggers);
+        if (parsed.isGenerated) setIsGenerated(true);
+      } catch (e) {
+        console.error("Failed to load audit 1.1.2", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("audit_1_1_2", JSON.stringify({
+        demographics: selectedDemographics,
+        channels: selectedChannels,
+        triggers: selectedTriggers,
+        isGenerated
+      }));
+    }
+  }, [selectedDemographics, selectedChannels, selectedTriggers, isGenerated, isLoaded]);
 
   const toggleSelection = (item: string, list: string[], setList: (val: string[]) => void, type: "demo"|"channel"|"trigger") => {
     // Generate AI Insight
@@ -41,7 +69,9 @@ export default function PersonaBuilderPage() {
     }
   };
 
-  const isReady = personaName.length > 2 && selectedDemographics.length > 0 && selectedChannels.length > 0 && selectedTriggers.length > 0;
+  const isReady = selectedDemographics.length > 0 && selectedChannels.length > 0;
+
+  if (!isLoaded) return null;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -195,8 +225,16 @@ export default function PersonaBuilderPage() {
                   <h3 className="text-2xl font-black text-[#022f42] flex items-center gap-2">
                     <MapIcon className="w-6 h-6 text-emerald-500" /> Customer Journey Map
                   </h3>
-                  <button onClick={() => setIsGenerated(false)} className="text-xs font-bold text-[#1e4a62] border px-3 py-1 hover:bg-gray-50">Edit Profile</button>
+                  <button onClick={() => {setIsGenerated(false); setSelectedDemographics([]); setSelectedChannels([]); setSelectedTriggers([]); localStorage.removeItem("audit_1_1_2");}} className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest border border-[#1e4a62]/20 px-6 py-3 hover:bg-[#f2f6fa] transition-colors rounded-sm">
+                    Edit Profile
+                  </button>
                 </div>
+
+                {/* Journey Map Explanation */}
+                <div className="bg-[#f2f6fa] p-4 rounded-sm border-l-[4px] border-l-[#022f42] mb-6">
+                    <h4 className="font-bold text-[#022f42] mb-2 flex items-center gap-2"><Info className="w-4 h-4 text-[#1e4a62]"/> What is a Customer Journey Map?</h4>
+                    <p className="text-sm text-[#1e4a62] leading-relaxed">A Customer Journey Map illustrates the precise psychological steps your buyer takes from not knowing you exist (<strong>Awareness</strong>), to evaluating your solution against competitors (<strong>Consideration</strong>), to pulling out their credit card because a specific event forced them to act (<strong>Acquisition & Trigger</strong>). Investors use this to mathematically validate if your projected Sales Cycle and Customer Acquisition Cost (CAC) are realistic.</p>
+                  </div>
 
                 {/* Simulated AI Journey Diagram */}
                 <div className="relative">
@@ -237,7 +275,7 @@ export default function PersonaBuilderPage() {
                 <div className="mt-8 bg-amber-50 border border-amber-200 p-4 rounded-sm flex items-start gap-3">
                   <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-sm font-bold text-amber-900">AI Look-Alike Suggestion</h4>
+                    <h4 className="text-sm font-bold text-amber-900">AI assisted suggestion</h4>
                     <p className="text-xs text-amber-800 mt-1">Based on targeting {selectedDemographics.join(', ')} via {selectedChannels[0]}, similar startups also found success targeting <strong>Mid-Market Operations</strong> via <strong>Webinars</strong>. Consider expanding your Total Addressable Market (TAM) horizontally.</p>
                   </div>
                 </div>
