@@ -1,15 +1,44 @@
 import Database from "better-sqlite3";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "fundability.db");
+const DB_FILENAME = "fundability.db";
+const DEFAULT_PATH = path.join(process.cwd(), DB_FILENAME);
+const FALLBACK_PATH = path.join("/tmp", DB_FILENAME);
 
 let db: Database.Database;
 
 export function getDb() {
   if (!db) {
-    db = new Database(DB_PATH);
-    db.pragma("journal_mode = WAL");
-    db.exec(`
+    let selectedPath = process.env.DATABASE_PATH || DEFAULT_PATH;
+    
+    console.log(`[DB] Initializing database...`);
+    console.log(`[DB] Attempting path: ${selectedPath}`);
+
+    try {
+      // Try initialization at selected path
+      db = new Database(selectedPath);
+    } catch (err: any) {
+      console.error(`[DB] Failed to initialize at ${selectedPath}: ${err.message}`);
+      
+      if (selectedPath !== FALLBACK_PATH) {
+        console.log(`[DB] Retrying with fallback path: ${FALLBACK_PATH}`);
+        try {
+          db = new Database(FALLBACK_PATH);
+          selectedPath = FALLBACK_PATH;
+        } catch (fallbackErr: any) {
+          console.error(`[DB] Critical: Fallback also failed: ${fallbackErr.message}`);
+          throw fallbackErr;
+        }
+      } else {
+        throw err;
+      }
+    }
+
+    console.log(`[DB] Successfully opened database at: ${selectedPath}`);
+    
+    try {
+      db.pragma("journal_mode = WAL");
+      db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         company TEXT NOT NULL,
@@ -149,6 +178,10 @@ export function getDb() {
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
     `);
+    } catch (execErr: any) {
+      console.error(`[DB] Error executing schema: ${execErr.message}`);
+      throw execErr;
+    }
   }
   return db;
 }
