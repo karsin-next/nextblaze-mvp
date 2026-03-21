@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.2.2"
+        badge="4.2.2 Financial DD Prep"
         title="Audit Your Finances"
         description="Guided preparation of financial statements, tax returns, and projections in investor‑ready format."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Checklist with explanations. Option to generate a “financial summary” document.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.2.2 Financial DD Prep" title="Audit Your Finances" description="Guided preparation of financial statements, tax returns, and projections in investor‑ready format." />
       </div>
     </div>
   );

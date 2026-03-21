@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.2.4"
+        badge="3.2.4 FundabilityOS Verified Badge"
         title="The Ultimate Goal"
         description="Earn the Verified Badge by completing all core modules and consenting to profile visibility. This signals to investors that your startup has undergone rigorous self‑assessment."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Automatic badge assignment upon completion. Displayed on your profile and any shared materials. Link to publicly available profile of the startup.
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.2.4 FundabilityOS Verified Badge" title="The Ultimate Goal" description="Earn the Verified Badge by completing all core modules and consenting to profile visibility. This signals to investors that your startup has undergone rigorous self‑assessment." />
       </div>
     </div>
   );

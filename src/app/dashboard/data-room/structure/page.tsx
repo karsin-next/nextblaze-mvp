@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.5.1"
+        badge="2.5.1 Structure Template"
         title="Investor‑Ready Data Room Setup"
         description="Pre-built a well‑organised folder structure that matches investor due diligence expectations."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User sees a visual folder tree (e.g., “Legal,” “Financial,” “IP,” etc.) and can create the folders in their own cloud storage (e.g., Google Drive) by clicking a button.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.5.1 Structure Template" title="Investor‑Ready Data Room Setup" description="Pre-built a well‑organised folder structure that matches investor due diligence expectations." />
       </div>
     </div>
   );

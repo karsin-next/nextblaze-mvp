@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.4.1"
+        badge="2.4.1 WHAT: Capital Needs"
         title="How Much to Raise?"
         description="Determine the amount of capital needed  (money, resources, talent) based on your 18‑36 month strategic plan to reach the next milestone."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Guided questionnaire with sliders for different needs (product dev, hiring, marketing). System summarises total capital need.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.4.1 WHAT: Capital Needs" title="How Much to Raise?" description="Determine the amount of capital needed  (money, resources, talent) based on your 18‑36 month strategic plan to reach the next milestone." />
       </div>
     </div>
   );

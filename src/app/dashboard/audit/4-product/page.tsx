@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.4"
+        badge="1.1.4 Product Readiness"
         title="MVP & Adoption Readiness"
         description="Evaluate your product’s development stage, uniqueness, and readiness for customers. Investors assess risk through this lens."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Slider‑based: Concept → Prototype → Beta → Live with paying customers.. AI asks follow‑ups based on stage (e.g., if Beta, “How many beta users? What’s their NPS?”).
 Feature 2: AI ask for existing website and check for product readiness by on research.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.4 Product Readiness" title="MVP & Adoption Readiness" description="Evaluate your product’s development stage, uniqueness, and readiness for customers. Investors assess risk through this lens." />
       </div>
     </div>
   );

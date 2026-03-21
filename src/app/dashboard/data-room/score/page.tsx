@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.5.4"
+        badge="2.5.4 Readiness Score"
         title="Data Room Health"
         description="A score indicating how complete and organised your data room is."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Based on checklist completion and folder structure adherence.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.5.4 Readiness Score" title="Data Room Health" description="A score indicating how complete and organised your data room is." />
       </div>
     </div>
   );

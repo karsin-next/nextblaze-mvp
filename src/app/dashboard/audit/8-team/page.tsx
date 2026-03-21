@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.8"
+        badge="1.1.8 Team Composition Audit"
         title="The Founding Team Scorecard"
         description="Evaluate your team’s strengths, gaps, and ability to execute. Investors invest in people first."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Add team members with roles, experience, time commitment. AI highlights gaps (e.g., “No one with sales experience”). Generates a team strength score.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.8 Team Composition Audit" title="The Founding Team Scorecard" description="Evaluate your team’s strengths, gaps, and ability to execute. Investors invest in people first." />
       </div>
     </div>
   );

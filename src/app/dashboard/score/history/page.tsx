@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.2.4"
+        badge="1.2.4 Score History"
         title="Your Improvement Timeline"
         description="Track your Fundability Score over time as you complete modules and improve your business."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Timeline graph with annotations for each completed module (e.g., “+12% after completing Financial Foundation”).
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.2.4 Score History" title="Your Improvement Timeline" description="Track your Fundability Score over time as you complete modules and improve your business." />
       </div>
     </div>
   );

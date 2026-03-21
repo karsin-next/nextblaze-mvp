@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.1.1"
+        badge="4.1.1 Term Sheet Anatomy"
         title="Understand Every Clause"
         description="Interactive walkthrough of a standard term sheet with plain‑English explanations."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Click any term (e.g., “Liquidation Preference”) to see definition, example, and negotiation tips.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.1.1 Term Sheet Anatomy" title="Understand Every Clause" description="Interactive walkthrough of a standard term sheet with plain‑English explanations." />
       </div>
     </div>
   );

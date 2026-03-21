@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.2.3"
+        badge="4.2.3 IP Audit Tool"
         title="Protect Your Ideas"
         description="Assess your intellectual property position and identify gaps in protection."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Questionnaire about patents, trademarks, copyrights, trade secrets. Outputs an IP strength score and recommendations.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.2.3 IP Audit Tool" title="Protect Your Ideas" description="Assess your intellectual property position and identify gaps in protection." />
       </div>
     </div>
   );

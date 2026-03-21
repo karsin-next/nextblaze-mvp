@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.2"
+        badge="1.1.2 Customer Persona"
         title="Who Exactly? Persona Builder"
         description="Define your ideal customer segments, their buying triggers, and how to reach them. This builds the “customer” part of your pitch and validates go‑to‑market fit."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Drag‑and‑drop persona creation: demographics, psychographics, channel preferences, buying triggers. 
 Feature 2: Auto‑generates a “customer journey map” based on inputs. AI suggests look-alike customer profiles from research.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.2 Customer Persona" title="Who Exactly? Persona Builder" description="Define your ideal customer segments, their buying triggers, and how to reach them. This builds the “customer” part of your pitch and validates go‑to‑market fit." />
       </div>
     </div>
   );

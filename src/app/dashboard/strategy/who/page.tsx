@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.4.5"
+        badge="2.4.5 WHO: Investor Matching"
         title="Find Your Investor Type"
         description="Based on your stage, sector, and location, identify which investor types are most likely to invest."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User selects criteria (stage, sector, geography). System shows a list of investor categories (Angels, VCs, etc.) and characteristics. AI generate list from research
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.4.5 WHO: Investor Matching" title="Find Your Investor Type" description="Based on your stage, sector, and location, identify which investor types are most likely to invest." />
       </div>
     </div>
   );

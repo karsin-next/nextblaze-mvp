@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.2.2"
+        badge="3.2.2 Portfolio & Competitor Check"
         title="Avoid Conflicts"
         description="Analyse potential investors’ portfolios to see if they already invest in a direct competitor."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Searchable database of investor profiles (built from public data). User can add notes.
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.2.2 Portfolio & Competitor Check" title="Avoid Conflicts" description="Analyse potential investors’ portfolios to see if they already invest in a direct competitor." />
       </div>
     </div>
   );

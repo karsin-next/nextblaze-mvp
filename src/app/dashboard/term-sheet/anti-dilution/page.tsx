@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.1.4"
+        badge="4.1.4 Anti‑Dilution Comparison"
         title="Down Round Protection"
         description="Compare weighted‑average vs. full ratchet anti‑dilution and see impact on founder ownership in a down round."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Simulator: user inputs down round valuation, previous investment terms. System shows new ownership percentages.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.1.4 Anti‑Dilution Comparison" title="Down Round Protection" description="Compare weighted‑average vs. full ratchet anti‑dilution and see impact on founder ownership in a down round." />
       </div>
     </div>
   );

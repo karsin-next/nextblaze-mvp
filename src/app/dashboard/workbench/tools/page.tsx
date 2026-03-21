@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.1.2"
+        badge="3.1.2 Tool Library"
         title="Resources and Templates for Every Task"
         description="Access to all templates (cap table, financial model, pitch deck outline, etc.) referenced in the action plan."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Searchable library with filters by category. One‑click download (template file).
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.1.2 Tool Library" title="Resources and Templates for Every Task" description="Access to all templates (cap table, financial model, pitch deck outline, etc.) referenced in the action plan." />
       </div>
     </div>
   );

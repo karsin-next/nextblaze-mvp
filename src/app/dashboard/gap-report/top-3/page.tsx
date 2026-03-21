@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.3.1"
+        badge="1.3.1 Top 3 Gaps"
         title="Top 3 Gaps Identifier"
         description="AI identifies the three biggest weaknesses holding back your score, with plain‑language explanations."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Based on diagnostic answers, AI extracts the lowest‑scoring areas and ranks them by impact.
 Feature 2: Report displayed on screen, with each gap explained in plain language.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.3.1 Top 3 Gaps" title="Top 3 Gaps Identifier" description="AI identifies the three biggest weaknesses holding back your score, with plain‑language explanations." />
       </div>
     </div>
   );

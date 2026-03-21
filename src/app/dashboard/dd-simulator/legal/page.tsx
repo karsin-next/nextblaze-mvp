@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.2.1"
+        badge="4.2.1 Legal DD Checklist"
         title="Get Legal‑Ready"
         description="Comprehensive list of legal documents investors will request, with templates and examples."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Interactive checklist; users can upload (optional) or just track readiness.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.2.1 Legal DD Checklist" title="Get Legal‑Ready" description="Comprehensive list of legal documents investors will request, with templates and examples." />
       </div>
     </div>
   );

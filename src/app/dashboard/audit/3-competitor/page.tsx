@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.3"
+        badge="1.1.3 Competitor Analysis"
         title="SWOT & Moat Analyzer"
         description="Assess your competitive landscape and differentiate your unique value proposition. Investors want to know why you win."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Interactive SWOT quadrant: user drags factors into Strengths, Weaknesses, Opportunities, Threats. AI compares to industry benchmarks. Visual positioning map.
 Feature 2: Interactive 2×2 grid (Price vs. Features). User places competitors and then drops their own company. AI highlights white space.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.3 Competitor Analysis" title="SWOT & Moat Analyzer" description="Assess your competitive landscape and differentiate your unique value proposition. Investors want to know why you win." />
       </div>
     </div>
   );

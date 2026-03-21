@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.2.2"
+        badge="1.2.2 Key Criteria Breakdown"
         title="Key Investor Criteria Score"
         description="Visual breakdown of your scores across the six key investor criteria: Problem, Product, Market, PMF, Revenue, Team."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Radar chart showing scores with clickable sections for Problem, Product, Market, PMF, Revenue, Team . Each section reveals the specific answers that contributed to that score.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.2.2 Key Criteria Breakdown" title="Key Investor Criteria Score" description="Visual breakdown of your scores across the six key investor criteria: Problem, Product, Market, PMF, Revenue, Team." />
       </div>
     </div>
   );

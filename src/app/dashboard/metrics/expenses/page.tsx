@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.2.3"
+        badge="2.2.3 Expense Breakdown"
         title="Where Your Money Goes"
         description="Categorise expenses manually (sales, marketing, R&D, G&A)."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Pie/bar chart with user‑defined categories. Users can allocate percentage or dollar amounts.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.2.3 Expense Breakdown" title="Where Your Money Goes" description="Categorise expenses manually (sales, marketing, R&D, G&A)." />
       </div>
     </div>
   );

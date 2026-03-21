@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.7"
+        badge="1.1.7 Revenue Model Explorer"
         title="How You’ll Make Money"
         description="Describe your revenue model, pricing strategy, and margin potential. Investors assess sustainability and scalability."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Interactive selection of revenue models (subscription, transaction, hardware, etc.). AI asks follow‑ups about pricing power, customer willingness to pay and margin assumptions. Outputs a revenue model score.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.7 Revenue Model Explorer" title="How You’ll Make Money" description="Describe your revenue model, pricing strategy, and margin potential. Investors assess sustainability and scalability." />
       </div>
     </div>
   );

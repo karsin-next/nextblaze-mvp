@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.1.3"
+        badge="4.1.3 Liquidation Preference Simulator"
         title="See Your Exit Payout"
         description="Model different liquidation preferences and their impact on founder proceeds at exit."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User inputs investment amount, preferences (1x non‑participating, participating, etc.), exit value. System shows payout to each party.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.1.3 Liquidation Preference Simulator" title="See Your Exit Payout" description="Model different liquidation preferences and their impact on founder proceeds at exit." />
       </div>
     </div>
   );

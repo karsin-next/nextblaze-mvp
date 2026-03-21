@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.1.3"
+        badge="2.1.3 Cash Flow Snapshot"
         title="Cash In/Out Summary"
         description="Manually enter monthly cash inflows and outflows (aggregated, not transaction‑level)."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Users enter totals for revenue, cost of goods sold, operating expenses, and financing cash flows. System generates a simplified cash flow statement (operating, investing, financing).
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.1.3 Cash Flow Snapshot" title="Cash In/Out Summary" description="Manually enter monthly cash inflows and outflows (aggregated, not transaction‑level)." />
       </div>
     </div>
   );

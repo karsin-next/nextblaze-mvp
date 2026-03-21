@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.2.1"
+        badge="3.2.1 Investor Profile Builder"
         title="Who to Approach"
         description="Define your ideal investor using stage, sector, geography, and ticket size."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Form with dropdowns and sliders. Save multiple profiles.
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.2.1 Investor Profile Builder" title="Who to Approach" description="Define your ideal investor using stage, sector, geography, and ticket size." />
       </div>
     </div>
   );

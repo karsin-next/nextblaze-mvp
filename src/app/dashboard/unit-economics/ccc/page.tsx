@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.3.4"
+        badge="2.3.4 Cash Conversion Cycle"
         title="CCC Simulator"
         description="Understand how long cash is tied up in operations."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Users input days of inventory, receivable collection, and payable deferral. System calculates CCC and shows impact of improving each component.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.3.4 Cash Conversion Cycle" title="CCC Simulator" description="Understand how long cash is tied up in operations." />
       </div>
     </div>
   );

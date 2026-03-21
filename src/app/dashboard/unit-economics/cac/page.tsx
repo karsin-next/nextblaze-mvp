@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.3.1"
+        badge="2.3.1 CAC Calculator"
         title="Customer Acquisition Cost"
         description="Manually enter marketing spend and new customers to calculate CAC."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Simple form: total marketing expenses (last 3 months), number of new customers. System calculates CAC and compares to industry benchmarks.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.3.1 CAC Calculator" title="Customer Acquisition Cost" description="Manually enter marketing spend and new customers to calculate CAC." />
       </div>
     </div>
   );

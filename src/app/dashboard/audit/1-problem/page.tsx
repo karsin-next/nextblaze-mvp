@@ -244,7 +244,7 @@ export default function PainExplorerPage() {
             </div>
           </div>
 
-          <Link href="/academy/the-problem-slide-that-wins" className="group block bg-white border border-[#1e4a62]/10 p-5 rounded-sm hover:border-[#ffd800] hover:shadow-md transition-all">
+          <Link href="/dashboard/academy/the-problem-slide-that-wins" className="group block bg-white border border-[#1e4a62]/10 p-5 rounded-sm hover:border-[#ffd800] hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] bg-[#ffd800]/10 px-2 py-0.5 rounded-sm">Academy Guide</span>
               <ExternalLink className="w-3 h-3 text-[#1e4a62]/40 group-hover:text-[#ffd800]" />

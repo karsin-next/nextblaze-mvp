@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.5"
+        badge="1.1.5 Market Opportunity"
         title="TAM / SAM / SOM & VOS Indicator"
         description="Size your market opportunity using a structured framework. Investors use this to decide if the business can scale."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Guided calculator: user inputs total addressable market, serviceable market, and share. AI auto‑fills industry benchmarks. Outputs a “Market Potential Score” based on VOS Indicator™ criteria.
 Feature 2: Interactive TAM/SAM/SOM calculator: user inputs total market size, target segment, and projected share. AI pulls industry benchmarks for comparison.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.5 Market Opportunity" title="TAM / SAM / SOM & VOS Indicator" description="Size your market opportunity using a structured framework. Investors use this to decide if the business can scale." />
       </div>
     </div>
   );

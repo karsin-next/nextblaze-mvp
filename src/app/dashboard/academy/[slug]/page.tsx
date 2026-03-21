@@ -3,7 +3,7 @@ import { ArrowLeft, BookOpen, Clock } from "lucide-react";
 import articlesData from "@/data/academy_articles.json";
 import { notFound } from "next/navigation";
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
+export default function DashboardArticlePage({ params }: { params: { slug: string } }) {
   const article = articlesData.find((a) => a.slug === params.slug);
 
   if (!article) {
@@ -11,27 +11,27 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f6fa] text-[#022f42] font-sans">
-      <div className="max-w-[800px] mx-auto px-6 py-12">
-        <Link href="/academy" className="inline-flex items-center gap-2 text-[#1e4a62] hover:text-[#ffd800] font-bold text-sm uppercase tracking-widest transition-colors mb-12">
-          <ArrowLeft className="w-4 h-4" /> Back to Academy
-        </Link>
-        
-        <div className="mb-10">
+    <div className="p-6 max-w-4xl mx-auto font-sans">
+      <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#1e4a62] hover:text-[#022f42] font-bold text-sm uppercase tracking-widest transition-colors mb-8">
+        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+      </Link>
+      
+      <div className="bg-white p-8 md:p-12 shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border-t-[4px] border-[#ffd800] rounded-sm">
+        <div className="mb-10 border-b border-gray-100 pb-8">
           <div className="flex items-center gap-2 mb-6">
             <span className="bg-[#022f42] text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm">
               Module {article.source_module}
             </span>
-            <span className="bg-[#ffd800] text-[#022f42] px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm">
+            <span className="bg-[#ffd800] text-[#022f42] px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-sm">
               {article.module_name}
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-black text-[#022f42] tracking-tight leading-tight mb-6">
+          <h1 className="text-3xl md:text-5xl font-black text-[#022f42] tracking-tight leading-tight mb-6">
             {article.title}
           </h1>
           
-          <div className="flex items-center gap-4 text-[#1e4a62] text-sm font-medium border-t border-b border-[#1e4a62]/10 py-4">
+          <div className="flex items-center gap-4 text-[#1e4a62] text-sm font-medium">
             <div className="flex items-center gap-1.5">
               <BookOpen className="w-4 h-4 text-[#ffd800]" />
               <span>FundabilityOS Methodology</span>
@@ -43,9 +43,12 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
           </div>
         </div>
         
-        <article className="prose prose-lg max-w-none text-[#1e4a62] prose-headings:text-[#022f42] prose-headings:font-bold prose-a:text-[#022f42] prose-a:font-bold prose-a:underline hover:prose-a:text-[#ffd800] hover:prose-a:no-underline prose-strong:text-[#022f42] leading-relaxed">
-          <div className="bg-white p-8 border-l-[4px] border-[#ffd800] shadow-sm mb-8 rounded-sm">
-            <p className="font-bold m-0 italic">
+        <article className="prose prose-lg max-w-none text-[#1e4a62] prose-headings:text-[#022f42] prose-headings:font-black prose-a:text-[#022f42] prose-a:font-bold prose-a:underline hover:prose-a:text-[#ffd800] hover:prose-a:no-underline prose-strong:text-[#022f42] leading-relaxed">
+          <div className="bg-[#f2f6fa] p-8 border-l-[4px] border-[#022f42] mb-8 rounded-sm">
+            <p className="font-bold m-0 text-[#022f42]">
+              Executive Summary
+            </p>
+            <p className="text-sm mt-2 mb-0 italic">
               &quot;This article details the exact frameworks used by investors to evaluate your startup during the Due Diligence phase. Applying these principles will directly impact your Fundability Score.&quot;
             </p>
           </div>
@@ -64,14 +67,6 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
             <li>Identify red flags before they derail your fundraise.</li>
             <li>Structure your data room for maximum transparency and speed.</li>
           </ul>
-          
-          <div className="bg-[#022f42] text-white p-8 mt-12 rounded-sm text-center">
-            <h3 className="text-white text-2xl font-black mb-4">Ready to test your {article.module_name}?</h3>
-            <p className="text-[#b0d0e0] mb-6">Log into FundabilityOS to run the dedicated diagnostic module for this framework.</p>
-            <Link href="/login" className="bg-[#ffd800] text-black px-8 py-3 font-bold text-sm uppercase tracking-widest shadow-md hover:bg-[#fff09e] transition-colors inline-block rounded-sm">
-              Launch Module {article.source_module}
-            </Link>
-          </div>
         </article>
       </div>
     </div>

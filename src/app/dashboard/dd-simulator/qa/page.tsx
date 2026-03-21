@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="4.2.4"
+        badge="4.2.4 Mock Q & A"
         title="Practice the Hard Questions"
         description="AI simulates an investor due diligence interview, asking tough questions and scoring your answers."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Text or voice response to AI‑generated questions. Feedback on completeness and quality.
         </p>
-        <ComingSoon />
+        <ComingSoon module="4.2.4 Mock Q & A" title="Practice the Hard Questions" description="AI simulates an investor due diligence interview, asking tough questions and scoring your answers." />
       </div>
     </div>
   );

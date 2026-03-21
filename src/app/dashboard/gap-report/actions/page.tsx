@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.3.3"
+        badge="1.3.3 Recommended Actions"
         title="Close the Gap Checklist"
         description="Concrete, actionable step‑by‑step tasks to close each gap, with links to relevant templates and next modules."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Each gap maps to a set of action items. Clicking “Add to My Plan” creates a task in the Workbench.
 Feature 2: Each action is a clickable card that takes the user directly to the relevant sub‑module (e.g., “Connect your financials to see your runway”).
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.3.3 Recommended Actions" title="Close the Gap Checklist" description="Concrete, actionable step‑by‑step tasks to close each gap, with links to relevant templates and next modules." />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.1.1"
+        badge="3.1.1 Personalised Action Plan"
         title="Your To‑Do List"
         description="All recommended actions from the Gap Analysis are compiled into a single list with priorities."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Kanban board: To Do, In Progress, Done. Users can drag tasks and set due dates.
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.1.1 Personalised Action Plan" title="Your To‑Do List" description="All recommended actions from the Gap Analysis are compiled into a single list with priorities." />
       </div>
     </div>
   );

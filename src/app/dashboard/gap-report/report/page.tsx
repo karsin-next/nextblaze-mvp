@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.3.4"
+        badge="1.3.4 Investor-Ready Report"
         title="Investor‑Ready PDF Report Generator"
         description="One‑click generation of a professional PDF summarising your diagnosis, score, and gaps."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User selects which sections to include; system generates a branded PDF, then downloads or shares via a link. The report has CTA to encourage signup.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.3.4 Investor-Ready Report" title="Investor‑Ready PDF Report Generator" description="One‑click generation of a professional PDF summarising your diagnosis, score, and gaps." />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.1.2"
+        badge="2.1.2 EBDAT Breakeven"
         title="Survival Revenue Calculator"
         description="Determine the revenue needed to cover cash fixed costs and variable costs – the point where you stop burning cash."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User inputs fixed operating costs, interest expenses, and variable cost percentage. System calculates EBDAT breakeven revenue and shows a chart (similar to academic Figure 4.2).
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.1.2 EBDAT Breakeven" title="Survival Revenue Calculator" description="Determine the revenue needed to cover cash fixed costs and variable costs – the point where you stop burning cash." />
       </div>
     </div>
   );

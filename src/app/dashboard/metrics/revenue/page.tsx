@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.2.2"
+        badge="2.2.2 Revenue & Growth"
         title="Growth Tracker"
         description="Visualise monthly revenue trend and growth rate."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Chart with month‑over‑month growth percentage. Users can enter revenue per month (manual entry for past 12 months).
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.2.2 Revenue & Growth" title="Growth Tracker" description="Visualise monthly revenue trend and growth rate." />
       </div>
     </div>
   );

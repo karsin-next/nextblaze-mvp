@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.1.6"
+        badge="1.1.6 Product‑Market Fit & Traction"
         title="Painkiller vs. Vitamin Test"
         description="Determine whether your product is a “must‑have” (painkiller) or “nice‑to‑have” (vitamin). Investors prefer painkillers. Determine whether you have early tractions."
       />
@@ -17,7 +17,7 @@ export default function Page() {
           [DEV] This module will implement: Feature 1: Short questionnaire about customer behavior (e.g., “Would they pay 2x? Can they switch easily?”). AI calculates a PMF score and labels you as painkiller/vitamin.
 Feature 2: Multiple‑choice questions (e.g., “If we discontinued your product tomorrow, how upset would your users be?”). AI calculates add-on to the PMF score based on the 40% rule.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.1.6 Product‑Market Fit & Traction" title="Painkiller vs. Vitamin Test" description="Determine whether your product is a “must‑have” (painkiller) or “nice‑to‑have” (vitamin). Investors prefer painkillers. Determine whether you have early tractions." />
       </div>
     </div>
   );

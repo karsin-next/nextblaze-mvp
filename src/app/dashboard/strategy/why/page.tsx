@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.4.2"
+        badge="2.4.2 WHY: Use of Funds"
         title="Justify Your Ask"
         description="Create a clear allocation of funds to different activities (R&D, marketing, etc.) with justifications."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Drag‑and‑drop allocation: assign percentages to categories (e.g., 40% R&D, 30% marketing). Add text notes for each.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.4.2 WHY: Use of Funds" title="Justify Your Ask" description="Create a clear allocation of funds to different activities (R&D, marketing, etc.) with justifications." />
       </div>
     </div>
   );

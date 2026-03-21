@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.3.2"
+        badge="1.3.2 Gap Deep Dive"
         title="Understand Each Gap"
         description="For each gap, see the specific answers that triggered it and why it matters to investors."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Expandable section showing original answers and investor‑centric commentary. Expandable cards showing original answers, investor rationale, and a “Why This Matters” button.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.3.2 Gap Deep Dive" title="Understand Each Gap" description="For each gap, see the specific answers that triggered it and why it matters to investors." />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="1.2.3"
+        badge="1.2.3 Benchmark Comparison"
         title="How You Stack Up"
         description="Compare your scores (anonymously) to other startups in your industry and stage."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Toggle to show/hide benchmark lines on charts. Data sourced from aggregate platform usage.
         </p>
-        <ComingSoon />
+        <ComingSoon module="1.2.3 Benchmark Comparison" title="How You Stack Up" description="Compare your scores (anonymously) to other startups in your industry and stage." />
       </div>
     </div>
   );

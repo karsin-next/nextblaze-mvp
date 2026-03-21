@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.2.4"
+        badge="2.2.4 Custom Views"
         title="Shareable Dashboard"
         description="Save and share different dashboard views (e.g., for board, for investors)."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Drag‑and‑drop widgets to arrange. Save named views. Generate a shareable link with view‑only access.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.2.4 Custom Views" title="Shareable Dashboard" description="Save and share different dashboard views (e.g., for board, for investors)." />
       </div>
     </div>
   );

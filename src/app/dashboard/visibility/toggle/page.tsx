@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="3.2.3"
+        badge="3.2.3 Profile Visibility"
         title="Control Your Exposure"
         description="Decide whether your startup profile is visible to investors on the platform."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: Simple toggle: public (visible to all investors) or private (only you).
         </p>
-        <ComingSoon />
+        <ComingSoon module="3.2.3 Profile Visibility" title="Control Your Exposure" description="Decide whether your startup profile is visible to investors on the platform." />
       </div>
     </div>
   );

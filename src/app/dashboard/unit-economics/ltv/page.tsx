@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <ModuleHeader 
-        badge="2.3.2"
+        badge="2.3.2 LTV Estimator"
         title="Lifetime Value"
         description="Estimate customer lifetime value based on average revenue per customer and churn rate."
       />
@@ -16,7 +16,7 @@ export default function Page() {
         <p className="text-sm text-[#1e4a62]/80 bg-[#1e4a62]/5 p-3 rounded-sm border border-[#1e4a62]/10 mb-6">
           [DEV] This module will implement: User inputs average monthly revenue per customer, estimated customer lifespan (or churn rate). System calculates LTV and LTV:CAC ratio.
         </p>
-        <ComingSoon />
+        <ComingSoon module="2.3.2 LTV Estimator" title="Lifetime Value" description="Estimate customer lifetime value based on average revenue per customer and churn rate." />
       </div>
     </div>
   );
