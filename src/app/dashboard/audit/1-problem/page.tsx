@@ -10,7 +10,7 @@ const questions = [
   {
     id: "target",
     question: "Who exactly is experiencing this pain?",
-    helper: "Investors need to know your TAM. Be specific (e.g., B2B SaaS Founders vs 'Businesses').",
+    helper: "Investors need to calculate your Total Addressable Market (TAM). The more specific you are (e.g., 'B2B SaaS Founders' vs 'Businesses'), the more accurate your TAM calculation will be in later modules.",
     type: "text",
     placeholder: "e.g., Mid-market logistics managers...",
   },
@@ -126,7 +126,7 @@ export default function PainExplorerPage() {
                         <button
                           key={opt}
                           onClick={() => setAnswers({ ...answers, [currentQ.id]: opt })}
-                          className={`w-full text-left p-4 border-2 rounded-sm transition-all duration-200 font-medium ${
+                          className={`w-full text-left p-4 min-h-[4rem] border-2 rounded-sm transition-all duration-200 font-medium whitespace-normal break-words ${
                             answers[currentQ.id] === opt 
                               ? "border-[#ffd800] bg-[#ffd800]/5 text-[#022f42] shadow-sm transform scale-[1.01]" 
                               : "border-[#1e4a62]/10 text-[#1e4a62] hover:border-[#1e4a62]/30 hover:bg-[#f2f6fa]"

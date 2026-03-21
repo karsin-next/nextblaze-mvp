@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Zap, PieChart, Activity, Target, Clock, ShieldCheck } from "lucide-react";
 
 export const metadata = {
@@ -58,9 +56,7 @@ const pillars = [
 export default function MethodologyPage() {
   return (
     <div className="min-h-screen font-sans bg-[#f2f6fa]">
-      <Header />
-      
-      <main className="pt-32 pb-24">
+      <main className="pt-16 md:pt-24 pb-24">
         {/* Hero Section */}
         <section className="px-6 max-w-7xl mx-auto mb-20 text-center">
           <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-[#1e4a62]/10 mb-8 shadow-sm">
@@ -147,8 +143,6 @@ export default function MethodologyPage() {
           })}
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
