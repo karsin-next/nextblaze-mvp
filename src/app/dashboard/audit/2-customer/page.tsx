@@ -219,16 +219,16 @@ export default function PersonaBuilderPage() {
                   
                   <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span className="flex items-center gap-2" title="Investors want to know who signs the cheque. Be specific about the decision-maker."><Briefcase className="w-4 h-4 text-emerald-500"/> Job Title / Role</span>
-                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <span className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-emerald-500"/> Job Title / Role</span>
+                      <span title="Investors want to know who signs the cheque. Be specific about the decision-maker."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <input type="text" value={data.role} onChange={e => handleRoleChange(e.target.value)} placeholder="e.g. CFO, VP of Logistics" className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium" />
                   </div>
 
                   <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span className="flex items-center gap-2" title="Investors assess whether your target market is large enough to scale."><Building2 className="w-4 h-4 text-blue-500"/> Company Size & Industry</span>
-                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <span className="flex items-center gap-2"><Building2 className="w-4 h-4 text-blue-500"/> Company Size & Industry</span>
+                      <span title="Investors assess whether your target market is large enough to scale."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <div className="space-y-3">
                       <select value={data.size} onChange={e => setData({...data, size: e.target.value})} className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm outline-none text-sm font-medium bg-white">
@@ -244,8 +244,8 @@ export default function PersonaBuilderPage() {
 
                   <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span className="flex items-center gap-2" title="If you're targeting multiple regions, investors will ask about go-to-market readiness in each."><MapPin className="w-4 h-4 text-rose-500"/> Geography</span>
-                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-rose-500"/> Geography</span>
+                      <span title="If you're targeting multiple regions, investors will ask about go-to-market readiness in each."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <input type="text" value={data.geo} onChange={e => setData({...data, geo: e.target.value})} placeholder="e.g. North America, Global" className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium" />
                   </div>
@@ -281,8 +281,8 @@ export default function PersonaBuilderPage() {
                   
                   <div>
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span title="Paint a vivid picture. The more specific, the more credible your understanding.">Daily Scenario</span>
-                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <span>Daily Scenario</span>
+                      <span title="Paint a vivid picture. The more specific, the more credible your understanding."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <textarea 
                       value={data.scenario} 
@@ -296,8 +296,8 @@ export default function PersonaBuilderPage() {
 
                   <div>
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span title="The JTBD is the functional job they hire your product to do. Investors use this to assess product-market fit.">Job-to-Be-Done (JTBD)</span>
-                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <span>Job-to-Be-Done (JTBD)</span>
+                      <span title="The JTBD is the functional job they hire your product to do. Investors use this to assess product-market fit."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <p className="text-xs text-[#1e4a62] mb-3">What is the core measurable outcome they are trying to achieve?</p>
                     <input 
@@ -339,9 +339,9 @@ export default function PersonaBuilderPage() {
           <AnimatePresence>
             {expanded.s3 && (
               <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
-                <label className="block text-sm font-bold text-[#022f42] mb-6 flex items-center justify-between" title="Investors want to see that you have a realistic, cost-effective way to acquire customers. Cold outreach to the wrong channel wastes money.">
-                  Where do your customers already spend time?
-                  <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                <label className="block text-sm font-bold text-[#022f42] mb-6 flex items-center justify-between">
+                  How will you reach this persona?
+                  <span title="Investors want to see that you have a realistic, cost-effective way to acquire customers. Cold outreach to the wrong channel wastes money."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </label>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

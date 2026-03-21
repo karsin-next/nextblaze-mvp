@@ -201,8 +201,8 @@ export default function CompetitorAnalysisPage() {
             {/* STEP 1: Identification */}
             {step === 1 && (
               <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="Include 3-5 competitors. Missing a key competitor makes you look naive.">
-                  Who&apos;s Already There? <Info className="w-4 h-4 text-gray-400" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
+                  Who&apos;s Already There? <span title="Include 3-5 competitors. Missing a key competitor makes you look naive."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-6 text-sm">List your direct and indirect competitors. We will map these in the next steps.</p>
                 
@@ -245,8 +245,8 @@ export default function CompetitorAnalysisPage() {
             {/* STEP 2: Positioning Map */}
             {step === 2 && (
               <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="This map helps you see whitespace. Investors love clear whitespace positioning.">
-                  Where Do You Fit? Map Your Position <Info className="w-4 h-4 text-gray-400" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
+                  Where Do You Fit? Map Your Position <span title="Drag yourself and competitors across the axes. Where is the whitespace?"><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-8 text-sm">Physically drag the competitor bubbles (and your own yellow beacon) onto the coordinate grid below to map out the market whitespace.</p>
                 
@@ -295,8 +295,8 @@ export default function CompetitorAnalysisPage() {
             {/* STEP 3: Matrix */}
             {step === 3 && (
               <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="The goal is to identify at least 2-3 dimensions where you are clearly better.">
-                  Why Will Customers Choose You? <Info className="w-4 h-4 text-gray-400" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
+                  Why Will Customers Choose You? <span title="Be intellectually honest. Don't claim you win on every dimension."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-8 text-sm">Compare your startup across key dimensions. Being cheaper alone is rarely a sustainable moat.</p>
                 
@@ -345,8 +345,8 @@ export default function CompetitorAnalysisPage() {
             {step === 4 && (
               <motion.div key="s4" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-indigo-600 rounded-sm">
                 <div className="absolute top-0 right-0 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] px-3 py-1 pb-1.5 rounded-bl-sm">The Moat Workshop</div>
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="Investors assess whether you have sustainable advantages that competitors cannot easily copy.">
-                  Build Your Moat <Info className="w-4 h-4 text-gray-400" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
+                  Build Your Moat <span title="Investors hate 'me-too' products. A moat protects your margins."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-8 text-sm">Assess your defensibility against the four canonical venture-scale moats.</p>
                 
@@ -354,7 +354,7 @@ export default function CompetitorAnalysisPage() {
                   {/* IP */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span title="Patents, trademarks, trade secrets, proprietary tech.">1. Intellectual Property (IP) Moat</span>
+                       <span className="flex items-center gap-1" title="Patents, algorithms, or proprietary systems.">1. IP & Technology Moat <Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span>
                        <span className="text-indigo-600 font-black">{data.moats.ip}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Patents, trademarks, proprietary tech or algorithms that cannot be replicated.</p>
@@ -365,7 +365,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Network */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span title="Your product becomes more valuable as more people use it.">2. Network Effects Moat</span>
+                       <span className="flex items-center gap-1">2. Network Effects Moat <span title="Your product becomes more valuable as more people use it."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.network}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">The product mathematically becomes more valuable as more users join (e.g. marketplaces, social graphs).</p>
@@ -376,7 +376,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Brand Tracking */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span title="Customers stick with you because of high switching costs or data lock-in.">3. Brand & Switching Costs</span>
+                       <span className="flex items-center gap-1">3. Brand & Switching Costs <span title="Customers stick with you because of high switching costs or data lock-in."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.brand}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Deep data integrations, team retraining costs, or immense brand loyalty that prevents churn.</p>
@@ -387,7 +387,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Scale */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span title="Your cost structure allows you to offer significantly better prices.">4. Scale & Cost Moat</span>
+                       <span className="flex items-center gap-1">4. Scale & Cost Moat <span title="Your cost structure allows you to offer significantly better prices."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.scale}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Operational efficiency, distribution hacks, or economies of scale competitors cannot match.</p>

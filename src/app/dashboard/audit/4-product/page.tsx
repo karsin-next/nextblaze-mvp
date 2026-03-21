@@ -164,8 +164,8 @@ export default function ProductReadinessPage() {
             {/* STEP 1: Status */}
             {step === 1 && (
               <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2" title="Be honest. A clear prototype with a concrete build plan is often better than an over-promised MVP.">
-                  Does your product exist in a form someone can use today? <Info className="w-4 h-4 text-gray-400" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
+                  Does your product exist in a form someone can use today? <span title="Be honest. A clear prototype with a concrete build plan is often better than an over-promised MVP."><Info className="w-4 h-4 text-gray-400" /></span>
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 mb-8">
@@ -209,7 +209,7 @@ export default function ProductReadinessPage() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-bold text-[#022f42] mb-2 flex justify-between">
-                       <span title="Investors want to see you grasp the scope of work. Be specific about APIs, frontend, etc.">What&apos;s Built So Far? <Info className="w-4 h-4 text-gray-400 inline"/></span>
+                       <span>What&apos;s Built So Far? <span title="Investors want to see you grasp the scope of work. Be specific about APIs, frontend, etc."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                     </label>
                     <textarea value={data.builtSoFar} onChange={e=>setData({...data, builtSoFar: e.target.value})} maxLength={300} placeholder="e.g. Figma prototype finished. Frontend 40% coded. Database mapped." className="w-full p-4 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 min-h-[100px] text-sm font-medium"/>
                   </div>
@@ -221,7 +221,7 @@ export default function ProductReadinessPage() {
                     </div>
                     <div className="w-full md:w-2/3">
                       <label className="block text-sm font-bold text-[#022f42] mb-2 flex justify-between">
-                        <span title="Investors know things break. Identify constraints.">Biggest risk to timeline? <Info className="w-4 h-4 text-gray-400 inline"/></span>
+                        <span>Biggest risk to timeline? <span title="Investors know things break. Identify constraints."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                       </label>
                       <input type="text" value={data.risks} onChange={e=>setData({...data, risks: e.target.value})} maxLength={200} placeholder="e.g. Waiting on partner API access..." className="w-full p-4 border-2 border-gray-200 rounded-sm outline-none focus:border-indigo-500 text-sm font-medium"/>
                     </div>
@@ -268,19 +268,19 @@ export default function ProductReadinessPage() {
                     </thead>
                     <tbody>
                       <tr className="border-b">
-                        <td className="px-5 py-4 font-bold text-[#1e4a62]" title="Include all who signed up.">Total registered users <Info className="w-4 h-4 text-gray-400 inline ml-1"/></td>
+                        <td className="px-5 py-4 font-bold text-[#1e4a62]">Total registered users <span title="Include all who signed up."><Info className="w-4 h-4 text-gray-400 inline ml-1 cursor-help"/></span></td>
                         <td className="px-5 py-2 border-l border-gray-100 bg-white"><input type="number" value={data.metrics.registered} onChange={e=>setData({...data, metrics: {...data.metrics, registered: e.target.value}})} className="w-full p-2 outline-none text-center font-bold font-mono focus:border-b-2 border-indigo-500" placeholder="0"/></td>
                       </tr>
                       <tr className="border-b">
-                        <td className="px-5 py-4 font-bold text-[#1e4a62]" title="Users who actually performed a key action.">30-Day Active Users <Info className="w-4 h-4 text-gray-400 inline ml-1"/></td>
+                        <td className="px-5 py-4 font-bold text-[#1e4a62]">30-Day Active Users <span title="Users who actually performed a key action."><Info className="w-4 h-4 text-gray-400 inline ml-1 cursor-help"/></span></td>
                         <td className="px-5 py-2 border-l border-gray-100 bg-white"><input type="number" value={data.metrics.active} onChange={e=>setData({...data, metrics: {...data.metrics, active: e.target.value}})} className="w-full p-2 outline-none text-center font-bold font-mono focus:border-b-2 border-indigo-500" placeholder="0"/></td>
                       </tr>
                       <tr className="border-b bg-[#fffdf0]">
-                        <td className="px-5 py-4 font-bold text-[#1e4a62]" title="Paid at least once.">Paying Customers <Info className="w-4 h-4 text-gray-400 inline ml-1"/></td>
+                        <td className="px-5 py-4 font-bold text-[#1e4a62]">Paying Customers <span title="Paid at least once."><Info className="w-4 h-4 text-gray-400 inline ml-1 cursor-help"/></span></td>
                         <td className="px-5 py-2 border-l border-gray-100"><input type="number" value={data.metrics.paying} onChange={e=>setData({...data, metrics: {...data.metrics, paying: e.target.value}})} className="w-full p-2 outline-none bg-transparent text-center font-black text-indigo-600 font-mono focus:border-b-2 border-indigo-500" placeholder="0"/></td>
                       </tr>
                       <tr>
-                        <td className="px-5 py-4 font-bold text-[#1e4a62]" title="Compare last 30 days to prev 30 days.">MAU Growth (%) <Info className="w-4 h-4 text-gray-400 inline ml-1"/></td>
+                        <td className="px-5 py-4 font-bold text-[#1e4a62]">Monthly Active Users (MAU) Growth (%) <span title="Compare last 30 days to prev 30 days."><Info className="w-4 h-4 text-gray-400 inline ml-1 cursor-help"/></span></td>
                         <td className="px-5 py-2 border-l border-gray-100 bg-white"><input type="text" value={data.metrics.growth} onChange={e=>setData({...data, metrics: {...data.metrics, growth: e.target.value}})} className="w-full p-2 outline-none text-center font-bold font-mono focus:border-b-2 border-indigo-500" placeholder="e.g. +15%"/></td>
                       </tr>
                     </tbody>
@@ -350,8 +350,8 @@ export default function ProductReadinessPage() {
                 </div>
 
                 <div className="bg-[#f2f6fa] border border-gray-200 p-6 rounded-sm mb-6">
-                  <label className="block text-sm font-bold text-[#022f42] mb-4 flex items-center gap-2" title="The 'Painkiller vs Vitamin' test.">
-                    If you stopped offering your product tomorrow, what would they do? <HelpCircle className="w-4 h-4 text-gray-400"/>
+                  <label className="block text-sm font-bold text-[#022f42] mb-4 flex items-center gap-2">
+                    If you stopped offering your product tomorrow, what would they do? <span title="The 'Painkiller vs Vitamin' test."><HelpCircle className="w-4 h-4 text-gray-400 cursor-help"/></span>
                   </label>
                   <div className="space-y-3">
                     <button onClick={() => setData({...data, painkiller: "switchable"})} className={`w-full p-4 border-2 rounded-sm text-left flex items-center gap-4 transition-colors ${data.painkiller === 'switchable' ? 'border-indigo-500 bg-indigo-50/50' : 'border-gray-200 hover:border-gray-300 bg-white'}`}>

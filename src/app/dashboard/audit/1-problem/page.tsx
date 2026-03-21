@@ -164,8 +164,8 @@ export default function PainExplorerPage() {
             {/* STEP 1 */}
             {step === 1 && (
               <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="Be specific. Instead of 'cash flow problems', say 'SMEs don't know their runway until it's too late'.">
-                  Describe the Problem <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2 group cursor-pointer">
+                  Describe the Problem <span title="Be specific. Instead of 'cash flow problems', say 'SMEs don't know their runway'."><Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-6 text-sm">Provide the qualitative foundation. (Max 250 characters)</p>
                 
@@ -193,8 +193,8 @@ export default function PainExplorerPage() {
             {/* STEP 2 */}
             {step === 2 && (
               <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="The more specific you are, the more credible your story becomes. 'CFOs of mid-market SaaS companies' is better than 'businesses'.">
-                  Who Experiences This Problem? <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2 group cursor-pointer">
+                  Who Experiences This Problem? <span title="Don't just say 'businesses'. Say 'CFOs at mid-market SaaS companies'."><Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-6 text-sm">Customer Definition. Be highly specific about the decision-maker.</p>
                 
@@ -228,8 +228,8 @@ export default function PainExplorerPage() {
             {/* STEP 3 */}
             {step === 3 && (
               <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-2 cursor-help group flex items-center gap-2" title="Investors want to know if there's already a solution – and if so, why it's not good enough.">
-                  Current Solutions & Alternatives <Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" />
+                <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2 group cursor-pointer">
+                  Current Solutions & Alternatives <span title="If you say 'none', investors will assume there is no market. Excel is always a competitor."><Info className="w-4 h-4 text-gray-400 group-hover:text-[#ffd800] transition-colors" /></span>
                 </h2>
                 <p className="text-[#1e4a62] mb-6 text-sm">How do customers currently solve this problem in the market today?</p>
                 
@@ -266,7 +266,7 @@ export default function PainExplorerPage() {
                   <div className={`p-4 rounded-sm flex gap-3 items-start border bg-emerald-50 border-emerald-200`}>
                     <Activity className={`w-5 h-5 mt-0.5 text-emerald-500`} />
                     <div>
-                      <h4 className={`text-sm font-bold text-emerald-900`}>Strategic Context</h4>
+                      <h4 className="text-sm font-bold text-emerald-900">Strategic Context</h4>
                       <p className={`text-sm text-emerald-800`}>{aiFlags.step3}</p>
                     </div>
                   </div>
@@ -285,9 +285,9 @@ export default function PainExplorerPage() {
                   {/* Gauge 1 */}
                   <div className="bg-[#f2f6fa] p-5 rounded-sm border border-[#1e4a62]/10 group">
                     <div className="flex justify-between items-center mb-2">
-                       <h4 className="font-bold text-[#022f42] flex items-center gap-2 cursor-help" title="If this problem isn't fixed, does the business lose customers? Money? Reputation?">
-                         Problem Intensity <Info className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
-                       </h4>
+                       <label className="text-sm font-bold text-[#1e4a62] mb-1 flex items-center gap-1 group">
+                         Problem Intensity <span title="Is this a minor annoyance or a massive blocker?"><Info className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" /></span>
+                      </label>
                        <span className={`font-black text-xl ${data.intensity > 7 ? 'text-red-500' : data.intensity > 4 ? 'text-amber-500' : 'text-emerald-500'}`}>{data.intensity}</span>
                     </div>
                     <div className="flex items-center gap-4 text-xs font-bold text-gray-400 mb-2">
