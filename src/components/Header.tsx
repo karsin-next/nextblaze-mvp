@@ -53,6 +53,9 @@ export default function Header() {
           <Link href="/#cases" onClick={() => setMenuOpen(false)} className="text-white/90 hover:text-[#ffd800] font-bold text-sm uppercase tracking-widest border-b-2 border-transparent hover:border-[#ffd800] transition-all pb-1">
             Case Studies
           </Link>
+          <Link href="/academy" onClick={() => setMenuOpen(false)} className="text-white/90 hover:text-[#ffd800] font-bold text-sm uppercase tracking-widest border-b-2 border-transparent hover:border-[#ffd800] transition-all pb-1 flex items-center gap-1">
+            Academy <span className="bg-[#ffd800] text-[#022f42] text-[8px] px-1 py-0.5 rounded-sm ml-1">NEW</span>
+          </Link>
           <Link href="/methodology" onClick={() => setMenuOpen(false)} className="text-white/90 hover:text-[#ffd800] font-bold text-sm uppercase tracking-widest border-b-2 border-transparent hover:border-[#ffd800] transition-all pb-1">
             Methodology
           </Link>

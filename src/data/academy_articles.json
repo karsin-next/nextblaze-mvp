@@ -1,0 +1,326 @@
+[
+  {
+    "title": "The Problem Slide That Wins",
+    "slug": "the-problem-slide-that-wins",
+    "source_module": "1.1.1 Problem& Hypothesis",
+    "module_name": "Pain & Need Explorer"
+  },
+  {
+    "title": "How to Create a Customer Persona That Investors Believe.",
+    "slug": "how-to-create-a-customer-persona-that-investors-believe",
+    "source_module": "1.1.2 Customer Persona",
+    "module_name": "Who Exactly? Persona Builder"
+  },
+  {
+    "title": "Building a Sustainable Moat",
+    "slug": "building-a-sustainable-moat",
+    "source_module": "1.1.3 Competitor Analysis",
+    "module_name": "SWOT & Moat Analyzer"
+  },
+  {
+    "title": "The Product Maturity Spectrum \u2013 What VCs Look For.",
+    "slug": "the-product-maturity-spectrum-what-vcs-look-for",
+    "source_module": "1.1.4 Product Readiness",
+    "module_name": "MVP & Adoption Readiness"
+  },
+  {
+    "title": "How to Defend Your Market Sizing.",
+    "slug": "how-to-defend-your-market-sizing",
+    "source_module": "1.1.5 Market Opportunity",
+    "module_name": "TAM / SAM / SOM & VOS Indicator"
+  },
+  {
+    "title": "The Science of Product\u2011Market Fit.",
+    "slug": "the-science-of-product-market-fit",
+    "source_module": "1.1.6 Product\u2011Market Fit & Traction",
+    "module_name": "Painkiller vs. Vitamin Test"
+  },
+  {
+    "title": "Designing a Scalable Revenue Model.",
+    "slug": "designing-a-scalable-revenue-model",
+    "source_module": "1.1.7 Revenue Model Explorer",
+    "module_name": "How You\u2019ll Make Money"
+  },
+  {
+    "title": "Building a Fundable Team \u2013 What Investors Look For.",
+    "slug": "building-a-fundable-team-what-investors-look-for",
+    "source_module": "1.1.8 Team Composition Audit",
+    "module_name": "The Founding Team Scorecard"
+  },
+  {
+    "title": "What Your Fundability Score Really Means.",
+    "slug": "what-your-fundability-score-really-means",
+    "source_module": "1.2.1 Fundability Score",
+    "module_name": "Your Fundability Score"
+  },
+  {
+    "title": "How Investors Weigh Each Category.",
+    "slug": "how-investors-weigh-each-category",
+    "source_module": "1.2.2 Key Criteria Breakdown",
+    "module_name": "Key Investor Criteria Score"
+  },
+  {
+    "title": "What a Top\u2011Quartile Startup Looks Like.",
+    "slug": "what-a-top-quartile-startup-looks-like",
+    "source_module": "1.2.3 Benchmark Comparison",
+    "module_name": "How You Stack Up"
+  },
+  {
+    "title": "How Small Improvements Add Up.",
+    "slug": "how-small-improvements-add-up",
+    "source_module": "1.2.4 Score History",
+    "module_name": "Your Improvement Timeline"
+  },
+  {
+    "title": "Closing Your Biggest Gap \u2013 A Guide.",
+    "slug": "closing-your-biggest-gap-a-guide",
+    "source_module": "1.3.1 Top 3 Gaps",
+    "module_name": "Top 3 Gaps Identifier"
+  },
+  {
+    "title": "The Investor Mindset on [Gap Topic].",
+    "slug": "the-investor-mindset-on-gap-topic",
+    "source_module": "1.3.2 Gap Deep Dive",
+    "module_name": "Understand Each Gap"
+  },
+  {
+    "title": "Why This Step Matters.",
+    "slug": "why-this-step-matters",
+    "source_module": "1.3.3 Recommended Actions",
+    "module_name": "Close the Gap Checklist"
+  },
+  {
+    "title": "How to Use Your Gap Report in Investor Conversations.",
+    "slug": "how-to-use-your-gap-report-in-investor-conversations",
+    "source_module": "1.3.4 Investor-Ready Report",
+    "module_name": "Investor\u2011Ready PDF Report Generator"
+  },
+  {
+    "title": "Understanding Your Runway.",
+    "slug": "understanding-your-runway",
+    "source_module": "2.1.1 Key Metrics Entry",
+    "module_name": "Scenario-Based Financial Simulator"
+  },
+  {
+    "title": "What Is EBDAT and Why Investors Care.",
+    "slug": "what-is-ebdat-and-why-investors-care",
+    "source_module": "2.1.2 EBDAT Breakeven",
+    "module_name": "Survival Revenue Calculator"
+  },
+  {
+    "title": "Reading Your Cash Flow Statement Like an Investor.",
+    "slug": "reading-your-cash-flow-statement-like-an-investor",
+    "source_module": "2.1.3 Cash Flow Snapshot",
+    "module_name": "Cash In/Out Summary"
+  },
+  {
+    "title": "How to Extend Runway Without Slowing Growth.",
+    "slug": "how-to-extend-runway-without-slowing-growth",
+    "source_module": "2.2.1 Runway & Burn",
+    "module_name": "Runway Visualizer"
+  },
+  {
+    "title": "Growth Metrics That Matter.",
+    "slug": "growth-metrics-that-matter",
+    "source_module": "2.2.2 Revenue & Growth",
+    "module_name": "Growth Tracker"
+  },
+  {
+    "title": "Smart Spending: What Investors Look For.",
+    "slug": "smart-spending-what-investors-look-for",
+    "source_module": "2.2.3 Expense Breakdown",
+    "module_name": "Where Your Money Goes"
+  },
+  {
+    "title": "What to Show Your Board vs. Investors.",
+    "slug": "what-to-show-your-board-vs-investors",
+    "source_module": "2.2.4 Custom Views",
+    "module_name": "Shareable Dashboard"
+  },
+  {
+    "title": "How to Lower CAC.",
+    "slug": "how-to-lower-cac",
+    "source_module": "2.3.1 CAC Calculator",
+    "module_name": "Customer Acquisition Cost"
+  },
+  {
+    "title": "The LTV:CAC Ratio \u2013 Why It Matters.",
+    "slug": "the-ltv-cac-ratio-why-it-matters",
+    "source_module": "2.3.2 LTV Estimator",
+    "module_name": "Lifetime Value"
+  },
+  {
+    "title": "Why margins matter.",
+    "slug": "why-margins-matter",
+    "source_module": "2.3.3 Gross Margin",
+    "module_name": "Margin Analyzer"
+  },
+  {
+    "title": "Mastering the Cash Conversion Cycle.",
+    "slug": "mastering-the-cash-conversion-cycle",
+    "source_module": "2.3.4 Cash Conversion Cycle",
+    "module_name": "CCC Simulator"
+  },
+  {
+    "title": "How Much Should You Raise?",
+    "slug": "how-much-should-you-raise",
+    "source_module": "2.4.1 WHAT: Capital Needs",
+    "module_name": "How Much to Raise?"
+  },
+  {
+    "title": "Telling Your Use\u2011of\u2011Funds Story.",
+    "slug": "telling-your-use-of-funds-story",
+    "source_module": "2.4.2 WHY: Use of Funds",
+    "module_name": "Justify Your Ask"
+  },
+  {
+    "title": "Timing Your Fundraise.",
+    "slug": "timing-your-fundraise",
+    "source_module": "2.4.3 WHEN: Timing & Runway",
+    "module_name": "Fundraising Timeline"
+  },
+  {
+    "title": "Building a Simple Financial Model.",
+    "slug": "building-a-simple-financial-model",
+    "source_module": "2.4.4 HOW: Cash Flow Projection",
+    "module_name": "36\u2011Month Projector"
+  },
+  {
+    "title": "How to Research Investors.",
+    "slug": "how-to-research-investors",
+    "source_module": "2.4.5 WHO: Investor Matching",
+    "module_name": "Find Your Investor Type"
+  },
+  {
+    "title": "What to Put in Your Data Room.",
+    "slug": "what-to-put-in-your-data-room",
+    "source_module": "2.5.1 Structure Template",
+    "module_name": "Investor\u2011Ready Data Room Setup"
+  },
+  {
+    "title": "The Due Diligence Timeline.",
+    "slug": "the-due-diligence-timeline",
+    "source_module": "2.5.2 Document Checklist",
+    "module_name": "Document Checklist & Tracker"
+  },
+  {
+    "title": "Data Room Best Practices.",
+    "slug": "data-room-best-practices",
+    "source_module": "2.5.3 Investor Access Simulator",
+    "module_name": "Simulate and Share when Ready"
+  },
+  {
+    "title": "How to Score 100% on Data Room Readiness.",
+    "slug": "how-to-score-100-on-data-room-readiness",
+    "source_module": "2.5.4 Readiness Score",
+    "module_name": "Data Room Health"
+  },
+  {
+    "title": "How to Prioritise When Everything Is Important.",
+    "slug": "how-to-prioritise-when-everything-is-important",
+    "source_module": "3.1.1 Personalised Action Plan",
+    "module_name": "Your To\u2011Do List"
+  },
+  {
+    "title": "How to Use Each Template.",
+    "slug": "how-to-use-each-template",
+    "source_module": "3.1.2 Tool Library",
+    "module_name": "Resources and Templates for Every Task"
+  },
+  {
+    "title": "Continuously learns from user interactions",
+    "slug": "continuously-learns-from-user-interactions",
+    "source_module": "3.1.3 AI Coach Assistant",
+    "module_name": "Ask the Mentor"
+  },
+  {
+    "title": "Creating an Investor Persona.",
+    "slug": "creating-an-investor-persona",
+    "source_module": "3.2.1 Investor Profile Builder",
+    "module_name": "Who to Approach"
+  },
+  {
+    "title": "Why Competitor Conflict Matters.",
+    "slug": "why-competitor-conflict-matters",
+    "source_module": "3.2.2 Portfolio & Competitor Check",
+    "module_name": "Avoid Conflicts"
+  },
+  {
+    "title": "When to Start Engaging Investors.",
+    "slug": "when-to-start-engaging-investors",
+    "source_module": "3.2.3 Profile Visibility",
+    "module_name": "Control Your Exposure"
+  },
+  {
+    "title": "What the Verified Badge Means (and Doesn\u2019t).",
+    "slug": "what-the-verified-badge-means-and-doesn-t",
+    "source_module": "3.2.4 FundabilityOS Verified Badge",
+    "module_name": "The Ultimate Goal"
+  },
+  {
+    "title": "Term Sheet Decoded",
+    "slug": "term-sheet-decoded",
+    "source_module": "4.1.1 Term Sheet Anatomy",
+    "module_name": "Understand Every Clause"
+  },
+  {
+    "title": "How to Justify Your Valuation.",
+    "slug": "how-to-justify-your-valuation",
+    "source_module": "4.1.2 Valuation Simulator",
+    "module_name": "What\u2019s Your Company Worth?"
+  },
+  {
+    "title": "Liquidation Preferences Explained.",
+    "slug": "liquidation-preferences-explained",
+    "source_module": "4.1.3 Liquidation Preference Simulator",
+    "module_name": "See Your Exit Payout"
+  },
+  {
+    "title": "Why Full Ratchet Is Toxic.",
+    "slug": "why-full-ratchet-is-toxic",
+    "source_module": "4.1.4 Anti\u2011Dilution Comparison",
+    "module_name": "Down Round Protection"
+  },
+  {
+    "title": "The Legal Due Diligence Checklist.",
+    "slug": "the-legal-due-diligence-checklist",
+    "source_module": "4.2.1 Legal DD Checklist",
+    "module_name": "Get Legal\u2011Ready"
+  },
+  {
+    "title": "What Investors Look for in Financial Due Diligence.",
+    "slug": "what-investors-look-for-in-financial-due-diligence",
+    "source_module": "4.2.2 Financial DD Prep",
+    "module_name": "Audit Your Finances"
+  },
+  {
+    "title": "IP Strategy for Startups.",
+    "slug": "ip-strategy-for-startups",
+    "source_module": "4.2.3 IP Audit Tool",
+    "module_name": "Protect Your Ideas"
+  },
+  {
+    "title": "Top 50 Due Diligence Questions.",
+    "slug": "top-50-due-diligence-questions",
+    "source_module": "4.2.4 Mock Q&A",
+    "module_name": "Practice the Hard Questions"
+  },
+  {
+    "title": "What\u2019s Negotiable vs. Non\u2011Negotiable.",
+    "slug": "what-s-negotiable-vs-non-negotiable",
+    "source_module": "4.3.1 Deal\u2011Breaker Builder",
+    "module_name": "Define Your Red Lines"
+  },
+  {
+    "title": "How to Align Incentives with Investors.",
+    "slug": "how-to-align-incentives-with-investors",
+    "source_module": "4.3.2 Exit Value Distribution",
+    "module_name": "Who Gets What?"
+  },
+  {
+    "title": "Toxic Term Sheet Clauses to Avoid.",
+    "slug": "toxic-term-sheet-clauses-to-avoid",
+    "source_module": "4.3.3 Red Flag Identifier",
+    "module_name": "Spot Toxic Clauses"
+  }
+]

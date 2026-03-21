@@ -7,73 +7,175 @@ import {
   CheckSquare, FolderOpen, GraduationCap, ShieldCheck, Eye, Target, Settings,
   Calculator, Activity, Users, Table2, FileSearch, Kanban,
   ChevronRight, User, Lightbulb, Swords, Package, Globe, TrendingUp, DollarSign, HeartHandshake,
-  LineChart, LayoutDashboard, Layers
+  LineChart, LayoutDashboard, Layers, AlertTriangle, Search, Wallet, Edit, Tally3, Flame,
+  Percent, RefreshCw, Infinity, ArrowDownToLine, Clock, Folders, ListChecks, Lock, Wrench, Bot,
+  UserPlus, Briefcase, Copyleft, MessageSquare, ShieldAlert
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
-// Full sitemap tree structure
+// Full sitemap tree structure from Table 1 Methodology
 const siteMap = [
   {
-    label: "Week 1: DIAGNOSE",
+    label: "1. DIAGNOSE – Establish Baseline",
     items: [
       {
-        name: "360° Fundability Audit",
+        name: "1.1 360° Fundability Audit",
         href: "/dashboard",
         icon: Zap,
         children: [
-          { name: "1.1 Problem & Hypothesis", href: "/dashboard/audit/1-problem", icon: Lightbulb },
-          { name: "1.2 Customer Persona", href: "/dashboard/audit/2-customer", icon: User },
-          { name: "1.3 Competitor Analysis", href: "/dashboard/audit/3-competitor", icon: Swords },
-          { name: "1.4 Product Stage", href: "/dashboard/audit/4-product", icon: Package },
-          { name: "1.5 Market Opportunity", href: "/dashboard/audit/5-market", icon: Globe },
-          { name: "1.6 Traction & PMF", href: "/dashboard/audit/6-pmf", icon: TrendingUp },
-          { name: "1.7 Revenue Model", href: "/dashboard/audit/7-revenue", icon: DollarSign },
-          { name: "1.8 Team Composition", href: "/dashboard/audit/8-team", icon: HeartHandshake },
+          { name: "1.1.1 Pain & Need Explorer", href: "/dashboard/audit/1-problem", icon: Lightbulb },
+          { name: "1.1.2 Who Exactly? Persona", href: "/dashboard/audit/2-customer", icon: User },
+          { name: "1.1.3 SWOT & Moat Analyzer", href: "/dashboard/audit/3-competitor", icon: Swords },
+          { name: "1.1.4 MVP & Readiness", href: "/dashboard/audit/4-product", icon: Package },
+          { name: "1.1.5 TAM/SAM/SOM & VOS", href: "/dashboard/audit/5-market", icon: Globe },
+          { name: "1.1.6 Painkiller vs Vitamin", href: "/dashboard/audit/6-pmf", icon: TrendingUp },
+          { name: "1.1.7 Revenue Model Explorer", href: "/dashboard/audit/7-revenue", icon: DollarSign },
+          { name: "1.1.8 Founding Team Scorecard", href: "/dashboard/audit/8-team", icon: HeartHandshake },
         ],
       },
-      { name: "Live Fundability Score", href: "/dashboard/score", icon: Target },
-      { name: "Gap Analysis Report", href: "/dashboard/gap-report", icon: BarChart3 },
-    ],
-  },
-  {
-    label: "Week 2: ACTIVATE",
-    items: [
-      { name: "Financials Connect", href: "/dashboard/financials", icon: PieChart,
+      {
+        name: "1.2 Live Fundability Score",
+        href: "/dashboard/score",
+        icon: Target,
         children: [
-          { name: "Unit Economics", href: "/dashboard/unit-economics", icon: LineChart },
+          { name: "1.2.1 Fundability Score", href: "/dashboard/score/overview", icon: Activity },
+          { name: "1.2.2 Criteria Breakdown", href: "/dashboard/score/breakdown", icon: Layers },
+          { name: "1.2.3 Benchmark Comparison", href: "/dashboard/score/benchmark", icon: BarChart3 },
+          { name: "1.2.4 Score History", href: "/dashboard/score/history", icon: LineChart },
         ],
       },
-      { name: "Investor Dashboard", href: "/dashboard/metrics", icon: LayoutDashboard },
-      { name: "Valuation & Strategy", href: "/dashboard/strategy", icon: Map },
-      { name: "AFN Forecaster", href: "/dashboard/afn-calculator", icon: Calculator },
-      { name: "Data Room Builder", href: "/dashboard/data-room", icon: FolderOpen },
+      {
+        name: "1.3 Gap Analysis Report",
+        href: "/dashboard/gap-report",
+        icon: BarChart3,
+        children: [
+          { name: "1.3.1 Top 3 Gaps", href: "/dashboard/gap-report/top-3", icon: AlertTriangle },
+          { name: "1.3.2 Gap Deep Dive", href: "/dashboard/gap-report/deep-dive", icon: Search },
+          { name: "1.3.3 Recommended Actions", href: "/dashboard/gap-report/actions", icon: CheckSquare },
+          { name: "1.3.4 Investor-Ready Report", href: "/dashboard/gap-report/report", icon: FileText },
+        ],
+      },
     ],
   },
   {
-    label: "Week 3: ACCELERATE",
+    label: "2. ACTIVATE – Financial Foundation",
     items: [
-      { name: "Gap Closure Workbench", href: "/dashboard/workbench", icon: Activity },
-      { name: "VC Matcher Network", href: "/dashboard/investors", icon: Users },
-      { name: "Action Plan / Roadmap", href: "/dashboard/roadmap", icon: CheckSquare },
-      { name: "Toolbox & Templates", href: "/dashboard/templates", icon: FolderOpen, soon: true },
-      { name: "Micro-Lessons", href: "/dashboard/lessons", icon: GraduationCap, soon: true },
+      {
+        name: "2.1 Manual Financial Input",
+        href: "/dashboard/financials",
+        icon: Calculator,
+        children: [
+          { name: "2.1.1 Key Metrics Entry", href: "/dashboard/financials/metrics", icon: Edit },
+          { name: "2.1.2 EBDAT Breakeven", href: "/dashboard/financials/breakeven", icon: Tally3 },
+          { name: "2.1.3 Cash Flow Snapshot", href: "/dashboard/financials/cash-flow", icon: Wallet },
+        ],
+      },
+      {
+        name: "2.2 Investor Dashboard",
+        href: "/dashboard/metrics",
+        icon: LayoutDashboard,
+        children: [
+          { name: "2.2.1 Runway & Burn", href: "/dashboard/metrics/runway", icon: Flame },
+          { name: "2.2.2 Revenue & Growth", href: "/dashboard/metrics/revenue", icon: TrendingUp },
+          { name: "2.2.3 Expense Breakdown", href: "/dashboard/metrics/expenses", icon: PieChart },
+          { name: "2.2.4 Custom Views", href: "/dashboard/metrics/views", icon: Eye },
+        ],
+      },
+      {
+        name: "2.3 Unit Economics",
+        href: "/dashboard/unit-economics",
+        icon: LineChart,
+        children: [
+          { name: "2.3.1 CAC Calculator", href: "/dashboard/unit-economics/cac", icon: Users },
+          { name: "2.3.2 LTV Estimator", href: "/dashboard/unit-economics/ltv", icon: Infinity },
+          { name: "2.3.3 Gross Margin", href: "/dashboard/unit-economics/margin", icon: Percent },
+          { name: "2.3.4 Cash Conversion Cycle", href: "/dashboard/unit-economics/ccc", icon: RefreshCw },
+        ],
+      },
+      {
+        name: "2.4 Fundraising Strategy Canvas",
+        href: "/dashboard/strategy",
+        icon: Map,
+        children: [
+          { name: "2.4.1 WHAT: Capital Needs", href: "/dashboard/strategy/what", icon: DollarSign },
+          { name: "2.4.2 WHY: Use of Funds", href: "/dashboard/strategy/why", icon: PieChart },
+          { name: "2.4.3 WHEN: Timing & Runway", href: "/dashboard/strategy/when", icon: Clock },
+          { name: "2.4.4 HOW: Projections", href: "/dashboard/strategy/how", icon: LineChart },
+          { name: "2.4.5 WHO: Match Type", href: "/dashboard/strategy/who", icon: Users },
+        ],
+      },
+      {
+        name: "2.5 Data Room Builder",
+        href: "/dashboard/data-room",
+        icon: FolderOpen,
+        children: [
+          { name: "2.5.1 Structure Template", href: "/dashboard/data-room/structure", icon: Folders },
+          { name: "2.5.2 Document Checklist", href: "/dashboard/data-room/checklist", icon: ListChecks },
+          { name: "2.5.3 Access Simulator", href: "/dashboard/data-room/simulator", icon: Lock },
+          { name: "2.5.4 Readiness Score", href: "/dashboard/data-room/score", icon: ShieldCheck },
+        ],
+      },
     ],
   },
   {
-    label: "Week 4: PACKAGE",
+    label: "3. ACCELERATE – Closing Gaps",
     items: [
-      { name: "Investor Snapshot", href: "/dashboard/snapshot", icon: FileText },
-      { name: "Verified Badge", href: "/dashboard/badge", icon: ShieldCheck, soon: true },
-      { name: "Visibility Toggle", href: "/dashboard/visibility", icon: Eye, soon: true },
+      {
+        name: "3.1 Gap Closure Workbench",
+        href: "/dashboard/workbench",
+        icon: Activity,
+        children: [
+          { name: "3.1.1 Action Plan", href: "/dashboard/workbench/plan", icon: CheckSquare },
+          { name: "3.1.2 Tool Library", href: "/dashboard/workbench/tools", icon: Wrench },
+          { name: "3.1.3 AI Coach Assistant", href: "/dashboard/workbench/coach", icon: Bot },
+        ],
+      },
+      {
+        name: "3.2 Investor Targeting",
+        href: "/dashboard/investors",
+        icon: Target,
+        children: [
+          { name: "3.2.1 Profile Builder", href: "/dashboard/investors/profile", icon: UserPlus },
+          { name: "3.2.2 Portfolio Check", href: "/dashboard/investors/portfolio", icon: Search },
+        ],
+      },
+      {
+        name: "3.3 Visibility & Verification",
+        href: "/dashboard/visibility",
+        icon: Eye,
+        children: [
+          { name: "3.3.1 Profile Visibility", href: "/dashboard/visibility/toggle", icon: Eye },
+          { name: "3.3.2 Verified Badge", href: "/dashboard/visibility/badge", icon: ShieldCheck },
+        ],
+      },
     ],
   },
   {
-    label: "Phase 4: SYNDICATE",
+    label: "4. MASTER – Advanced Topics",
     items: [
-      { name: "Cap Table Simulator", href: "/dashboard/cap-table", icon: Table2 },
-      { name: "Term Sheet Analyzer", href: "/dashboard/term-sheet", icon: FileSearch },
-      { name: "Investor CRM", href: "/dashboard/crm", icon: Kanban },
+      {
+        name: "4.1 Term Sheet Mastery",
+        href: "/dashboard/term-sheet",
+        icon: FileSearch,
+        children: [
+          { name: "4.1.1 Anatomy", href: "/dashboard/term-sheet/anatomy", icon: FileText },
+          { name: "4.1.2 Valuation Simulator", href: "/dashboard/term-sheet/valuation", icon: Calculator },
+          { name: "4.1.3 Liquidation Simulator", href: "/dashboard/term-sheet/liquidation", icon: ArrowDownToLine },
+          { name: "4.1.4 Anti-Dilution", href: "/dashboard/term-sheet/anti-dilution", icon: ShieldAlert },
+        ],
+      },
+      {
+        name: "4.2 Due Diligence Simulator",
+        href: "/dashboard/dd-simulator",
+        icon: Search,
+        children: [
+          { name: "4.2.1 Legal Checklist", href: "/dashboard/dd-simulator/legal", icon: Briefcase },
+          { name: "4.2.2 Financial Prep", href: "/dashboard/dd-simulator/financial", icon: PieChart },
+          { name: "4.2.3 IP Audit Tool", href: "/dashboard/dd-simulator/ip", icon: Copyleft },
+          { name: "4.2.4 Mock Q&A", href: "/dashboard/dd-simulator/qa", icon: MessageSquare },
+        ],
+      },
     ],
   },
   {

@@ -5,14 +5,20 @@ import { Clock, Sparkles, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
-  module: string;
-  title: string;
-  description: string;
-  phase: string;
+  module?: string;
+  title?: string;
+  description?: string;
+  phase?: string;
   eta?: string;
 }
 
-export function ComingSoon({ module, title, description, phase, eta }: Props) {
+export function ComingSoon({ 
+  module = "Future Module", 
+  title = "In Development", 
+  description = "This methodology component is queued for a future development sprint.", 
+  phase = "Methodology Rollout", 
+  eta 
+}: Props) {
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-8">
       <div className="max-w-lg w-full text-center">
