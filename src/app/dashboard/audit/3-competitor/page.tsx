@@ -28,7 +28,7 @@ export default function CompetitorAnalysisPage() {
     ] as Dimension[],
     moats: { ip: 1, network: 1, brand: 1, scale: 1 },
     uvp: { customer: "", problem: "", benefit: "", diff: "" },
-    finalSummary: ""
+    uvpOverride: undefined as string | undefined
   });
 
   const [newComp, setNewComp] = useState({ name: "", type: "Direct Competitor", desc: "" });
@@ -100,11 +100,19 @@ export default function CompetitorAnalysisPage() {
   // Handlers - STEP 2 Grid
   const handleGridDragEnd = (event: any, info: any, type: "you" | "competitor", id?: string) => {
     if (!gridRef.current) return;
-    const rect = gridRef.current.getBoundingClientRect();
-    let rawX = Math.max(0, Math.min(info.point.x - rect.left, rect.width));
-    let rawY = Math.max(0, Math.min(info.point.y - rect.top, rect.height));
-    const percentX = Math.round((rawX / rect.width) * 100);
-    const percentY = 100 - Math.round((rawY / rect.height) * 100);
+    const gridRect = gridRef.current.getBoundingClientRect();
+    const draggedEl = event.target.closest('div');
+    if (!draggedEl) return;
+    const rect = draggedEl.getBoundingClientRect();
+    
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    let rawX = Math.max(0, Math.min(centerX - gridRect.left, gridRect.width));
+    let rawY = Math.max(0, Math.min(centerY - gridRect.top, gridRect.height));
+    
+    const percentX = Math.round((rawX / gridRect.width) * 100);
+    const percentY = 100 - Math.round((rawY / gridRect.height) * 100);
 
     if (type === "you") {
       setData(prev => ({ ...prev, you: { x: percentX, y: percentY } }));
@@ -155,14 +163,7 @@ export default function CompetitorAnalysisPage() {
   }, [data.moats, moatScore]);
 
   // Handlers - STEP 5 UVP
-  useEffect(() => {
-    const defaultUVP = `For ${data.uvp.customer || "[target customer]"} who are struggling with ${data.uvp.problem || "[problem]"}, our solution ${data.uvp.benefit || "[provides benefit]"}. Unlike ${data.competitors.length > 0 ? data.competitors.map(c=>c.name).join(' & ') : "[competitors]"}, we ${data.uvp.diff || "[key differentiator]"}.`;
-    
-    // Only auto-update if the user hasn't explicitly edited the final string by hand
-    if (!data.finalSummary || data.finalSummary.includes("[target customer]") || data.finalSummary.includes("[competitors]")) {
-      setData(prev => ({...prev, finalSummary: defaultUVP}));
-    }
-  }, [data.uvp, data.competitors]);
+  const defaultUVP = `For ${data.uvp.customer || "[target customer]"} who are struggling with ${data.uvp.problem || "[problem]"}, our solution ${data.uvp.benefit || "[provides benefit]"}. Unlike ${data.competitors.length > 0 ? data.competitors.map(c=>c.name).join(' & ') : "[competitors]"}, we ${data.uvp.diff || "[key differentiator]"}.`;
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
@@ -358,6 +359,7 @@ export default function CompetitorAnalysisPage() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Patents, trademarks, proprietary tech or algorithms that cannot be replicated.</p>
                     <input type="range" min="1" max="10" value={data.moats.ip} onChange={e => setData({...data, moats: {...data.moats, ip: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                    <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1"><span>1 - No IP Protection</span><span>10 - Defensible Patent Portfolio</span></div>
                   </div>
                   
                   {/* Network */}
@@ -368,6 +370,7 @@ export default function CompetitorAnalysisPage() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">The product mathematically becomes more valuable as more users join (e.g. marketplaces, social graphs).</p>
                     <input type="range" min="1" max="10" value={data.moats.network} onChange={e => setData({...data, moats: {...data.moats, network: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                    <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1"><span>1 - No Network Effects</span><span>10 - Strong Multi-Sided Network</span></div>
                   </div>
 
                   {/* Brand Tracking */}
@@ -378,6 +381,7 @@ export default function CompetitorAnalysisPage() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Deep data integrations, team retraining costs, or immense brand loyalty that prevents churn.</p>
                     <input type="range" min="1" max="10" value={data.moats.brand} onChange={e => setData({...data, moats: {...data.moats, brand: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                    <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1"><span>1 - Easy To Switch</span><span>10 - Deeply Locked In</span></div>
                   </div>
 
                   {/* Scale */}
@@ -388,6 +392,7 @@ export default function CompetitorAnalysisPage() {
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Operational efficiency, distribution hacks, or economies of scale competitors cannot match.</p>
                     <input type="range" min="1" max="10" value={data.moats.scale} onChange={e => setData({...data, moats: {...data.moats, scale: parseInt(e.target.value)}})} className="w-full accent-indigo-600" />
+                    <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1"><span>1 - No Scale Advantage</span><span>10 - Massive Scale Unmatchable</span></div>
                   </div>
                 </div>
 
@@ -421,11 +426,16 @@ export default function CompetitorAnalysisPage() {
                   <input type="text" value={data.uvp.diff} onChange={e=>setData({...data, uvp: {...data.uvp, diff: e.target.value}})} placeholder="Key Differentiator (e.g. deliver results in 1 week)" className="p-3 border-2 border-gray-200 rounded-sm outline-none text-sm" />
                 </div>
                 
-                <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8">
-                  <label className="block text-xs font-black text-[#1e4a62]/60 uppercase tracking-widest mb-3">Editable Pitch Fragment (UVP)</label>
+                <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8 relative">
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-xs font-black text-[#1e4a62]/60 uppercase tracking-widest">Editable Pitch Fragment (UVP)</label>
+                    {data.uvpOverride !== undefined && (
+                      <button onClick={() => setData({...data, uvpOverride: undefined})} className="text-xs font-bold text-indigo-500 hover:text-indigo-700">Restore Auto-Sync</button>
+                    )}
+                  </div>
                   <textarea 
-                    value={data.finalSummary}
-                    onChange={(e) => setData({...data, finalSummary: e.target.value})}
+                    value={data.uvpOverride !== undefined ? data.uvpOverride : defaultUVP}
+                    onChange={(e) => setData({...data, uvpOverride: e.target.value})}
                     className="w-full bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm focus:border-emerald-500 outline-none text-[#022f42] font-medium text-lg min-h-[140px] leading-relaxed shadow-sm"
                   />
                 </div>
