@@ -30,15 +30,31 @@ export default function MarketOpportunityPage() {
   const [aiFlags, setAiFlags] = useState({ step1: "", step3: "", step4: "", step5: "", step6: "", step7: "" });
   const [isSearching, setIsSearching] = useState(false);
 
-  // Persistence
+  // Persistence & Cross-Module Sync
   useEffect(() => {
+    let defaultProblem = "";
+    try {
+      const saved111 = localStorage.getItem("audit_1_1_1");
+      if (saved111) {
+        const parsed111 = JSON.parse(saved111);
+        if (parsed111?.data?.problem) defaultProblem = parsed111.data.problem;
+      }
+    } catch(e) {}
+
     const saved = localStorage.getItem("audit_1_1_5");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.data) setData(parsed.data);
+        if (parsed.data) {
+          // If problemContext is empty, hydrate it from 1.1.1
+          setData(d => ({...d, ...parsed.data, problemContext: parsed.data.problemContext || defaultProblem}));
+        } else {
+          setData(d => ({...d, problemContext: defaultProblem}));
+        }
         if (parsed.step) setStep(parsed.step);
       } catch (e) {}
+    } else {
+      setData(d => ({...d, problemContext: defaultProblem}));
     }
     setIsLoaded(true);
   }, []);
