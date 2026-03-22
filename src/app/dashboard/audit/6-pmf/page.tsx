@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -167,7 +168,7 @@ export default function PMFPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/score", 1000); // Route somewhere suitable
+    setTimeout(() => window.location.href = "/dashboard/audit/7-revenue", 1000); 
   };
 
   const milestoneOptions = [
@@ -256,7 +257,7 @@ export default function PMFPage() {
                 {data.painkillerChoice && aiFlags.step1 && (
                   <motion.div initial={{opacity:0, y:-10}} animate={{opacity:1, y:0}} className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step1}</p>
+                    <AIAssistedInsight content={aiFlags.step1} />
                   </motion.div>
                 )}
               </motion.div>
@@ -276,7 +277,7 @@ export default function PMFPage() {
                       <span className={`text-3xl font-black ${data.paidPercent > 50 ? 'text-emerald-500' : data.paidPercent > 10 ? 'text-amber-500' : 'text-rose-500'}`}>{data.paidPercent}%</span>
                     </div>
                     <input type="range" min="0" max="100" value={data.paidPercent} onChange={e=>setData({...data, paidPercent: parseInt(e.target.value)})} className={`w-full accent-${data.paidPercent > 50 ? 'emerald' : data.paidPercent > 10 ? 'amber' : 'rose'}-500`} />
-                    <p className="text-xs font-bold text-[#1e4a62] mt-3">{aiFlags.step2a}</p>
+                    <AIAssistedInsight content={aiFlags.step2a} />
                   </div>
 
                   {/* Retention */}
@@ -286,7 +287,7 @@ export default function PMFPage() {
                       <span className={`text-3xl font-black ${data.retentionPercent > 70 ? 'text-emerald-500' : data.retentionPercent > 30 ? 'text-amber-500' : 'text-rose-500'}`}>{data.retentionPercent}%</span>
                     </div>
                     <input type="range" min="0" max="100" value={data.retentionPercent} onChange={e=>setData({...data, retentionPercent: parseInt(e.target.value)})} className={`w-full accent-${data.retentionPercent > 70 ? 'emerald' : data.retentionPercent > 30 ? 'amber' : 'rose'}-500`} />
-                    <p className="text-xs font-bold text-[#1e4a62] mt-3">{aiFlags.step2b}</p>
+                    <AIAssistedInsight content={aiFlags.step2b} />
                   </div>
 
                   {/* NPS */}
@@ -301,7 +302,7 @@ export default function PMFPage() {
                        <span>0 Neutral</span>
                        <span>+100 Promoters</span>
                     </div>
-                    <p className="text-xs font-bold text-[#1e4a62] mt-3">{aiFlags.step2c}</p>
+                    <AIAssistedInsight content={aiFlags.step2c} />
                   </div>
                 </div>
               </motion.div>
@@ -337,7 +338,7 @@ export default function PMFPage() {
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-gray-400">$</span>
                         <input type="number" value={data.mrr} onChange={e=>setData({...data, mrr: e.target.value})} placeholder="15000" className="w-full pl-10 p-4 border border-gray-200 rounded-sm outline-none focus:border-[#ffd800] font-mono text-xl font-bold text-[#022f42]" />
                       </div>
-                      <p className="text-xs font-bold text-gray-500 mt-2">{aiFlags.step3b}</p>
+                      <AIAssistedInsight content={aiFlags.step3b} />
                     </div>
 
                     <div className="bg-[#f2f6fa] p-6 rounded-sm border border-gray-100">
@@ -346,7 +347,7 @@ export default function PMFPage() {
                         <span className={`text-2xl font-black flex items-center gap-1 ${data.growthRate < 0 ? 'text-rose-500' : data.growthRate > 30 ? 'text-emerald-500' : 'text-indigo-600'}`}>{data.growthRate < 0 ? <TrendingDown className="w-5 h-5"/> : <TrendingUp className="w-5 h-5"/>} {data.growthRate}%</span>
                       </div>
                       <input type="range" min="-50" max="100" step="5" value={data.growthRate} onChange={e=>setData({...data, growthRate: parseInt(e.target.value)})} className="w-full" />
-                      <p className="text-xs font-bold text-gray-500 mt-2">{aiFlags.step3c}</p>
+                      <AIAssistedInsight content={aiFlags.step3c} />
                     </div>
                   </motion.div>
                 )}
@@ -382,7 +383,7 @@ export default function PMFPage() {
 
                 <div className="bg-indigo-50/50 border border-indigo-100 p-6 rounded-sm text-left">
                   <h4 className="font-black text-indigo-900 mb-2 flex items-center gap-2">Institutional Investor Insight</h4>
-                  <p className="text-sm text-indigo-800 leading-relaxed font-medium">{aiFlags.step4}</p>
+                  <AIAssistedInsight content={aiFlags.step4} />
                 </div>
               </motion.div>
             )}

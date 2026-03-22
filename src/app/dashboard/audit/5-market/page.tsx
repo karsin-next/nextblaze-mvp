@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -173,7 +174,7 @@ export default function MarketOpportunityPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/audit/5-market", 1000); // Wait what is next module? We don't have 1.1.6. Route them back or next phase.
+    setTimeout(() => window.location.href = "/dashboard/audit/6-pmf", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -220,7 +221,7 @@ export default function MarketOpportunityPage() {
                 {aiFlags.step1 && (
                   <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step1}</p>
+                    <AIAssistedInsight content={aiFlags.step1} />
                   </div>
                 )}
               </motion.div>
@@ -334,7 +335,7 @@ export default function MarketOpportunityPage() {
                 {aiFlags.step3 && (
                   <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step3}</p>
+                    <AIAssistedInsight content={aiFlags.step3} />
                   </div>
                 )}
               </motion.div>
@@ -381,7 +382,7 @@ export default function MarketOpportunityPage() {
                 {aiFlags.step4 && (
                   <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step4}</p>
+                    <AIAssistedInsight content={aiFlags.step4} />
                   </div>
                 )}
               </motion.div>
@@ -431,7 +432,7 @@ export default function MarketOpportunityPage() {
                 {aiFlags.step5 && (
                   <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step5}</p>
+                    <AIAssistedInsight content={aiFlags.step5} />
                   </div>
                 )}
               </motion.div>
@@ -478,7 +479,7 @@ export default function MarketOpportunityPage() {
                 {aiFlags.step6 && (
                   <div className="mt-8 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step6}</p>
+                    <AIAssistedInsight content={aiFlags.step6} />
                   </div>
                 )}
               </motion.div>
@@ -508,7 +509,7 @@ export default function MarketOpportunityPage() {
 
                 <div className="bg-emerald-50 border border-emerald-200 p-5 rounded-sm mb-8">
                   <h4 className="text-sm font-bold text-emerald-900 mb-1">AI Strategic Insight</h4>
-                  <p className="text-sm text-emerald-800">{aiFlags.step7}</p>
+                  <AIAssistedInsight content={aiFlags.step7} />
                 </div>
 
                 <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8 relative">

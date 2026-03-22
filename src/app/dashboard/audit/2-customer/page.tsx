@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -254,7 +255,7 @@ export default function PersonaBuilderPage() {
                 {aiFlags.step1 && (
                   <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step1}</p>
+                    <AIAssistedInsight content={aiFlags.step1} />
                   </div>
                 )}
               </motion.div>
@@ -316,7 +317,7 @@ export default function PersonaBuilderPage() {
                 {aiFlags.step2 && (
                   <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step2}</p>
+                    <AIAssistedInsight content={aiFlags.step2} />
                   </div>
                 )}
               </motion.div>
@@ -379,7 +380,7 @@ export default function PersonaBuilderPage() {
                 {aiFlags.step3 && (
                   <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <p className="text-sm text-emerald-900 font-medium">{aiFlags.step3}</p>
+                    <AIAssistedInsight content={aiFlags.step3} />
                   </div>
                 )}
               </motion.div>

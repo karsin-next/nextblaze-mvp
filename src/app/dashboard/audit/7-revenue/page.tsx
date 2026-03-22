@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -138,7 +139,7 @@ export default function RevenuePage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/audit/1-problem", 1000); // Or to next stage
+    setTimeout(() => window.location.href = "/dashboard/audit/8-team", 1000);
   };
 
   const revenueModels = [
@@ -212,7 +213,7 @@ export default function RevenuePage() {
                 {data.primaryModel && aiFlags.step1 && (
                   <motion.div initial={{opacity:0, y:-10}} animate={{opacity:1, y:0}} className="mt-6 flex items-start gap-3 p-4 bg-indigo-50 border border-indigo-200 rounded-sm">
                     <Activity className="w-5 h-5 mt-0.5 text-indigo-500 shrink-0" />
-                    <p className="text-sm text-indigo-900 font-medium">{aiFlags.step1}</p>
+                    <AIAssistedInsight content={aiFlags.step1} />
                   </motion.div>
                 )}
               </motion.div>
@@ -276,13 +277,7 @@ export default function RevenuePage() {
                   <textarea value={data.assumptions} onChange={e=>setData({...data, assumptions: e.target.value})} rows={3} placeholder="We charge $1k/mo because this directly replaces a $5k/mo FTE. Customer ROI is aggressively positive day one." className="w-full p-3 border border-gray-300 rounded-sm outline-none focus:border-indigo-500"></textarea>
                 </div>
 
-                {(aiFlags.step2a || aiFlags.step2b || aiFlags.step2c) && (
-                  <motion.div initial={{opacity:0}} animate={{opacity:1}} className="flex flex-col gap-2 p-4 bg-indigo-50 border border-indigo-200 rounded-sm">
-                    {aiFlags.step2a && <div className="text-xs font-bold text-indigo-900 border-l-2 border-indigo-500 pl-2">{aiFlags.step2a}</div>}
-                    {aiFlags.step2b && <div className="text-xs font-bold text-indigo-900 border-l-2 border-indigo-500 pl-2">{aiFlags.step2b}</div>}
-                    {aiFlags.step2c && <div className="text-xs font-bold text-indigo-900 border-l-2 border-emerald-500 pl-2 text-emerald-800">{aiFlags.step2c}</div>}
-                  </motion.div>
-                )}
+                { (aiFlags.step2a || aiFlags.step2b || aiFlags.step2c) && <AIAssistedInsight content={[aiFlags.step2a, aiFlags.step2b, aiFlags.step2c].filter(Boolean).join(" ")} /> }
               </motion.div>
             )}
 
@@ -333,7 +328,7 @@ export default function RevenuePage() {
                 </div>
 
                 <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-sm text-center">
-                  <p className="text-sm text-indigo-900 font-bold">{aiFlags.step3}</p>
+                  <AIAssistedInsight content={aiFlags.step3} />
                 </div>
               </motion.div>
             )}
@@ -368,7 +363,7 @@ export default function RevenuePage() {
                   <div className="bg-[#f0f9ff] border border-blue-100 p-6 rounded-sm flex flex-col items-center justify-center">
                      <h4 className="text-xs uppercase tracking-widest font-black text-blue-900 mb-4 opacity-70">Unit Core Gross Margin</h4>
                      <div className={`text-6xl font-black mb-4 ${grossMargin >= 70 ? 'text-emerald-500' : grossMargin >= 40 ? 'text-blue-500' : 'text-rose-500'}`}>{grossMargin}%</div>
-                     <p className="text-center text-xs font-bold text-blue-800 leading-relaxed">{aiFlags.step4a}</p>
+                     <AIAssistedInsight content={aiFlags.step4a} />
                   </div>
                 </div>
 
@@ -379,7 +374,7 @@ export default function RevenuePage() {
                      <button onClick={() => setData({...data, marginScale: "stable"})} className={`p-4 border-2 rounded-sm text-center text-sm font-bold transition-all ${data.marginScale === 'stable' ? 'border-indigo-500 bg-indigo-50 text-indigo-900' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>Margins stay EXACTLY STABLE<br/><span className="text-[10px] uppercase opacity-70">(Hard commoditized hardware)</span></button>
                      <button onClick={() => setData({...data, marginScale: "decrease"})} className={`p-4 border-2 rounded-sm text-center text-sm font-bold transition-all ${data.marginScale === 'decrease' ? 'border-rose-500 bg-rose-50 text-rose-900' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>Margins systemically DECREASE<br/><span className="text-[10px] uppercase opacity-70">(Complex service layers bleed)</span></button>
                    </div>
-                   {aiFlags.step4b && <p className="mt-4 text-xs font-bold text-indigo-600 text-center">{aiFlags.step4b}</p>}
+                   {aiFlags.step4b && <AIAssistedInsight content={aiFlags.step4b} />}
                 </div>
 
               </motion.div>

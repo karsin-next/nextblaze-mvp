@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -308,12 +309,7 @@ export default function TeamScorecardPage() {
                   ))}
                 </div>
 
-                {aiFlags.step1 && (
-                  <motion.div initial={{opacity:0, y:-10}} animate={{opacity:1, y:0}} className="mt-6 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-sm">
-                    <AlertTriangle className="w-5 h-5 mt-0.5 text-amber-500 shrink-0" />
-                    <p className="text-sm text-amber-900 font-bold">{aiFlags.step1}</p>
-                  </motion.div>
-                )}
+                <AIAssistedInsight content={aiFlags.step1} />
               </motion.div>
             )}
 
@@ -364,7 +360,7 @@ export default function TeamScorecardPage() {
                         <input type="range" min="1" max="10" value={data.founderChemistry} onChange={e=>setData({...data, founderChemistry: parseInt(e.target.value)})} className="w-full accent-[#022f42]"/>
                       </div>
                       <div className="flex justify-between text-[10px] tracking-widest uppercase font-bold text-[#1e4a62] mb-2"><span>1 (Tense, Part-Time)</span><span>10 (Telepathic, 100% Locked)</span></div>
-                      <p className="text-xs font-bold text-[#1e4a62]">{aiFlags.step2b}</p>
+                      <AIAssistedInsight content={aiFlags.step2b} />
                    </div>
                 </div>
 
@@ -435,12 +431,7 @@ export default function TeamScorecardPage() {
                   </div>
                 )}
 
-                {aiFlags.step3 && (
-                  <motion.div initial={{opacity:0, y:-10}} animate={{opacity:1, y:0}} className="mt-6 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-sm">
-                    <AlertTriangle className="w-5 h-5 mt-0.5 text-amber-500 shrink-0" />
-                    <p className="text-sm text-amber-900 font-bold">{aiFlags.step3}</p>
-                  </motion.div>
-                )}
+                <AIAssistedInsight content={aiFlags.step3} />
               </motion.div>
             )}
 
@@ -464,7 +455,7 @@ export default function TeamScorecardPage() {
                      <input type="range" min="1" max="10" value={data.networkStrength} onChange={e=>setData({...data, networkStrength: parseInt(e.target.value)})} className="w-full accent-[#022f42]"/>
                    </div>
                    <div className="flex justify-between text-[10px] tracking-widest uppercase font-bold text-[#1e4a62] mb-2"><span>1 (Zero Cold Access)</span><span>10 (Direct Cell access to Tier-A VCs)</span></div>
-                   <p className="text-xs font-bold text-[#1e4a62]">{aiFlags.step4}</p>
+                   <AIAssistedInsight content={aiFlags.step4} />
                 </div>
 
                 <div className="space-y-4">

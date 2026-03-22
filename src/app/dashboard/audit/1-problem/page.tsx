@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -342,7 +343,7 @@ export default function PainExplorerPage() {
                     <Target className="w-5 h-5 mt-0.5 text-emerald-500" />
                     <div>
                       <h4 className="text-sm font-bold text-emerald-900">AI Venture Analysis</h4>
-                      <p className="text-sm text-emerald-800">{aiFlags.step4}</p>
+                      <AIAssistedInsight content={aiFlags.step4} />
                     </div>
                   </div>
                 )}
