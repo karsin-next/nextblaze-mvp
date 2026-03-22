@@ -26,11 +26,12 @@ export default function AuditHubPage() {
   const [overallProgress, setOverallProgress] = useState(0);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !user?.id) return;
+    if (typeof window === 'undefined') return;
     
-    // Read completed modules from localStorage scoped to user
-    const mockState = subModules.map((m) => {
-      const isCompleted = localStorage.getItem(`audit_${m.id}_${user.id}`) === 'completed';
+    // Read completed modules from localStorage
+    const mockState = subModules.map((m, index) => {
+      const num = index + 1;
+      const isCompleted = !!(localStorage.getItem(`audit_1_1_${num}`) || localStorage.getItem(`audit_1_1_${num}_v2`));
       return {
         ...m,
         status: isCompleted ? "completed" : "not_started"
@@ -40,15 +41,16 @@ export default function AuditHubPage() {
     setModules(mockState);
     const completedCount = mockState.filter(m => m.status === 'completed').length;
     setOverallProgress(Math.round((completedCount / subModules.length) * 100));
-  }, [user?.id]);
+  }, []);
 
   const resetAudit = () => {
-    if (typeof window === 'undefined' || !user?.id) return;
+    if (typeof window === 'undefined') return;
     if (confirm("Are you sure you want to wipe this diagnostic? All progress will be lost.")) {
-      subModules.forEach(m => {
-        localStorage.removeItem(`audit_${m.id}_${user.id}`);
-        localStorage.removeItem(`audit_${m.id}_data_${user.id}`);
-      });
+      for (let i = 1; i <= 8; i++) {
+        localStorage.removeItem(`audit_1_1_${i}`);
+        localStorage.removeItem(`audit_1_1_${i}_v2`);
+        localStorage.removeItem(`audit_1_1_${i}_data`);
+      }
       setModules(subModules.map(m => ({ ...m, status: "not_started" })));
       setOverallProgress(0);
     }

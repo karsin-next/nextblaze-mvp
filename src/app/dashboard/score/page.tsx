@@ -190,24 +190,12 @@ export default function FundabilityScorePage() {
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <div className="mb-8 border-b border-gray-100 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block">1.2.1 • Central Diagnostic Brain</span>
+          <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block">1.2 • Central Diagnostic Brain</span>
           <h1 className="text-4xl font-black text-[#022f42] tracking-tight mb-2 flex items-center gap-3">
              <Trophy className="w-10 h-10 text-emerald-500" />
-             Fundability Score
+             Live Fundability Score
           </h1>
           <p className="text-lg text-[#1e4a62] max-w-2xl font-medium">A trustworthy, benchmarked, and actionable metric mirroring exact institutional execution thresholds.</p>
-        </div>
-        <div className="flex items-center gap-4 bg-white p-2 rounded-full border border-gray-200 shadow-sm pr-6">
-          <button onClick={() => {
-            setWhatIfMode(!whatIfMode);
-            if (whatIfMode) {
-              // Reset to original
-              setCategories(prev => prev.map(c => ({ ...c, score: c.originalScore })));
-            }
-          }} className={`w-12 h-6 rounded-full relative transition-colors ${whatIfMode ? 'bg-indigo-500' : 'bg-gray-300'}`}>
-             <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${whatIfMode ? 'left-7' : 'left-1'}`}/>
-          </button>
-          <span className="text-xs font-black uppercase tracking-widest text-[#022f42]">Try &quot;What-If&quot; Mode</span>
         </div>
       </div>
 
