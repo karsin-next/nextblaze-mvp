@@ -185,6 +185,7 @@ export function getDb() {
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
     `);
+    console.log(`[DEPLOY] SERVER READY AND LISTENING ON PORT ${process.env.PORT || '3000'}`);
     } catch (execErr: any) {
       console.error(`[DB] Error executing schema: ${execErr.message}`);
       throw execErr;
