@@ -55,13 +55,13 @@ export default function FundabilityScorePage() {
     
     // Problem (1.1.1)
     try {
-      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || "{}")?.data;
+      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
       if (d1) pScore = Math.round(((parseInt(d1.severity)||1)*4 + (parseInt(d1.frequency)||1)*4 + ((11-(parseInt(d1.alternatives)||10))*2)) * 2) || 15;
     } catch(e) {}
 
     // Product (1.1.4)
     try {
-      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4") || "{}");
+      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4_v2") || "{}");
       if (d4?.score) prScore = d4.score;
       else prScore = 15;
     } catch(e) {}

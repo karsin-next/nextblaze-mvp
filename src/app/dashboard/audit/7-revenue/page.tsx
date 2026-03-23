@@ -368,7 +368,8 @@ export default function RevenuePage() {
                 </div>
 
                 <div className="border-t border-gray-100 pt-8">
-                   <h3 className="font-black text-[#022f42] mb-4">Geometric Variance at Enterprise Scale</h3>
+                   <h3 className="font-black text-[#022f42] mb-2 flex items-center gap-2">Geometric Variance at Enterprise Scale <span title="As you scale 10x, do your margins naturally improve out of software efficiency (good), stay stable like hardware (okay), or degrade because each new big client requires massive custom integration and server drag (toxic)?"><Info className="w-4 h-4 text-gray-400 cursor-help" /></span></h3>
+                   <p className="text-xs text-[#1e4a62] mb-4">Select how your operational margins structurally respond as your volume geometrically expands.</p>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                      <button onClick={() => setData({...data, marginScale: "improve"})} className={`p-4 border-2 rounded-sm text-center text-sm font-bold transition-all ${data.marginScale === 'improve' ? 'border-emerald-500 bg-emerald-50 text-emerald-900' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>Margins intrinsically IMPROVE<br/><span className="text-[10px] uppercase opacity-70">(SaaS software scale)</span></button>
                      <button onClick={() => setData({...data, marginScale: "stable"})} className={`p-4 border-2 rounded-sm text-center text-sm font-bold transition-all ${data.marginScale === 'stable' ? 'border-indigo-500 bg-indigo-50 text-indigo-900' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>Margins stay EXACTLY STABLE<br/><span className="text-[10px] uppercase opacity-70">(Hard commoditized hardware)</span></button>

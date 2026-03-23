@@ -18,7 +18,7 @@ export default function ScoreHistoryPage() {
   const [currentScore, setCurrentScore] = useState(0);
   const [currentCategories, setCurrentCategories] = useState<{name:string, score:number}[]>([]);
   
-  const [historySnapshot, setHistorySnapshot] = useState("Week 6 (Now)");
+  const [historySnapshot, setHistorySnapshot] = useState("Mod 1.2.1");
   const [showAvgTrajectory, setShowAvgTrajectory] = useState(false);
 
   useEffect(() => {
@@ -48,12 +48,12 @@ export default function ScoreHistoryPage() {
 
   // Mocked Timeline History anchored to Current Score
   const timelineData = [
-    { week: "Week 1", score: Math.max(12, currentScore - 42), event: "Started FundabilityOS. Initial Audit triggered.", avg: 30, top: 40 },
-    { week: "Week 2", score: Math.max(22, currentScore - 30), event: "+10% – Clarified Problem Severity logic.", avg: 34, top: 48 },
-    { week: "Week 3", score: Math.max(38, currentScore - 20), event: "+16% – TAM calculated & Founding Team verified.", avg: 38, top: 55 },
-    { week: "Week 4", score: Math.max(45, currentScore - 12), event: "+7% – MVP architecture registered.", avg: 42, top: 62 },
-    { week: "Week 5", score: Math.max(58, currentScore - 5), event: "+13% – Unit Economics structurally locked.", avg: 48, top: 70 },
-    { week: "Week 6 (Now)", score: currentScore, event: "Current Diagnostic Master Score.", avg: 52, top: 76 }
+    { week: "Mod 1.1.1", score: Math.max(12, currentScore - 42), event: "Started FundabilityOS. Initial Audit triggered.", avg: 30, top: 40 },
+    { week: "Mod 1.1.2", score: Math.max(22, currentScore - 30), event: "+10% – Clarified Problem Severity logic.", avg: 34, top: 48 },
+    { week: "Mod 1.1.3", score: Math.max(38, currentScore - 20), event: "+16% – TAM calculated & Founding Team verified.", avg: 38, top: 55 },
+    { week: "Mod 1.1.4", score: Math.max(45, currentScore - 12), event: "+7% – MVP architecture registered.", avg: 42, top: 62 },
+    { week: "Mod 1.1.5", score: Math.max(58, currentScore - 5), event: "+13% – Unit Economics structurally locked.", avg: 48, top: 70 },
+    { week: "Mod 1.2.1", score: currentScore, event: "Current Diagnostic Master Score.", avg: 52, top: 76 }
   ];
 
   // Impact bar chart
@@ -291,7 +291,7 @@ export default function ScoreHistoryPage() {
                      +{pointsSinceSnapshot} Points Gained
                    </span>
                  )}
-                 {pointsSinceSnapshot <= 0 && historySnapshot !== "Week 6 (Now)" && (
+                 {pointsSinceSnapshot <= 0 && historySnapshot !== "Mod 1.2.1" && (
                    <span className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-[10px] border border-gray-200">
                      Neutral Vector
                    </span>

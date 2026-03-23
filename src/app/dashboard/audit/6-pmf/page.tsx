@@ -12,6 +12,7 @@ import Link from "next/link";
 
 export default function PMFPage() {
   const [step, setStep] = useState(1);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -36,7 +37,7 @@ export default function PMFPage() {
   useEffect(() => {
     // Try to load customer type from 1.1.2 Persona
     try {
-      const saved112 = localStorage.getItem("audit_1_1_2");
+      const saved112 = localStorage.getItem("audit_1_1_2_v2");
       if (saved112) {
         const parsed = JSON.parse(saved112);
         if (parsed?.data?.role) setCustomerContext(parsed.data.role);
@@ -55,7 +56,7 @@ export default function PMFPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_1_1_6", JSON.stringify({ data, step }));
+    if (isLoaded) localStorage.setItem("audit_1_1_6", JSON.stringify({ data, step, score: getPMFScore() }));
   }, [data, step, isLoaded]);
 
   // Calculations
@@ -412,7 +413,7 @@ export default function PMFPage() {
                     <div className="relative pt-6 pb-2 px-4 overflow-x-auto">
                       <div className="flex absolute top-8 left-6 right-6 h-0.5 bg-gray-200 z-0"></div>
                       <div className="flex justify-between items-start min-w-[600px] relative z-10 gap-4">
-                        {data.milestones.map((m, idx) => (
+                        {[...data.milestones].sort((a,b) => (data.milestoneDates[a]||"9999-99").localeCompare(data.milestoneDates[b]||"9999-99")).map((m, idx) => (
                            <div key={idx} className="flex flex-col items-center w-24 hover:-translate-y-1 transition-transform group cursor-pointer relative">
                              <div className="w-5 h-5 rounded-full bg-[#022f42] border-4 border-white shadow shadow-gray-200 z-10"></div>
                              <div className="text-xs font-bold text-center mt-3 text-[#022f42] group-hover:text-indigo-600 line-clamp-3">{m}</div>

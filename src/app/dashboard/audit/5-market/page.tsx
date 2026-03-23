@@ -60,10 +60,6 @@ export default function MarketOpportunityPage() {
     setIsLoaded(true);
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_1_1_5", JSON.stringify({ data, step }));
-  }, [data, step, isLoaded]);
-
   // VOS Indicator Scoring Logic
   const tamValue = parseFloat(data.tam) || 0;
   let scoreTAM = 1.0;
@@ -78,7 +74,11 @@ export default function MarketOpportunityPage() {
   if (data.cagr > 30) scoreGrowth = 3.0;
   else if (data.cagr >= 10) scoreGrowth = 2.0;
 
-  const vosScore = parseFloat(((scoreTAM + scoreSOM + scoreGrowth) / 3).toFixed(2));
+  const vosScore = parseFloat(((scoreTAM + scoreSOM + scoreGrowth) / 3).toFixed(2)) || 1;
+
+  useEffect(() => {
+    if (isLoaded) localStorage.setItem("audit_1_1_5", JSON.stringify({ data, step, score: Math.round((vosScore/3)*100) }));
+  }, [data, step, vosScore, isLoaded]);
 
   // AI Feedback Updates
   useEffect(() => {
@@ -259,8 +259,8 @@ export default function MarketOpportunityPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Card A: TAM */}
                       <div className="p-5 border border-indigo-200 bg-white shadow-sm rounded-sm">
-                        <div className="flex items-center gap-2 text-indigo-500 mb-2"><Globe className="w-5 h-5"/><h3 className="font-black text-sm">Estimated Total Addressable Market (TAM)</h3></div>
-                        <p className="text-xs text-gray-600">Based on <strong className="text-indigo-800">Statista Sector Maps</strong>, the global market for this category is estimated at <strong className="text-indigo-800 text-lg">$2.3B</strong> in 2024, growing at <strong className="text-indigo-800">12% CAGR</strong> through 2029.</p>
+                        <div className="flex items-center gap-2 text-indigo-500 mb-2"><Globe className="w-5 h-5"/><h3 className="font-black text-sm">Estimated Addressable Market</h3></div>
+                        <p className="text-xs text-gray-600">Based on <strong className="text-indigo-800">Statista Sector Maps</strong>, the market for <strong>{data.problemContext ? `"${data.problemContext}"` : "this category"}</strong> is estimated at <strong className="text-indigo-800 text-lg">$2.3B</strong> in 2024, growing at <strong className="text-indigo-800">12% CAGR</strong> through 2029.</p>
                       </div>
 
                       {/* Card B: Trends */}

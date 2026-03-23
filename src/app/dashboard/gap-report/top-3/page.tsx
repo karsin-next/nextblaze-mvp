@@ -45,14 +45,15 @@ export default function Top3GapsPage() {
     let moduleCount = 0;
     
     // 1. Pull Data
-    let d1, d2, d3, d5, d6, d7, d8;
-    try { d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2") || "{}")?.data; if(d1) moduleCount++; } catch(e){}
-    try { d2 = JSON.parse(localStorage.getItem("audit_1_1_2") || "{}")?.data; if(d2) moduleCount++; } catch(e){}
-    try { d3 = JSON.parse(localStorage.getItem("audit_1_1_3") || "{}")?.data; if(d3) moduleCount++; } catch(e){}
-    try { d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}"); if(d5?.score) moduleCount++; } catch(e){}
-    try { d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}"); if(d6?.score) moduleCount++; } catch(e){}
-    try { d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data; if(d7) moduleCount++; } catch(e){}
-    try { d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data; if(d8) moduleCount++; } catch(e){}
+    let d1: any, d2: any, d3: any, d5: any, d6: any, d7: any, d8: any;
+    try { if (localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2")) { moduleCount++; d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2") || "{}")?.data; } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_2")) { moduleCount++; d2 = JSON.parse(localStorage.getItem("audit_1_1_2") || "{}")?.data; } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_3")) { moduleCount++; d3 = JSON.parse(localStorage.getItem("audit_1_1_3") || "{}")?.data; } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_4")) { moduleCount++; } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_5")) { moduleCount++; d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}"); } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_6")) { moduleCount++; d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}"); } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_7")) { moduleCount++; d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data; } } catch(e){}
+    try { if (localStorage.getItem("audit_1_1_8")) { moduleCount++; d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data; } } catch(e){}
 
     if (moduleCount < 4) {
       setStatus("empty");

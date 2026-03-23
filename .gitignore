@@ -31,3 +31,6 @@ next-env.d.ts
 # Large binaries we downloaded
 node-v20.11.1-*
 *.tar.gz
+
+# Database
+fundability.db*

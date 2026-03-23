@@ -15,6 +15,7 @@ type Dimension = { id: string; name: string; you: string; [compId: string]: stri
 
 export default function CompetitorAnalysisPage() {
   const [step, setStep] = useState(1);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -153,7 +154,10 @@ export default function CompetitorAnalysisPage() {
     const filledYou = data.dimensions.filter(d => d.you && d.you.length > 3);
     if (filledYou.length === 0) setAiFlags(p => ({...p, step3: "You listed no advantages in any dimension – investors will see you as a me-too product."}));
     else if (filledYou.length === 1 && filledYou[0].name === "Price") setAiFlags(p => ({...p, step3: "Your only differentiator is price. This is rarely a sustainable advantage. Add non-price features."}));
-    else setAiFlags(p => ({...p, step3: `You have strong differentiation points. Highlight "${filledYou[0]?.name || 'these'}" in your pitch.`}));
+    else {
+      const diffs = filledYou.filter(f => f.name !== "Price");
+      setAiFlags(p => ({...p, step3: `You have strong differentiation points. Highlight "${diffs[0]?.name || 'these'}" in your pitch.`}));
+    }
   }, [data.dimensions]);
 
   // Handlers - STEP 4 Moat
@@ -265,7 +269,7 @@ export default function CompetitorAnalysisPage() {
 
                   {data.competitors.map((comp) => (
                     <motion.div 
-                      key={comp.id} drag dragMomentum={false}
+                      key={comp.id} drag dragMomentum={false} dragConstraints={gridRef}
                       whileDrag={{ scale: 1.1, zIndex: 50, shadow: "0px 10px 20px rgba(0,0,0,0.1)" }}
                       onDragEnd={(e, info) => handleGridDragEnd(e, info, "competitor", comp.id)}
                       className="absolute px-4 py-2 rounded-full bg-white text-xs font-bold text-gray-700 cursor-grab active:cursor-grabbing shadow-md border-2 border-gray-200"
@@ -276,7 +280,7 @@ export default function CompetitorAnalysisPage() {
                   ))}
 
                   <motion.div 
-                    drag dragMomentum={false}
+                    drag dragMomentum={false} dragConstraints={gridRef}
                     whileDrag={{ scale: 1.1, zIndex: 60, shadow: "0px 10px 20px rgba(0,0,0,0.2)" }}
                     onDragEnd={(e, info) => handleGridDragEnd(e, info, "you")}
                     className="absolute px-5 py-2.5 rounded-full bg-[#ffd800] text-sm font-black text-[#022f42] cursor-grab active:cursor-grabbing shadow-lg border-2 border-[#022f42] z-40 flex items-center gap-1"
@@ -349,13 +353,18 @@ export default function CompetitorAnalysisPage() {
                 <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
                   Build Your Moat <span title="Investors hate 'me-too' products. A moat protects your margins."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
-                <p className="text-[#1e4a62] mb-8 text-sm">Assess your defensibility against the four canonical venture-scale moats.</p>
+                <p className="text-[#1e4a62] mb-6 text-sm">Assess your defensibility against the four canonical venture-scale moats.</p>
+                <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-sm mb-6 flex items-start gap-3">
+                  <Info className="w-5 h-5 text-indigo-500 shrink-0"/>
+                  <span className="text-sm text-indigo-900 font-medium leading-relaxed"><strong>How to use this tool:</strong> Rate your CURRENT state, not your future roadmap. Be intellectually honest. Investors will diligence these heavily.
+                  <br/><strong>1. IP/Tech:</strong> Patents or algorithms.<br/><strong>2. Network Effects:</strong> Does product get better with more users?<br/><strong>3. Brand/Switching:</strong> How painful is it to leave?<br/><strong>4. Scale:</strong> Operational/cost efficiencies.</span>
+                </div>
                 
                 <div className="space-y-6 mb-10">
                   {/* IP */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span className="flex items-center gap-1" title="Patents, algorithms, or proprietary systems.">1. IP & Technology Moat <Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span>
+                       <span className="flex items-center gap-1" title="Rate your CURRENT state, not your future roadmap. Patents, algorithms, or proprietary systems.">1. IP & Technology Moat <Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span>
                        <span className="text-indigo-600 font-black">{data.moats.ip}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Patents, trademarks, proprietary tech or algorithms that cannot be replicated.</p>
@@ -366,7 +375,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Network */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span className="flex items-center gap-1">2. Network Effects Moat <span title="Your product becomes more valuable as more people use it."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
+                       <span className="flex items-center gap-1">2. Network Effects Moat <span title="Rate your CURRENT state, not your future roadmap. Your product becomes more valuable as more people use it."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.network}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">The product mathematically becomes more valuable as more users join (e.g. marketplaces, social graphs).</p>
@@ -377,7 +386,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Brand Tracking */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span className="flex items-center gap-1">3. Brand & Switching Costs <span title="Customers stick with you because of high switching costs or data lock-in."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
+                       <span className="flex items-center gap-1">3. Brand & Switching Costs <span title="Rate your CURRENT state. Customers stick with you because of high switching costs or data lock-in."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.brand}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Deep data integrations, team retraining costs, or immense brand loyalty that prevents churn.</p>
@@ -388,7 +397,7 @@ export default function CompetitorAnalysisPage() {
                   {/* Scale */}
                   <div className="bg-gray-50 border border-gray-200 p-6 rounded-sm">
                     <h4 className="font-bold text-[#022f42] flex justify-between mb-2">
-                       <span className="flex items-center gap-1">4. Scale & Cost Moat <span title="Your cost structure allows you to offer significantly better prices."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
+                       <span className="flex items-center gap-1">4. Scale & Cost Moat <span title="Rate your CURRENT state. Your cost structure allows you to offer significantly better prices."><Info className="w-4 h-4 text-gray-400 inline cursor-help"/></span></span>
                        <span className="text-indigo-600 font-black">{data.moats.scale}</span>
                     </h4>
                     <p className="text-xs text-gray-500 mb-4">Operational efficiency, distribution hacks, or economies of scale competitors cannot match.</p>

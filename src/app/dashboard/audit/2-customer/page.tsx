@@ -26,7 +26,7 @@ export default function PersonaBuilderPage() {
     scenario: "",
     jtbd: "",
     channels: [] as { name: string; tactic: string }[],
-    finalSummary: ""
+    uvpOverride: undefined as string | undefined
   });
 
   const [aiFlags, setAiFlags] = useState({
@@ -138,27 +138,8 @@ export default function PersonaBuilderPage() {
   }, [data.channels]);
 
   // Auto Generate Summary
-  useEffect(() => {
-    const roleTxt = data.role || "[Role]";
-    const sizeTxt = data.size || "[Company Size]";
-    const indTxt = data.industry || "[Industry]";
-    const geoTxt = data.geo || "[Geography]";
-    const scenTxt = data.scenario || "[Daily scenario summary]";
-    const jTBDTxt = data.jtbd || "[JTBD]";
-    
-    let chText = "[List of channels with tactics]";
-    if (data.channels.length > 0) {
-      chText = data.channels.filter(c => c.tactic).map(c => `${c.name} (${c.tactic})`).join(', ');
-      if (!chText) chText = data.channels.map(c => c.name).join(', ');
-    }
+  const defaultSummary = `${data.role||"[Role]"} at ${data.size||"[Company Size]"} ${data.industry||"[Industry]"} companies in ${data.geo||"[Geography]"}\n\nDaily struggle: ${data.scenario||"[Daily scenario summary]"}\n\nHires your solution to: ${data.jtbd||"[JTBD]"}\n\nBest reached via: ${data.channels.length>0 ? data.channels.map(c => `${c.name} ${c.tactic?"("+c.tactic+")":""}`).join(', ') : "[List of channels with tactics]"}`;
 
-    const gen = `${roleTxt} at ${sizeTxt} ${indTxt} companies in ${geoTxt}\n\nDaily struggle: ${scenTxt}\n\nHires your solution to: ${jTBDTxt}\n\nBest reached via: ${chText}`;
-    
-    // Only auto-update if the user hasn't heavily edited it away from the template
-    if (!data.finalSummary || data.finalSummary.includes("[Role]") || score < 100) {
-      setData(prev => ({ ...prev, finalSummary: gen }));
-    }
-  }, [data.role, data.size, data.industry, data.geo, data.scenario, data.jtbd, data.channels, score]);
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
@@ -404,12 +385,17 @@ export default function PersonaBuilderPage() {
             {expanded.s4 && (
               <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
                 <div className="bg-[#f2f6fa] border border-[#1e4a62]/10 p-6 rounded-sm mb-6 relative hover:shadow-md transition-shadow">
-                  <div className="absolute top-0 right-0 bg-[#ffd800] text-[#022f42] font-black uppercase tracking-widest text-[10px] px-3 py-1 pb-1.5 rounded-bl-sm">Generated Preview</div>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-xs font-black text-[#1e4a62] uppercase tracking-widest">Generated Preview</label>
+                    {data.uvpOverride !== undefined && (
+                      <button onClick={() => setData({...data, uvpOverride: undefined})} className="text-xs font-bold text-indigo-500 hover:text-indigo-700">Restore Auto-Sync</button>
+                    )}
+                  </div>
                   
                   <textarea 
-                    value={data.finalSummary}
-                    onChange={e => setData({...data, finalSummary: e.target.value})}
-                    className="w-full bg-transparent border-none resize-none min-h-[160px] outline-none text-[#022f42] font-medium leading-relaxed"
+                    value={data.uvpOverride !== undefined ? data.uvpOverride : defaultSummary}
+                    onChange={e => setData({...data, uvpOverride: e.target.value})}
+                    className="w-full bg-white p-5 border border-gray-200 rounded-sm outline-none text-[#022f42] font-medium leading-relaxed min-h-[160px]"
                   />
                 </div>
 
