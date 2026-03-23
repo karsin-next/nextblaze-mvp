@@ -5,7 +5,7 @@ nixPkgs = ["nodejs-20_x", "python3", "gcc", "sqlite"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["NPM_CONFIG_PRODUCTION=false npm run build"]
 
 [start]
-cmd = "npm run start"
+cmd = "node .next/standalone/server.js"

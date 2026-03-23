@@ -16,14 +16,16 @@ export function getDb() {
 
     try {
       // Try initialization at selected path
-      db = new Database(selectedPath);
+      console.log(`[DB] Attempting new Database(${selectedPath})...`);
+      db = new Database(selectedPath, { verbose: console.log });
     } catch (err: any) {
       console.error(`[DB] Failed to initialize at ${selectedPath}: ${err.message}`);
+      console.error(`[DB] Error Stack: ${err.stack}`);
       
       if (selectedPath !== FALLBACK_PATH) {
         console.log(`[DB] Retrying with fallback path: ${FALLBACK_PATH}`);
         try {
-          db = new Database(FALLBACK_PATH);
+          db = new Database(FALLBACK_PATH, { verbose: console.log });
           selectedPath = FALLBACK_PATH;
         } catch (fallbackErr: any) {
           console.error(`[DB] Critical: Fallback also failed: ${fallbackErr.message}`);
@@ -35,9 +37,14 @@ export function getDb() {
     }
 
     console.log(`[DB] Successfully opened database at: ${selectedPath}`);
-    
+    console.log(`[DB] Checking write permissions...`);
     try {
       db.pragma("journal_mode = WAL");
+      console.log(`[DB] journal_mode set to WAL`);
+    } catch (pragmaErr: any) {
+      console.error(`[DB] PRAGMA failed: ${pragmaErr.message}`);
+    }
+    try {
       db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
