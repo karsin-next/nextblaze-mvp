@@ -1,9 +1,23 @@
 "use client";
 
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { PlayCircle, ShieldAlert, Sparkles, Navigation } from "lucide-react";
+import { PlayCircle, ShieldAlert, Sparkles, Navigation, Volume2, VolumeX } from "lucide-react";
 
 export default function LandingPage() {
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleAudio = () => {
+    if (videoRef.current) {
+      const newState = !isMuted;
+      videoRef.current.muted = newState;
+      setIsMuted(newState);
+      if (!newState) {
+        videoRef.current.play().catch(e => console.log("Audio play blocked:", e));
+      }
+    }
+  };
   return (
     <div className="bg-[#f2f6fa] text-[#022f42] selection:bg-[#ffd800] selection:text-[#022f42]">
       {/* HERO SECTION */}
@@ -28,8 +42,9 @@ export default function LandingPage() {
           <div className="flex-1 min-w-[300px]">
             <div className="border-2 border-[#ffd800] shadow-[0_25px_45px_-15px_rgba(2,47,66,0.15)] bg-[#022f42] aspect-video w-full relative overflow-hidden group">
               <video 
+                ref={videoRef}
                 autoPlay 
-                muted 
+                muted={isMuted}
                 loop 
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover opacity-60"
@@ -37,12 +52,25 @@ export default function LandingPage() {
                 <source src="/assets/videos/hero-placeholder.mp4" type="video/mp4" />
                 <source src="/assets/videos/hero.mp4" type="video/mp4" />
               </video>
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-16 h-16 rounded-full bg-[#ffd800]/20 flex items-center justify-center cursor-pointer hover:bg-[#ffd800]/40 transition-all backdrop-blur-sm border border-[#ffd800]/30 group-hover:scale-110 pointer-events-auto">
-                  <PlayCircle className="w-8 h-8 text-[#ffd800]" />
-                </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <button 
+                  onClick={toggleAudio}
+                  className="w-20 h-20 rounded-full bg-[#ffd800]/20 flex flex-col items-center justify-center cursor-pointer hover:bg-[#ffd800]/40 transition-all backdrop-blur-md border-2 border-[#ffd800]/50 group-hover:scale-110 shadow-2xl z-10"
+                >
+                  {isMuted ? (
+                    <>
+                      <VolumeX className="w-10 h-10 text-[#ffd800] mb-1" />
+                      <span className="text-[10px] font-black text-[#ffd800] uppercase tracking-widest">Unmute</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-10 h-10 text-[#ffd800] mb-1" />
+                      <span className="text-[10px] font-black text-[#ffd800] uppercase tracking-widest">Sound On</span>
+                    </>
+                  )}
+                </button>
               </div>
-              <div className="absolute bottom-4 right-4 text-[#ffd800] font-black text-xs tracking-[0.3em] opacity-40 uppercase">NextBlaze Preview</div>
+              <div className="absolute bottom-4 right-4 text-[#ffd800] font-black text-[10px] tracking-[0.3em] opacity-40 uppercase z-0">NextBlaze Preview</div>
             </div>
           </div>
         </div>
