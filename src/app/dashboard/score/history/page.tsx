@@ -96,6 +96,11 @@ export default function ScoreHistoryPage() {
   const pointsSinceSnapshot = currentScore - selectedSnapshot.score;
 
   // Mock Radar data dynamically tied to current scale
+  const radarData = currentCategories.map(c => ({
+    subject: c.name,
+    user: c.score,
+    avg: Math.min(85, c.score * 0.8 + 10)
+  }));
   const bestCategory = currentCategories.reduce((prev, curr) => (curr.score) > (prev?.score || 0) ? curr : prev, currentCategories[0]);
   const pScore = currentCategories.find(c => c.name === "Problem")?.score || 15;
 
