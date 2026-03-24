@@ -166,6 +166,9 @@ export default function Top3GapsPage() {
     }));
 
     setStatus("ready");
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_3_top_3', 'completed');
+    }
   };
 
   const toggleActionPlan = (id: string) => {

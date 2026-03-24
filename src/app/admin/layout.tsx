@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Users, LogOut, Building, Activity, MessageSquare } from "lucide-react";
+import { Users, LogOut, Building, Activity, MessageSquare, BookOpen } from "lucide-react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 
@@ -63,6 +63,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             >
               <MessageSquare className="w-4 h-4" />
               <span className="text-xs uppercase tracking-widest">User Feedback</span>
+            </Link>
+
+            <Link 
+              href="/admin?view=academy" 
+              className={`flex items-center space-x-3 px-3 py-3 rounded-sm font-black transition-all ${currentView === 'academy' ? 'bg-[#f2f6fa] border-l-4 border-l-[#022f42] text-[#022f42] shadow-inner' : 'text-[#1e4a62]/70 hover:bg-gray-50 hover:text-[#022f42]'}`}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="text-xs uppercase tracking-widest">Academy Editor</span>
             </Link>
           </nav>
         </div>

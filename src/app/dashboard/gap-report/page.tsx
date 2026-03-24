@@ -1,337 +1,158 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { AlertTriangle, CheckCircle2, ArrowRight, BookOpen, Sparkles, ListChecks, XCircle, ChevronDown, ChevronUp, Link2 } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle, Search, Lightbulb, FileText,
+  CheckCircle2, ChevronRight, ArrowRight, RefreshCw, Eye, List
+} from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
-// AI-Assisted badge component
-const AiBadge = () => (
-  <span className="inline-flex items-center bg-[#022f42] text-[#ffd800] px-2 py-0.5 text-[8px] uppercase tracking-widest font-black rounded-sm ml-2">
-    <Sparkles className="w-2.5 h-2.5 mr-1" /> AI Assisted
-  </span>
-);
-
-const allGaps = [
-  {
-    id: "missing_tech_cofounder",
-    severity: "critical",
-    title: "Missing Technical Co-founder",
-    source: "Module 1.1.8 - Team",
-    sourceHref: "/dashboard/audit/8-team",
-    description: "You are building a Deep Tech product but lack an in-house technical lead. Investors view outsourced core development at this stage as a critical risk that signals the team cannot build the product independently.",
-    whyItMatters: "A technical co-founder eliminates the #1 reason early-stage startups fail: the inability to ship and iterate on the core product without massive dependency on contractors. 70% of top VCs will not invest pre-Series A without at least one technical founder.",
-    action: "Begin executive search for a CTO or strong Lead Engineer. Consider fractional equity (0.5-2%) compensated via a vesting schedule. Alternatively, enroll in an accelerator program that provides technical co-founder matching.",
-    aiInsight: "Based on your sector and stage, the most defensible path is to recruit from local university networks or global talent platforms like Braintrust, Toptal, or AngelList Talent with an equity-first offer.",
-    checklist: [
-      "Search AngelList, LinkedIn, and university alumni networks for CTO candidates",
-      "Prepare a Technical Co-founder Offer Term Sheet (equity range: 5-20%)",
-      "Complete Module 1.1.8 Team Composition Check to update your score",
-      "Attend at least 2 startup networking events to expand your technical network",
-    ],
-    lesson: "Structuring Early Startup Teams"
-  },
-  {
-    id: "vitamin_product",
-    severity: "critical",
-    title: "'Vitamin' Product Positioning",
-    source: "Module 1.1.6 - PMF",
-    sourceHref: "/dashboard/audit/6-pmf",
-    description: "Your PMF probe indicates your solution is a 'nice to have' (Vitamin) rather than a 'must have' (Painkiller). Vitamins are the first subscription cancelled in a budget crunch.",
-    whyItMatters: "Investors discount Vitamin products by 30-50% in valuation models because the retention curves are weak, churn is high, and pricing power is limited. Painkillers command premium pricing because removal causes immediate, quantifiable pain.",
-    action: "Refine your persona in Module 1.1.2 to narrow to the user where your product is essential. Consider pivoting features to address an acute, budget-approved pain point that your current user is losing sleep over.",
-    aiInsight: "The fastest fix is to interview your top 10% most engaged users and ask: 'What would happen to your business if you lost access to our product tomorrow?' Their answers reveal where the Painkiller positioning lives.",
-    checklist: [
-      "Interview your top 10 most engaged users about switching costs",
-      "Re-complete Module 1.1.6 Traction & PMF Validator after interviews",
-      "Identify one workflow that breaks completely without your product",
-      "Rewrite your product's hero statement to lead with the pain, not the feature",
-    ],
-    lesson: "The Vitamin vs Painkiller Framework"
-  },
-  {
-    id: "narrow_white_space",
-    severity: "warning",
-    title: "Narrow Competitive White Space",
-    source: "Module 1.1.3 - Competitors",
-    sourceHref: "/dashboard/audit/3-competitor",
-    description: "Your position on the pricing/features matrix places you in the path of well-funded incumbents without a clear differentiation moat. This creates a commodity competition dynamic.",
-    whyItMatters: "Being caught in the 'land of the living dead' between incumbents is a VC red flag. Investors want to see a clear 10x differentiation from the dominant player, not a marginal improvement.",
-    action: "Re-evaluate your positioning in Module 1.1.3. Can you go further upmarket with enterprise features, or radically cheaper with a self-serve model?",
-    aiInsight: "The most defensible positions are at the extremes: either radically cheaper (10x lower price) or radically differentiated (10x better at one specific thing). The middle is where startups go to die.",
-    checklist: [
-      "Map your top 5 competitors on a 2x2 Price vs. Feature Depth matrix",
-      "Identify the one dimension where you can be 10x better than the market leader",
-      "Re-complete Module 1.1.3 Competitor Positioning Check",
-      "Update your pitch deck positioning slide to reflect the new differentiation",
-    ],
-    lesson: "Finding Defensible White Space"
-  },
-  {
-    id: "small_tam",
-    severity: "warning",
-    title: "Total Addressable Market (TAM) Under $1B",
-    source: "Module 1.1.5 - Market",
-    sourceHref: "/dashboard/audit/5-market",
-    description: "Your calculated TAM is under $1B. While your SOM is more important for near-term execution, venture-scale returns require a massive potential ceiling for a VC's fund math to work.",
-    whyItMatters: "A top-tier VC fund needs a 10-30x return on every investment to make fund math work. If your TAM is $500M and you capture 20% at a 5x multiple, that's still only a $500M outcome — too small for most institutional funds. $1B+ TAM is a minimum threshold.",
-    action: "Expand your market definition or identify adjacent markets you can enter later. Use the 'Expand, Adjacent, New' framework: define your core SOM, your 3-year SAM expansion, and a 10-year TAM narrative.",
-    aiInsight: "Consider whether you are defining your market too narrowly. Often, the real TAM is the total spend your customers currently use to solve the problem you address — not just direct competitors.",
-    checklist: [
-      "Re-run Module 1.1.5 Market Sizer with revised TAM definition",
-      "Research 2-3 adjacent market verticals you could enter by year 3",
-      "Build a 'market expansion' slide for your pitch deck",
-      "Include CAGR data to show market growth momentum",
-    ],
-    lesson: "Venture Math & Market Sizing"
-  },
-  {
-    id: "strong_revenue",
-    severity: "good",
-    title: "Strong Revenue Model Strategy",
-    source: "Module 1.1.7 - Revenue",
-    sourceHref: "/dashboard/audit/7-revenue",
-    description: "Your subscription model with high pricing power suggests excellent future gross margins and strong LTV:CAC potential. This is one of the most fundable revenue architectures.",
-    whyItMatters: "SaaS businesses with 75%+ gross margins are valued at 5-15x ARR. This model creates predictable revenue, reduces CAC payback period, and is highly legible to institutional investors.",
-    action: "Highlight your LTV potential and NRR path in your pitch deck. Build a 3-year ARR forecast model showing expansion revenue from upsells and seat additions.",
-    aiInsight: "The next step is to define your tier architecture: Starter (self-serve), Growth (team), Enterprise (custom). This tier map creates a natural upsell flywheel that improves NRR over time.",
-    checklist: [
-      "Define your 3-tier pricing architecture (Starter / Growth / Enterprise)",
-      "Calculate your target LTV:CAC ratio (aim for >3:1)",
-      "Build a NRR projection showing expansion revenue path",
-      "Include MRR growth chart in investor materials",
-    ],
-    lesson: "Pricing Power and Gross Margins"
-  },
-  {
-    id: "live_mvp",
-    severity: "good",
-    title: "Live Product with Prototype Evidence",
-    source: "Module 1.1.4 - Product",
-    sourceHref: "/dashboard/audit/4-product",
-    description: "Having a functioning MVP sets you ahead of 70% of pre-seed applicants. Execution capability signals to investors that you ship — the most underrated founder quality.",
-    whyItMatters: "Ideas are worthless without execution. A live product, even with zero revenue, proves your team can build. This is worth 20-30 additional points on your Fundability Score.",
-    action: "Ensure your analytics are tracking user retention correctly. Instrument your product with Mixpanel, Amplitude, or PostHog before your next investor meeting so you can show behavioral data.",
-    aiInsight: "Investors are moving from 'show me the product' to 'show me the usage data'. Retention cohort charts are now as important as the demo itself at pre-seed and seed rounds.",
-    checklist: [
-      "Install Mixpanel, Amplitude, or PostHog for event tracking",
-      "Create a day-1, day-7, day-30 retention cohort report",
-      "Record a 2-minute product demo video for your pitch deck",
-      "Get 3 customer testimonials or case studies on record",
-    ],
-    lesson: "Show, Don't Tell: The MVP Demo"
-  },
+const subModules = [
+  { id: "top-3", title: "Top 3 Critical Gaps", icon: AlertTriangle, desc: "Identify the high-impact red flags stopping your round.", status: "not_started", time: "3 min" },
+  { id: "deep-dive", title: "Gap Deep Dive Analysis", icon: Search, desc: "Why these gaps matter to institutional investors.", status: "locked", time: "5 min" },
+  { id: "actions", title: "Gap Closure Action Plan", icon: Lightbulb, desc: "Step-by-step roadmap to resolve each fracture.", status: "locked", time: "4 min" },
+  { id: "report", title: "Investor-Ready Report", icon: FileText, desc: "Generate a professional PDF narrative for VCs.", status: "locked", time: "2 min" },
 ];
 
-function GapCard({ gap, index }: { gap: typeof allGaps[0]; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const [checked, setChecked] = useState<string[]>([]);
+export default function GapHubPage() {
+  const { user } = useAuth();
+  const [modules, setModules] = useState(subModules);
+  const [overallProgress, setOverallProgress] = useState(0);
 
-  const toggleCheck = (item: string) => {
-    setChecked(prev => prev.includes(item) ? prev.filter(c => c !== item) : [...prev, item]);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Read completed modules from localStorage
+    const mockState = subModules.map((m) => {
+      const isCompleted = !!localStorage.getItem(`audit_1_3_${m.id.replace(/-/g, '_')}`);
+      return {
+        ...m,
+        status: isCompleted ? "completed" : "not_started"
+      };
+    });
+
+    setModules(mockState);
+    const completedCount = mockState.filter(m => m.status === 'completed').length;
+    setOverallProgress(Math.round((completedCount / subModules.length) * 100));
+  }, []);
+
+  const resetProgress = () => {
+    if (typeof window === 'undefined') return;
+    if (confirm("Are you sure you want to reset your analysis progress for this module?")) {
+      subModules.forEach(m => {
+        localStorage.removeItem(`audit_1_3_${m.id.replace(/-/g, '_')}`);
+      });
+      setModules(subModules.map(m => ({ ...m, status: "not_started" })));
+      setOverallProgress(0);
+    }
   };
 
-  const borderColor = gap.severity === "critical" ? "border-red-500" : gap.severity === "warning" ? "border-yellow-500" : "border-green-500";
-  const badgeBg = gap.severity === "critical" ? "bg-red-100 text-red-800" : gap.severity === "warning" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800";
-  const headerBg = gap.severity === "critical" ? "bg-red-50" : gap.severity === "warning" ? "bg-yellow-50" : "bg-green-50";
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case "completed": return "bg-green-100 text-green-700 border-green-200";
+      case "in_progress": return "bg-[#ffd800] text-[#022f42] border-[#ffd800]";
+      case "not_started": return "bg-white text-[#022f42] border-[rgba(2,47,66,0.15)] hover:border-[#022f42]";
+      default: return "bg-[#f2f6fa] text-[#1e4a62] border-[rgba(2,47,66,0.05)] opacity-60";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch(status) {
+      case "completed": return <CheckCircle2 className="w-5 h-5 text-green-600" />;
+      case "in_progress": return <ChevronRight className="w-5 h-5 text-[#022f42]" />;
+      case "not_started": return <ChevronRight className="w-5 h-5 opacity-50" />;
+      default: return null;
+    }
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.07 }}
-      className={`bg-white border border-[#1e4a62]/10 border-l-4 ${borderColor} rounded-sm shadow-sm overflow-hidden`}
-    >
-      {/* Card Header */}
-      <div
-        className={`p-5 cursor-pointer flex items-start justify-between gap-4 ${headerBg}`}
-        onClick={() => setExpanded(!expanded)}
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm ${badgeBg}`}>
-              {gap.severity === "critical" ? "Critical Gap" : gap.severity === "warning" ? "Improvement Needed" : "Strength"}
-            </span>
-            <Link href={gap.sourceHref} className="text-[9px] font-bold uppercase tracking-widest text-[#1e4a62] hover:text-[#022f42] flex items-center gap-1 bg-white/80 px-2 py-0.5 rounded-sm border border-[#1e4a62]/10">
-              <Link2 className="w-2.5 h-2.5" /> {gap.source}
-            </Link>
-          </div>
-          <h3 className="text-base font-bold text-[#022f42] leading-tight">{gap.title}</h3>
-          <p className="text-sm text-[#1e4a62] mt-1 leading-relaxed">{gap.description}</p>
-        </div>
-        <button className="shrink-0 text-[#1e4a62] mt-1">
-          {expanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Expanded Content */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="p-5 space-y-5 border-t border-[#1e4a62]/10">
-
-              {/* Why it Matters */}
-              <div className="bg-[#f2f6fa] p-4 rounded-sm border-l-4 border-[#1e4a62]/20">
-                <div className="text-[9px] font-black uppercase tracking-widest text-[#022f42] mb-2 flex items-center">
-                  <BookOpen className="w-3.5 h-3.5 mr-1.5" /> Why This Matters to Investors
-                </div>
-                <p className="text-xs text-[#1e4a62] leading-relaxed">{gap.whyItMatters}</p>
-              </div>
-
-              {/* AI Insight */}
-              <div className="bg-[#022f42] p-4 rounded-sm border-l-4 border-[#ffd800]">
-                <div className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] mb-2 flex items-center">
-                  <Sparkles className="w-3 h-3 mr-1.5" /> AI Assisted — Personalised Recommendation
-                </div>
-                <p className="text-xs text-[#b0d0e0] leading-relaxed">{gap.aiInsight}</p>
-              </div>
-
-              {/* Recommended Action */}
-              <div>
-                <div className="text-[9px] font-black uppercase tracking-widest text-[#022f42] mb-2">Recommended Action</div>
-                <p className="text-sm text-[#1e4a62] leading-relaxed border-l-4 border-[#ffd800] pl-3">{gap.action}</p>
-              </div>
-
-              {/* Closure Checklist */}
-              <div>
-                <div className="text-[9px] font-black uppercase tracking-widest text-[#022f42] mb-3 flex items-center">
-                  <ListChecks className="w-3.5 h-3.5 mr-1.5 text-[#ffd800]" /> Gap Closure Checklist
-                </div>
-                <div className="space-y-2">
-                  {gap.checklist.map((item, i) => (
-                    <label key={i} className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={checked.includes(item)}
-                        onChange={() => toggleCheck(item)}
-                        className="mt-0.5 w-4 h-4 accent-[#022f42] shrink-0"
-                      />
-                      <span className={`text-xs leading-relaxed transition-colors ${checked.includes(item) ? "line-through text-[#1e4a62]/50" : "text-[#1e4a62] group-hover:text-[#022f42]"}`}>{item}</span>
-                    </label>
-                  ))}
-                </div>
-                {checked.length === gap.checklist.length && (
-                  <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-green-600 bg-green-50 border border-green-100 px-3 py-2 rounded-sm">
-                    <CheckCircle2 className="w-4 h-4 shrink-0" /> All actions completed — re-run your audit to update your score!
-                  </div>
-                )}
-              </div>
-
-              {/* Related Lesson */}
-              <div className="flex items-center text-xs text-[#1e4a62] font-medium border-t border-[#1e4a62]/10 pt-4">
-                <BookOpen className="w-4 h-4 mr-2 text-[#ffd800] shrink-0" />
-                <span className="font-bold mr-2 text-[#022f42]">Related Lesson:</span> {gap.lesson}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-export default function GapReportPage() {
-  const critical = allGaps.filter(g => g.severity === "critical");
-  const warnings = allGaps.filter(g => g.severity === "warning");
-  const strengths = allGaps.filter(g => g.severity === "good");
-  const totalActions = allGaps.reduce((s, g) => s + g.checklist.length, 0);
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 lg:p-10">
-
-      {/* Header */}
-      <div className="mb-8">
-        <div className="inline-block bg-[#ffd800] text-[#022f42] font-bold px-3 py-1 mb-3 text-[10px] uppercase tracking-widest">
+    <div className="max-w-5xl mx-auto p-4 lg:p-8">
+      <div className="mb-8 bg-rose-900 text-white p-8 shadow-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500 rounded-full blur-[100px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+        <div className="inline-block bg-[#ffd800] text-[#022f42] font-bold px-3 py-1 mb-4 text-[10px] uppercase tracking-widest relative z-10">
           Module 1.3
         </div>
-        <h1 className="text-3xl font-black text-[#022f42] mb-2 tracking-tight flex items-center flex-wrap gap-2">
-          Dynamic Gap Analysis Report
-          <AiBadge />
-        </h1>
-        <p className="text-[#1e4a62] text-sm leading-relaxed max-w-2xl">
-          AI-generated analysis identifying your top funding gaps, strengths, and a personalized closure checklist for each item. Expand any card to see the investor rationale, AI recommendation, and a step-by-step action plan.
+        <h1 className="text-3xl font-bold mb-3 relative z-10">Gap Analysis Report</h1>
+        <p className="text-rose-100 text-sm max-w-2xl leading-relaxed relative z-10">
+          Isolate the specific fractures in your execution. This module builds the bridge between where you are and where an institutional investor needs you to be.
         </p>
+
+        <div className="mt-8 bg-white/10 p-4 border border-white/20 relative z-10 flex items-center justify-between">
+          <div className="flex-1 mr-6">
+            <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-rose-100 mb-2">
+              <span>Report Readiness</span>
+              <span>{overallProgress}%</span>
+            </div>
+            <div className="h-2 bg-rose-950 overflow-hidden">
+              <div className="h-full bg-emerald-400 transition-all duration-1000" style={{ width: `${overallProgress}%` }}></div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={resetProgress} className="px-6 py-2.5 bg-transparent text-rose-100 font-bold uppercase tracking-widest text-xs border border-rose-100/30 hover:bg-rose-100/10 transition-colors shrink-0 flex items-center gap-2">
+              <RefreshCw className="w-3 h-3" /> Reset
+            </button>
+            <Link href={`/dashboard/gap-report/${modules.find(m => m.status === 'not_started')?.id || 'top-3'}`} className="px-6 py-2.5 bg-[#ffd800] text-[#022f42] font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors shrink-0">
+              {overallProgress === 100 ? "View Report" : "Continue"}
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* KPI Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-red-50 border border-red-200 border-t-4 border-t-red-500 p-4 rounded-sm shadow-sm text-center">
-          <div className="text-3xl font-black text-red-600">{critical.length}</div>
-          <div className="text-[9px] uppercase tracking-widest font-bold text-red-700 mt-1">Critical Gaps</div>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-200 border-t-4 border-t-yellow-500 p-4 rounded-sm shadow-sm text-center">
-          <div className="text-3xl font-black text-yellow-700">{warnings.length}</div>
-          <div className="text-[9px] uppercase tracking-widest font-bold text-yellow-700 mt-1">Improvements</div>
-        </div>
-        <div className="bg-green-50 border border-green-200 border-t-4 border-t-green-500 p-4 rounded-sm shadow-sm text-center">
-          <div className="text-3xl font-black text-green-600">{strengths.length}</div>
-          <div className="text-[9px] uppercase tracking-widest font-bold text-green-700 mt-1">Strengths</div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {modules.map((mod, index) => {
+          const href = `/dashboard/gap-report/${mod.id}`;
+
+          return (
+            <Link key={mod.id} href={href} className={`block p-5 border-2 transition-all duration-300 relative ${getStatusColor(mod.status)} hover:-translate-y-1 hover:shadow-lg cursor-pointer`}>
+               <div className="flex justify-between items-start mb-3">
+                 <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 flex items-center justify-center font-bold text-lg opacity-40">
+                     1.3.{index + 1}
+                   </div>
+                   <mod.icon className="w-6 h-6" />
+                 </div>
+                 <div className="flex items-center gap-3">
+                   <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">{mod.time}</span>
+                   {getStatusIcon(mod.status)}
+                 </div>
+               </div>
+
+               <div className="pl-11">
+                 <h3 className="font-bold mb-1">{mod.title}</h3>
+                 <p className="text-xs opacity-80">{mod.desc}</p>
+               </div>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* Tips Banner */}
-      <div className="bg-[#022f42] border-l-4 border-[#ffd800] p-4 rounded-sm mb-8 flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-[#ffd800] shrink-0 mt-0.5" />
+      <div className="mt-8 flex gap-4">
+        <Link href="/dashboard/gap-report/all" className="flex-1 p-4 bg-white border border-[rgba(2,47,66,0.1)] rounded-sm hover:border-[#022f42] transition-colors flex items-center justify-between group">
+           <div className="flex items-center gap-3">
+             <div className="bg-[#f2f6fa] p-2 rounded-sm group-hover:bg-[#022f42] group-hover:text-white transition-colors">
+               <List className="w-4 h-4" />
+             </div>
+             <div>
+               <h4 className="text-sm font-bold text-[#022f42]">Full Gap Inventory</h4>
+               <p className="text-[10px] text-[#1e4a62] opacity-60 uppercase font-bold tracking-widest">View all {">"}15 identified markers</p>
+             </div>
+           </div>
+           <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </Link>
+      </div>
+
+      <div className="mt-12 bg-white p-6 border border-[rgba(2,47,66,0.1)] flex items-start gap-4">
+        <div className="bg-rose-50 p-3 rounded-sm">
+          <AlertTriangle className="w-5 h-5 text-rose-600" />
+        </div>
         <div>
-          <div className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] mb-1">AI Assisted — How to Use This Report</div>
-          <p className="text-xs text-[#b0d0e0] leading-relaxed">
-            Click any card to expand the full investor rationale, your personalised AI recommendation, and a closure checklist.
-            Check off each action item as you complete it. Once all items are checked, re-run the relevant audit module to update your Fundability Score.
+          <h4 className="text-sm font-bold text-[#022f42] mb-1">Critical Path Isolation</h4>
+          <p className="text-xs text-[#1e4a62] leading-relaxed font-medium">
+            This module doesn&#39;t just list problems—it prioritizes them based on investor psychology. A critical gap in Module 1.1.1 (Problem) is 10x more likely to kill a deal than a warning in Module 1.1.8 (Team) at the pre-seed stage. Use this intelligence to focus your limited founder time where it actually moves the needle.
           </p>
         </div>
-      </div>
-
-      {/* Critical Gaps */}
-      {critical.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-sm font-black uppercase tracking-widest text-red-600 mb-3 flex items-center">
-            <XCircle className="w-4 h-4 mr-2" /> Critical Gaps — Address These First
-          </h2>
-          <div className="space-y-3">
-            {critical.map((gap, i) => <GapCard key={gap.id} gap={gap} index={i} />)}
-          </div>
-        </div>
-      )}
-
-      {/* Warnings */}
-      {warnings.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-sm font-black uppercase tracking-widest text-yellow-700 mb-3 flex items-center">
-            <AlertTriangle className="w-4 h-4 mr-2" /> Areas Needing Improvement
-          </h2>
-          <div className="space-y-3">
-            {warnings.map((gap, i) => <GapCard key={gap.id} gap={gap} index={i} />)}
-          </div>
-        </div>
-      )}
-
-      {/* Strengths */}
-      {strengths.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-sm font-black uppercase tracking-widest text-green-700 mb-3 flex items-center">
-            <CheckCircle2 className="w-4 h-4 mr-2" /> Your Fundability Strengths
-          </h2>
-          <div className="space-y-3">
-            {strengths.map((gap, i) => <GapCard key={gap.id} gap={gap} index={i} />)}
-          </div>
-        </div>
-      )}
-
-      {/* CTA */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-3">
-        <Link href="/dashboard/financials" className="inline-flex items-center px-8 py-4 bg-[#022f42] text-white font-bold uppercase tracking-widest text-sm border-2 border-[#022f42] hover:bg-[#ffd800] hover:text-[#022f42] hover:border-[#ffd800] transition-all">
-          Proceed to Week 2: ACTIVATE <ArrowRight className="w-4 h-4 ml-2" />
-        </Link>
-        <Link href="/dashboard/workbench" className="inline-flex items-center px-8 py-4 bg-white text-[#022f42] font-bold uppercase tracking-widest text-sm border-2 border-[#1e4a62]/20 hover:border-[#022f42] transition-all">
-          Gap Closure Workbench <ArrowRight className="w-4 h-4 ml-2" />
-        </Link>
       </div>
     </div>
   );

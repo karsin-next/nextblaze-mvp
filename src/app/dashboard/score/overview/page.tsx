@@ -132,7 +132,9 @@ export default function FundabilityScorePage() {
     ]);
 
     setIsLoaded(true);
-
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_2_overview', 'completed');
+    }
   }, []);
 
   // Sync Global Insight AI Generation post-load

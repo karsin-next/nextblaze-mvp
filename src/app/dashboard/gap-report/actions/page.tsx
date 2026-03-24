@@ -103,6 +103,9 @@ export default function RecommendedActionsPage() {
 
     setGaps(ranked);
     setIsLoaded(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_3_actions', 'completed');
+    }
   }, []);
 
   // Handlers

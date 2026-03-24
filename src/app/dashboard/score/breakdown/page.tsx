@@ -151,6 +151,9 @@ export default function KeyCriteriaBreakdownPage() {
     ]);
 
     setIsLoaded(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_2_breakdown', 'completed');
+    }
   }, []);
 
   if (!isLoaded) return null;

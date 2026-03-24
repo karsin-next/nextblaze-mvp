@@ -145,6 +145,9 @@ export default function GapDeepDivePage() {
     setTopGaps(ranked);
     if(ranked.length > 0) setActiveGapId(ranked[0].id);
     setIsLoaded(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_3_deep_dive', 'completed');
+    }
   }, []);
 
   if (!isLoaded) return null;

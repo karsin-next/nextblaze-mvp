@@ -6,7 +6,7 @@ import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Users, Info, Target, CheckCircle2, AlertCircle, ChevronDown, 
-  MapPin, Briefcase, Building2, Activity, Save, Check
+  MapPin, Briefcase, Building2, Activity, Save, Check, Sparkles, ExternalLink, ArrowLeft, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ const INDUSTRIES = ["SaaS", "E-commerce", "Manufacturing", "Healthcare", "Fintec
 const DEFAULT_CHANNELS = ["LinkedIn", "Twitter / X", "Industry conferences", "Slack communities", "Podcasts / newsletters / articles", "Referrals from existing customers"];
 
 export default function PersonaBuilderPage() {
+  const [step, setStep] = useState(1);
   const [isLoaded, setIsLoaded] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   
@@ -33,17 +34,17 @@ export default function PersonaBuilderPage() {
     step1: "",
     step2: "",
     step3: "",
+    step4: ""
   });
 
-  const [expanded, setExpanded] = useState({ s1: true, s2: true, s3: true, s4: true });
-
-  // Persistence
+  // Persistence (SOP: Privacy-First Hybrid - Local Storage)
   useEffect(() => {
     const saved = localStorage.getItem("audit_1_1_2_v2");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         setData(parsed.data || data);
+        if (parsed.step) setStep(parsed.step);
       } catch (e) {
         console.error("Failed to load audit 1.1.2 v2", e);
       }
@@ -53,9 +54,9 @@ export default function PersonaBuilderPage() {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem("audit_1_1_2_v2", JSON.stringify({ data }));
+      localStorage.setItem("audit_1_1_2_v2", JSON.stringify({ data, step }));
     }
-  }, [data, isLoaded]);
+  }, [data, step, isLoaded]);
 
   // Scoring Math
   const calculateScore = () => {
@@ -74,7 +75,7 @@ export default function PersonaBuilderPage() {
 
   const score = calculateScore();
 
-  // Handlers and Live AI Feedback
+  // Handlers and Live AI Feedback (SOP: AI Insights)
   const handleRoleChange = (val: string) => {
     setData(prev => ({ ...prev, role: val }));
     const lval = val.toLowerCase();
@@ -137,7 +138,6 @@ export default function PersonaBuilderPage() {
     }
   }, [data.channels]);
 
-  // Auto Generate Summary
   const defaultSummary = `${data.role||"[Role]"} at ${data.size||"[Company Size]"} ${data.industry||"[Industry]"} companies in ${data.geo||"[Geography]"}\n\nDaily struggle: ${data.scenario||"[Daily scenario summary]"}\n\nHires your solution to: ${data.jtbd||"[JTBD]"}\n\nBest reached via: ${data.channels.length>0 ? data.channels.map(c => `${c.name} ${c.tactic?"("+c.tactic+")":""}`).join(', ') : "[List of channels with tactics]"}`;
 
 
@@ -154,178 +154,111 @@ export default function PersonaBuilderPage() {
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
         badge="1.1.2 Who Exactly?"
-        title="Persona Builder"
+        title="Persona Builder Workshop"
         description="Investors invest in companies that know their customer so well they can draw them. A vague 'SMEs' signals a lack of focus. This module enforces specificity."
       />
 
-      {/* Floating Sticky Score Bar */}
-      <div className="sticky top-0 z-50 bg-white shadow-md border-b border-[#1e4a62]/10 p-4 mb-8 -mx-6 px-6 md:mx-0 md:rounded-sm flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="relative w-12 h-12 flex items-center justify-center">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-              <path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="4" stroke="currentColor"/>
-              <path className={`${score === 100 ? 'text-emerald-500' : 'text-[#ffd800]'} transition-all duration-500`} strokeDasharray={`${score}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="4" stroke="currentColor"/>
-            </svg>
-            <span className="absolute text-xs font-black text-[#022f42]">{score}%</span>
-          </div>
-          <div>
-            <div className="text-sm font-black text-[#022f42] uppercase tracking-widest">Persona Completeness</div>
-            <div className={`text-xs ${score === 100 ? 'text-emerald-600 font-bold' : 'text-[#1e4a62]'}`}>
-              {score === 100 ? 'Investors will see you truly understand your market.' : 'Complete the fields below to reach 100%'}
-            </div>
-          </div>
+      {/* Progress Bar (SOP: Clickable Navigation) */}
+      <div className="bg-white shadow-sm border border-gray-100 p-4 mb-6 rounded-sm flex items-center justify-between">
+        <div className="flex gap-2">
+          {[1,2,3,4].map(i => (
+            <button 
+              key={i} 
+              onClick={() => setStep(i)}
+              className={`h-2 w-12 md:w-24 rounded-full transition-all ${step >= i ? 'bg-[#ffd800]' : 'bg-gray-200'} hover:opacity-80 cursor-pointer`} 
+              title={`Jump to Step ${i}`}
+            />
+          ))}
         </div>
-        <button onClick={handleSaveAndContinue} disabled={score < 50} className={`hidden md:flex px-6 py-2.5 font-bold uppercase tracking-widest transition-all rounded-sm items-center gap-2 text-xs shadow-sm ${score >= 50 ? (savedSuccess ? 'bg-green-500 text-white' : 'bg-[#022f42] hover:bg-[#1b4f68] text-white') : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
-          {savedSuccess ? <Check className="w-4 h-4"/> : <Save className="w-4 h-4"/>} {savedSuccess ? 'Saved' : 'Save & Continue'}
-        </button>
+        <span className="text-sm font-bold text-[#022f42] uppercase tracking-widest">Step {step} of 4</span>
       </div>
 
-      <div className="space-y-6">
-
-        {/* STEP 1 */}
-        <div className="bg-white shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border border-[#1e4a62]/10 rounded-sm overflow-hidden">
-          <button onClick={() => setExpanded({...expanded, s1: !expanded.s1})} className="w-full p-6 md:p-8 flex items-center justify-between hover:bg-gray-50 transition-colors text-left border-l-[4px] border-l-[#022f42]">
-            <div>
-               <h2 className="text-xl font-black text-[#022f42] flex items-center gap-2">
-                 Step 1: Who Is Your Customer?
-               </h2>
-               <p className="text-sm text-[#1e4a62] mt-1">Demographic Foundation</p>
-            </div>
-            <ChevronDown className={`w-6 h-6 text-[#1e4a62] transition-transform ${expanded.s1 ? 'rotate-180' : ''}`} />
-          </button>
-          
-          <AnimatePresence>
-            {expanded.s1 && (
-              <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  
-                  <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-8">
+        
+        {/* Main Interactive Area */}
+        <div className="flex-1">
+          <AnimatePresence mode="wait">
+            
+            {/* STEP 1: Demographic */}
+            {step === 1 && (
+              <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2">Step 1: Who Is Your Customer?</h2>
+                <p className="text-[#1e4a62] mb-8 text-sm uppercase tracking-widest font-bold">Demographic Foundation</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm">
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
                       <span className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-emerald-500"/> Job Title / Role</span>
-                      <span title="Investors want to know who signs the cheque. Be specific about the decision-maker."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <input type="text" value={data.role} onChange={e => handleRoleChange(e.target.value)} placeholder="e.g. CFO, VP of Logistics" className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium" />
                   </div>
 
-                  <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
-                    <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span className="flex items-center gap-2"><Building2 className="w-4 h-4 text-blue-500"/> Company Size & Industry</span>
-                      <span title="Investors assess whether your target market is large enough to scale."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
-                    </label>
-                    <div className="space-y-3">
-                      <select value={data.size} onChange={e => setData({...data, size: e.target.value})} className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm outline-none text-sm font-medium bg-white">
-                        <option value="">Select Size...</option>
-                        {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                      <select value={data.industry} onChange={e => setData({...data, industry: e.target.value})} className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm outline-none text-sm font-medium bg-white">
-                        <option value="">Select Industry...</option>
-                        {INDUSTRIES.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm">
+                  <div className="bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm">
                     <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
                       <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-rose-500"/> Geography</span>
-                      <span title="If you're targeting multiple regions, investors will ask about go-to-market readiness in each."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                     </label>
                     <input type="text" value={data.geo} onChange={e => setData({...data, geo: e.target.value})} placeholder="e.g. North America, Global" className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium" />
                   </div>
                 </div>
 
-                {aiFlags.step1 && (
-                  <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
-                    <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <AIAssistedInsight content={aiFlags.step1} />
+                <div className="bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm mb-6">
+                  <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-blue-500"/> Company Size & Industry
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select value={data.size} onChange={e => setData({...data, size: e.target.value})} className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm outline-none text-sm font-medium bg-white">
+                      <option value="">Select Size...</option>
+                      {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <select value={data.industry} onChange={e => setData({...data, industry: e.target.value})} className="w-full p-3 border-2 border-[#1e4a62]/10 rounded-sm outline-none text-sm font-medium bg-white">
+                      <option value="">Select Industry...</option>
+                      {INDUSTRIES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
                   </div>
-                )}
+                </div>
               </motion.div>
             )}
-          </AnimatePresence>
-        </div>
 
-        {/* STEP 2 */}
-        <div className="bg-white shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border border-[#1e4a62]/10 rounded-sm overflow-hidden">
-          <button onClick={() => setExpanded({...expanded, s2: !expanded.s2})} className="w-full p-6 md:p-8 flex items-center justify-between hover:bg-gray-50 transition-colors text-left border-l-[4px] border-l-[#1e4a62]">
-            <div>
-               <h2 className="text-xl font-black text-[#022f42] flex items-center gap-2">
-                 Step 2: What Does Their Day Look Like?
-               </h2>
-               <p className="text-sm text-[#1e4a62] mt-1">Psychographic Depth</p>
-            </div>
-            <ChevronDown className={`w-6 h-6 text-[#1e4a62] transition-transform ${expanded.s2 ? 'rotate-180' : ''}`} />
-          </button>
-          
-          <AnimatePresence>
-            {expanded.s2 && (
-              <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  
+            {/* STEP 2: Psychographic */}
+            {step === 2 && (
+              <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2">Step 2: What Does Their Day Look Like?</h2>
+                <p className="text-[#1e4a62] mb-8 text-sm uppercase tracking-widest font-bold">Psychographic Depth</p>
+                
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span>Daily Scenario</span>
-                      <span title="Paint a vivid picture. The more specific, the more credible your understanding."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
-                    </label>
+                    <label className="block text-sm font-bold text-[#022f42] mb-3">Daily Scenario (The Struggle)</label>
                     <textarea 
                       value={data.scenario} 
                       onChange={e => handleScenarioChange(e.target.value)} 
                       maxLength={300}
-                      placeholder="Example: A founder wakes up, checks Stripe, manually updates their runway spreadsheet, spends 2 hours anxiously preparing before an investor call..." 
+                      placeholder="Describe the moment of pain..." 
                       className="w-full p-4 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium min-h-[140px] resize-none" 
                     />
                     <div className="text-right text-xs text-gray-400 mt-1">{data.scenario.length}/300</div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-[#022f42] mb-3 flex items-center justify-between">
-                      <span>Job-to-Be-Done (JTBD)</span>
-                      <span title="The JTBD is the functional job they hire your product to do. Investors use this to assess product-market fit."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
-                    </label>
-                    <p className="text-xs text-[#1e4a62] mb-3">What is the core measurable outcome they are trying to achieve?</p>
+                    <label className="block text-sm font-bold text-[#022f42] mb-3">Job-to-Be-Done (JTBD)</label>
                     <input 
                       type="text"
                       value={data.jtbd} 
                       onChange={e => handleJTBDChange(e.target.value)} 
                       maxLength={150}
-                      placeholder="e.g. 'To know exactly how much runway they have without manual math.'" 
+                      placeholder="What is the core measurable outcome they hire you for?" 
                       className="w-full p-4 border-2 border-[#1e4a62]/10 rounded-sm focus:border-[#ffd800] outline-none text-sm font-medium" 
                     />
-                    <div className="text-right text-xs text-gray-400 mt-1">{data.jtbd.length}/150</div>
                   </div>
-
                 </div>
-
-                {aiFlags.step2 && (
-                  <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
-                    <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <AIAssistedInsight content={aiFlags.step2} />
-                  </div>
-                )}
               </motion.div>
             )}
-          </AnimatePresence>
-        </div>
 
-        {/* STEP 3 */}
-        <div className="bg-white shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border border-[#1e4a62]/10 rounded-sm overflow-hidden">
-          <button onClick={() => setExpanded({...expanded, s3: !expanded.s3})} className="w-full p-6 md:p-8 flex items-center justify-between hover:bg-gray-50 transition-colors text-left border-l-[4px] border-l-indigo-500">
-            <div>
-               <h2 className="text-xl font-black text-[#022f42] flex items-center gap-2">
-                 Step 3: How Do You Reach Them?
-               </h2>
-               <p className="text-sm text-[#1e4a62] mt-1">Go-to-Market Clarity</p>
-            </div>
-            <ChevronDown className={`w-6 h-6 text-[#1e4a62] transition-transform ${expanded.s3 ? 'rotate-180' : ''}`} />
-          </button>
-          
-          <AnimatePresence>
-            {expanded.s3 && (
-              <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
-                <label className="block text-sm font-bold text-[#022f42] mb-6 flex items-center justify-between">
-                  How will you reach this persona?
-                  <span title="Investors want to see that you have a realistic, cost-effective way to acquire customers. Cold outreach to the wrong channel wastes money."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
-                </label>
-
+            {/* STEP 3: GTM */}
+            {step === 3 && (
+              <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-indigo-500 rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-2">Step 3: How Do You Reach Them?</h2>
+                <p className="text-[#1e4a62] mb-8 text-sm uppercase tracking-widest font-bold">Go-to-Market Clarity</p>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {DEFAULT_CHANNELS.map(ch => {
                     const isSelected = data.channels.some(c => c.name === ch);
@@ -338,77 +271,111 @@ export default function PersonaBuilderPage() {
                           <span className={`font-bold text-sm ${isSelected ? 'text-indigo-900' : 'text-[#022f42]'}`}>{ch}</span>
                         </label>
                         
-                        <AnimatePresence>
-                          {isSelected && (
-                            <motion.div initial={{height:0, opacity:0, marginTop:0}} animate={{height:'auto', opacity:1, marginTop:12}} exit={{height:0, opacity:0, marginTop:0}}>
-                              <div className="text-xs font-bold text-indigo-800 mb-1 ml-8">How will you reach them here?</div>
-                              <input 
-                                type="text"
-                                value={channelData?.tactic || ""}
-                                onChange={(e) => updateTactic(ch, e.target.value)}
-                                placeholder="e.g. We will sponsor the top 3 SaaS podcasts"
-                                className="w-full ml-8 pb-1 border-b border-indigo-300 bg-transparent text-sm outline-none focus:border-indigo-600 font-medium placeholder:text-indigo-300"
-                                style={{ width: 'calc(100% - 2rem)'}}
-                              />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        {isSelected && (
+                          <div className="mt-3 ml-8">
+                            <input 
+                              type="text"
+                              value={channelData?.tactic || ""}
+                              onChange={(e) => updateTactic(ch, e.target.value)}
+                              placeholder="Add specific tactic..."
+                              className="w-full pb-1 border-b border-indigo-300 bg-transparent text-sm outline-none focus:border-indigo-600 font-medium"
+                            />
+                          </div>
+                        )}
                       </div>
                     )
                   })}
                 </div>
-
-                {aiFlags.step3 && (
-                  <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-sm">
-                    <Activity className="w-5 h-5 mt-0.5 text-emerald-500 shrink-0" />
-                    <AIAssistedInsight content={aiFlags.step3} />
-                  </div>
-                )}
               </motion.div>
             )}
-          </AnimatePresence>
-        </div>
 
-        {/* STEP 4 */}
-        <div className="bg-white shadow-[0_15px_30px_-15px_rgba(2,47,66,0.1)] border border-[#1e4a62]/10 rounded-sm overflow-hidden">
-          <button onClick={() => setExpanded({...expanded, s4: !expanded.s4})} className="w-full p-6 md:p-8 flex items-center justify-between hover:bg-gray-50 transition-colors text-left border-l-[4px] border-l-[#ffd800]">
-            <div>
-               <h2 className="text-xl font-black text-[#022f42] flex items-center gap-2">
-                 Step 4: Summary & Investor Statement
-               </h2>
-               <p className="text-sm text-[#1e4a62] mt-1">Review the final output format.</p>
-            </div>
-            <ChevronDown className={`w-6 h-6 text-[#1e4a62] transition-transform ${expanded.s4 ? 'rotate-180' : ''}`} />
-          </button>
-          
-          <AnimatePresence>
-            {expanded.s4 && (
-              <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className="p-6 md:p-8 border-t border-gray-100 bg-gray-50/30">
-                <div className="bg-[#f2f6fa] border border-[#1e4a62]/10 p-6 rounded-sm mb-6 relative hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-center mb-3">
-                    <label className="text-xs font-black text-[#1e4a62] uppercase tracking-widest">Generated Preview</label>
-                    {data.uvpOverride !== undefined && (
-                      <button onClick={() => setData({...data, uvpOverride: undefined})} className="text-xs font-bold text-indigo-500 hover:text-indigo-700">Restore Auto-Sync</button>
-                    )}
-                  </div>
-                  
+            {/* STEP 4: Summary */}
+            {step === 4 && (
+              <motion.div key="s4" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-emerald-500 rounded-sm">
+                <h2 className="text-2xl font-black text-[#022f42] mb-4 text-center">Summary & Investor Statement</h2>
+                
+                <div className="bg-[#f2f6fa] border-2 border-dashed border-[#1e4a62]/20 p-6 rounded-sm mb-8">
                   <textarea 
                     value={data.uvpOverride !== undefined ? data.uvpOverride : defaultSummary}
                     onChange={e => setData({...data, uvpOverride: e.target.value})}
-                    className="w-full bg-white p-5 border border-gray-200 rounded-sm outline-none text-[#022f42] font-medium leading-relaxed min-h-[160px]"
+                    className="w-full bg-white p-5 border-2 border-[#1e4a62]/10 rounded-sm focus:border-emerald-500 outline-none text-[#022f42] font-medium leading-relaxed min-h-[220px] resize-none"
                   />
                 </div>
 
-                <div className="flex justify-center mt-8">
+                <div className="flex justify-center">
                   <button onClick={handleSaveAndContinue} disabled={score < 50} className={`px-12 py-5 font-black uppercase tracking-widest transition-all rounded-sm flex items-center gap-2 shadow-lg ${score >= 50 ? (savedSuccess ? 'bg-green-500 text-white' : 'bg-[#ffd800] hover:bg-[#ffe24d] text-[#022f42]') : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
-                    {savedSuccess ? <><Check className="w-5 h-5"/> Saved Component</> : <><Save className="w-5 h-5"/> Save Persona & Continue</>}
+                    {savedSuccess ? <Check className="w-5 h-5"/> : <Save className="w-5 h-5"/>} {savedSuccess ? 'Saved Persona' : 'Save & Continue'}
                   </button>
                 </div>
               </motion.div>
             )}
+
           </AnimatePresence>
+
+          {/* Navigation Controls */}
+          <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
+            <button
+              onClick={() => setStep(s => Math.max(1, s - 1))}
+              className={`font-bold text-sm tracking-widest uppercase flex items-center gap-2 transition-colors ${step === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[#1e4a62] hover:text-[#022f42]'}`}
+              disabled={step === 1}
+            >
+              <ArrowLeft className="w-4 h-4"/> Back
+            </button>
+            
+            {step < 4 && (
+              <button
+                onClick={() => setStep(s => Math.min(4, s + 1))}
+                className="bg-[#022f42] text-white px-8 py-3 font-bold text-sm tracking-widest uppercase rounded-sm hover:bg-[#1b4f68] transition-colors flex items-center gap-2 shadow-md"
+              >
+                Next Step <ArrowRight className="w-4 h-4"/>
+              </button>
+            )}
+          </div>
         </div>
 
+        {/* ADDITIONAL Column (SOP: AI & Academy) */}
+        <div className="w-full lg:w-80 space-y-6">
+          <div className="bg-[#022f42] text-white p-6 rounded-sm shadow-lg border-b-4 border-[#ffd800]">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-[#ffd800]" />
+              <h3 className="font-black uppercase tracking-widest text-xs">ADDITIONAL INSIGHTS</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-white/10 p-4 rounded-sm border border-white/10">
+                <p className="text-sm leading-relaxed text-blue-50 font-medium">
+                  {step === 1 ? (aiFlags.step1 || "Specific roles (e.g. 'CFO') are 10x more fundable than general 'users'.") : 
+                   step === 2 ? (aiFlags.step2 || "Understanding the 'Daily Scenario' proves you have spoken to customers.") :
+                   step === 3 ? (aiFlags.step3 || "Investors look for CAC (Acquisition Cost) clarity here.") :
+                   "A clear summary is the heartbeat of your pitch deck."}
+                </p>
+              </div>
+
+              <hr className="border-white/10" />
+
+              <div className="group">
+                <Link 
+                  href="/academy/how-to-create-a-customer-persona-that-investors-believe" 
+                  className="flex items-center justify-between text-[#ffd800] font-bold text-xs uppercase tracking-widest hover:text-white transition-colors text-left"
+                >
+                  <span>Education: Credible Personas →</span>
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                </Link>
+                <p className="text-[10px] text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Academy: Creating Personas VCs believe</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 border border-gray-100 shadow-sm rounded-sm">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">Persona Gauge</h4>
+            <div className="flex items-center gap-3">
+              <div className="text-2xl font-black text-[#022f42]">{score}%</div>
+              <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div className={`h-full transition-all duration-500 ${score === 100 ? 'bg-emerald-500' : 'bg-[#ffd800]'}`} style={{width: `${score}%`}} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

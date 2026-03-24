@@ -6,7 +6,7 @@ import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ArrowLeft, Shield, CheckCircle2, AlertCircle, Info, 
-  Target, Crosshair, Sparkles, Plus, Trash2, Activity, Link as LinkIcon, Save, Check
+  Target, Crosshair, Sparkles, Plus, Trash2, Activity, Link as LinkIcon, Save, Check, ExternalLink
 } from "lucide-react";
 import Link from "next/link";
 
@@ -39,7 +39,7 @@ export default function CompetitorAnalysisPage() {
 
   const [aiFlags, setAiFlags] = useState({ step1: "", step2: "", step3: "", step4: "", step5: "" });
 
-  // Persistence
+  // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
     const saved = localStorage.getItem("audit_1_1_3_v2");
     if (saved) {
@@ -187,14 +187,19 @@ export default function CompetitorAnalysisPage() {
         description="Understand the competitive landscape, articulate a clear differentiator, and identify sustainable advantages (moats) that protect your business."
       />
 
-      {/* Progress Bar */}
+      {/* Progress Bar (SOP: Clickable Navigation) */}
       <div className="bg-white shadow-sm border border-gray-100 p-4 mb-6 rounded-sm flex items-center justify-between">
         <div className="flex gap-2">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-indigo-500' : 'bg-gray-200'}`} />
+            <button 
+              key={i} 
+              onClick={() => setStep(i)}
+              className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-[#ffd800]' : 'bg-gray-200'} hover:opacity-80 cursor-pointer`} 
+              title={`Jump to Step ${i}`}
+            />
           ))}
         </div>
-        <span className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest">Workshop Step {step} of 5</span>
+        <span className="text-sm font-bold text-[#022f42] uppercase tracking-widest">Step {step} of 5</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -303,7 +308,7 @@ export default function CompetitorAnalysisPage() {
                 <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">
                   Why Will Customers Choose You? <span title="Be intellectually honest. Don't claim you win on every dimension."><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                 </h2>
-                <p className="text-[#1e4a62] mb-8 text-sm">Compare your startup across key dimensions. Being cheaper alone is rarely a sustainable moat.</p>
+                <p className="text-[#1e4a62] mb-8 text-sm">Compare your startup across key dimensions. Being cheaper alone is rarely a sustainable advantage.</p>
                 
                 <div className="overflow-x-auto mb-8 relative border border-gray-200 rounded-sm">
                   <table className="w-full text-sm text-left">
@@ -466,7 +471,7 @@ export default function CompetitorAnalysisPage() {
           </AnimatePresence>
 
           {/* Navigation Controls */}
-          {step < 5 && (
+          {step < 5 ? (
             <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
               <button
                 onClick={() => setStep(s => Math.max(1, s - 1))}
@@ -482,7 +487,61 @@ export default function CompetitorAnalysisPage() {
                 Next Workshop Step <ArrowRight className="w-4 h-4"/>
               </button>
             </div>
+          ) : (
+             <div className="mt-8 flex items-center justify-start border-t border-gray-200 pt-6">
+               <button
+                 onClick={() => setStep(s => Math.max(1, s - 1))}
+                 className="font-bold text-sm tracking-widest uppercase flex items-center gap-2 text-[#1e4a62] hover:text-[#022f42]"
+               >
+                 <ArrowLeft className="w-4 h-4"/> Back
+               </button>
+             </div>
           )}
+        </div>
+
+        {/* ADDITIONAL Column (SOP: AI & Academy) */}
+        <div className="w-full lg:w-80 space-y-6">
+          <div className="bg-[#022f42] text-white p-6 rounded-sm shadow-lg border-b-4 border-[#ffd800]">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-[#ffd800]" />
+              <h3 className="font-black uppercase tracking-widest text-xs">ADDITIONAL INSIGHTS</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-white/10 p-4 rounded-sm border border-white/10">
+                <p className="text-sm leading-relaxed text-blue-50 font-medium">
+                  {step === 1 ? (aiFlags.step1 || "Investors look for how you handle 'Indirect' competition. It shows strategic depth.") : 
+                   step === 2 ? (aiFlags.step2 || "Whitespace is good, but isolation is bad. Proximity to incumbents can validate your market.") :
+                   step === 3 ? (aiFlags.step3 || "Winning on 'Price' is a race to the bottom. Win on 'Speed' or 'Effectiveness'.") :
+                   step === 4 ? (aiFlags.step4 || "A 'Moat' isn't just a feature; it's a structural barrier to entry.") :
+                   "Your UVP is your identity. It must be specific, measurable, and defensible."}
+                </p>
+              </div>
+
+              <hr className="border-white/10" />
+
+              <div className="group">
+                <Link 
+                  href="/academy/the-competitive-landscape-vs-the-monopoly-gap" 
+                  className="flex items-center justify-between text-[#ffd800] font-bold text-xs uppercase tracking-widest hover:text-white transition-colors text-left"
+                >
+                  <span>Education: Monopoly Gap →</span>
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                </Link>
+                <p className="text-[10px] text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Academy: Escaping Competition</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 border border-gray-100 shadow-sm rounded-sm">
+             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">Analysis Depth</h4>
+             <div className="flex items-center gap-3">
+               <div className="text-2xl font-black text-[#022f42]">{data.competitors.length > 0 ? 60 + (data.competitors.length * 10) : 20}%</div>
+               <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                 <div className="h-full bg-[#ffd800] transition-all duration-500" style={{width: `${data.competitors.length > 0 ? 60 + (data.competitors.length * 10) : 20}%`}} />
+               </div>
+             </div>
+          </div>
         </div>
 
       </div>

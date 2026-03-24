@@ -166,6 +166,9 @@ export default function BenchmarkComparisonPage() {
     ]);
 
     setIsLoaded(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_2_benchmark', 'completed');
+    }
   }, [industry, stage]);
 
   if (!isLoaded) return null;

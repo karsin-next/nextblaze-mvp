@@ -45,29 +45,25 @@ export default function LandingPage() {
                 ref={videoRef}
                 autoPlay 
                 muted={isMuted}
-                loop 
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover opacity-60"
               >
                 <source src="/assets/videos/hero-placeholder.mp4" type="video/mp4" />
                 <source src="/assets/videos/hero.mp4" type="video/mp4" />
               </video>
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute top-4 right-4 z-10">
                 <button 
                   onClick={toggleAudio}
-                  className="w-20 h-20 rounded-full bg-[#ffd800]/20 flex flex-col items-center justify-center cursor-pointer hover:bg-[#ffd800]/40 transition-all backdrop-blur-md border-2 border-[#ffd800]/50 group-hover:scale-110 shadow-2xl z-10"
+                  className="p-3 rounded-full bg-[#022f42]/40 hover:bg-[#022f42]/60 flex items-center justify-center cursor-pointer transition-all backdrop-blur-md border border-white/20 shadow-lg group/btn"
                 >
                   {isMuted ? (
-                    <>
-                      <VolumeX className="w-10 h-10 text-[#ffd800] mb-1" />
-                      <span className="text-[10px] font-black text-[#ffd800] uppercase tracking-widest">Unmute</span>
-                    </>
+                    <VolumeX className="w-4 h-4 text-[#ffd800]" />
                   ) : (
-                    <>
-                      <Volume2 className="w-10 h-10 text-[#ffd800] mb-1" />
-                      <span className="text-[10px] font-black text-[#ffd800] uppercase tracking-widest">Sound On</span>
-                    </>
+                    <Volume2 className="w-4 h-4 text-[#ffd800]" />
                   )}
+                  <span className="max-w-0 overflow-hidden group-hover/btn:max-w-xs group-hover/btn:ml-2 transition-all duration-300 text-[10px] font-black text-[#ffd800] uppercase tracking-widest whitespace-nowrap">
+                    {isMuted ? "Unmute" : "Sound On"}
+                  </span>
                 </button>
               </div>
               <div className="absolute bottom-4 right-4 text-[#ffd800] font-black text-[10px] tracking-[0.3em] opacity-40 uppercase z-0">NextBlaze Preview</div>

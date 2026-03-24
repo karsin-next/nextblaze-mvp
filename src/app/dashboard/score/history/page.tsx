@@ -42,6 +42,9 @@ export default function ScoreHistoryPage() {
       { name: "Team", score: tScore }
     ]);
     setIsLoaded(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('audit_1_2_history', 'completed');
+    }
   }, []);
 
   if (!isLoaded) return null;

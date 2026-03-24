@@ -6,7 +6,7 @@ import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ArrowLeft, Lightbulb, AlertCircle, CheckCircle2, ChevronRight, 
-  Info, ExternalLink, Activity, Target, Save, Check
+  Info, ExternalLink, Activity, Target, Save, Check, Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -146,14 +146,19 @@ export default function PainExplorerPage() {
         description="Core Philosophy: Investors don't invest in solutions; they invest in problems worth solving. This module ensures you can communicate your problem with extreme rigor."
       />
 
-      {/* Progress Bar */}
+      {/* Progress Bar (SOP: Clickable Navigation) */}
       <div className="bg-white shadow-sm border border-gray-100 p-4 mb-6 rounded-sm flex items-center justify-between">
         <div className="flex gap-2">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-[#ffd800]' : 'bg-gray-200'}`} />
+            <button 
+              key={i} 
+              onClick={() => setStep(i)}
+              className={`h-2 w-12 md:w-20 rounded-full transition-all ${step >= i ? 'bg-[#ffd800]' : 'bg-gray-200'} hover:opacity-80 cursor-pointer`} 
+              title={`Jump to Step ${i}`}
+            />
           ))}
         </div>
-        <span className="text-sm font-bold text-[#1e4a62] uppercase tracking-widest">Step {step} of 5</span>
+        <span className="text-sm font-bold text-[#022f42] uppercase tracking-widest">Step {step} of 5</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -403,8 +408,51 @@ export default function PainExplorerPage() {
               </button>
             </div>
           )}
-        </div>
+        </div> {/* End flex-1 */}
 
+        {/* ADDITIONAL Column (SOP: AI & Education) */}
+        <div className="w-full lg:w-80 space-y-6">
+          <div className="bg-[#022f42] text-white p-6 rounded-sm shadow-lg border-b-4 border-[#ffd800]">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-[#ffd800]" />
+              <h3 className="font-black uppercase tracking-widest text-xs">ADDITIONAL INSIGHTS</h3>
+            </div>
+            
+            {/* Contextual AI Insight */}
+            <div className="space-y-4">
+              {aiFlags[`step${step}` as keyof typeof aiFlags] ? (
+                <div className="bg-white/10 p-4 rounded-sm border border-white/10">
+                  <p className="text-sm leading-relaxed text-blue-50 font-medium">
+                    {aiFlags[`step${step}` as keyof typeof aiFlags]}
+                  </p>
+                </div>
+              ) : (
+                <div className="text-gray-400 text-xs italic">Complete the inputs to see live AI feedback.</div>
+              )}
+
+              <hr className="border-white/10" />
+
+              {/* Academy Link (SOP: Title -> Slug mapping) */}
+              <div className="group">
+                <Link 
+                  href="/academy/the-problem-slide-that-wins" 
+                  className="flex items-center justify-between text-[#ffd800] font-bold text-xs uppercase tracking-widest hover:text-white transition-colors"
+                >
+                  <span>Education: The Problem Slide →</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+                <p className="text-[10px] text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">View "The Problem Slide That Wins" in Academy</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 border border-gray-100 shadow-sm rounded-sm">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">Module Context</h4>
+            <p className="text-xs text-[#1e4a62] leading-relaxed">
+              Companies fail not because they couldn&apos;t build a product, but because they built something nobody wanted. This module defines the &quot;Who&quot; and the &quot;How Much&quot; of the pain.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

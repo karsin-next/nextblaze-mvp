@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { Search, ChevronRight, ShieldCheck, Download, AlertCircle, Trash2, Edit, Activity, Users, Database, X, Save, LineChart, Building } from "lucide-react";
+import { Search, ChevronRight, ShieldCheck, Download, AlertCircle, Trash2, Edit, Activity, Users, Database, X, Save, LineChart, Building, BookOpen, FileText, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import articlesData from "@/data/academy_articles.json";
 
 // Constant Arrays for Editor Overrides
 const SECTORS = [
@@ -17,14 +18,23 @@ const STAGES = ["Pre-Seed", "Seed", "Series A", "Series B+"];
 
 function AdminDashboardContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const currentView = searchParams.get('view') || 'startups';
-  const crmMode = currentView as "startups" | "investors";
+  const crmMode = currentView as "startups" | "investors" | "academy";
 
   const [startups, setStartups] = useState<any[]>([]);
   const [investors, setInvestors] = useState<any[]>([]);
   
   // Editorial State Hook
   const [editEntity, setEditEntity] = useState<any>(null);
+  
+  // Academy Editor State
+  const [editArticle, setEditArticle] = useState<any>(null);
+  const [markdown, setMarkdown] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editSlug, setEditSlug] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
 
   const loadData = async () => {
     try {
@@ -171,6 +181,55 @@ function AdminDashboardContent() {
     loadData();
   };
 
+  const openAcademyEditor = async (article: any) => {
+    setEditArticle(article);
+    setEditTitle(article.title);
+    setEditSlug(article.slug);
+    setSaveStatus("idle");
+    try {
+      const res = await fetch(`/api/admin/academy?slug=${article.slug}`);
+      const data = await res.json();
+      setMarkdown(data.content);
+    } catch (e) {
+      console.error("Failed to load article content", e);
+      setMarkdown(`# ${article.title}\n\nFailed to load content.`);
+    }
+  };
+
+  const saveAcademyArticle = async () => {
+    if (!editArticle) return;
+    setIsSaving(true);
+    setSaveStatus("saving");
+    try {
+      const res = await fetch('/api/admin/academy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          slug: editArticle.slug, 
+          content: markdown,
+          title: editTitle,
+          newSlug: editSlug
+        })
+      });
+      const result = await res.json();
+      if (res.ok) {
+        setSaveStatus("success");
+        // If slug changed, we need to update the local article list or just reload
+        if (result.newSlug) {
+          window.location.reload(); // Simplest way to sync all metadata
+        }
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        alert(result.error || "Failed to save");
+      }
+    } catch (e) {
+      setSaveStatus("error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const totalRegisters = startups.length;
   const activeDiagnostics = startups.filter(s => s.score > 0).length;
   const verifiedPipeline = startups.filter(s => s.score >= 80).length;
@@ -229,13 +288,128 @@ function AdminDashboardContent() {
         )}
       </AnimatePresence>
 
+      {/* Academy Editor Modal */}
+      <AnimatePresence>
+        {editArticle && (
+          <div className="fixed inset-0 z-[100] bg-[#022f42]/90 backdrop-blur-md flex items-center justify-center p-0 md:p-8">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#f2f6fa] w-full h-full max-w-6xl shadow-2xl overflow-hidden flex flex-col border border-[#1e4a62]/20 rounded-sm"
+            >
+              {/* Modal Header */}
+              <div className="bg-[#022f42] p-4 flex justify-between items-center text-white border-b border-white/10 shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="text-[10px] uppercase font-black tracking-widest text-[#ffd800] flex items-center bg-white/10 px-3 py-1.5 rounded-sm">
+                    <BookOpen className="w-3.5 h-3.5 mr-2" /> Academy CMS
+                  </div>
+                  <div className="flex flex-col">
+                    <input 
+                      type="text" 
+                      value={editTitle} 
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="bg-transparent border-none outline-none text-white text-sm font-bold w-[400px] focus:ring-1 focus:ring-[#ffd800]/50 rounded-sm px-2 py-1"
+                      placeholder="Article Title"
+                    />
+                    <div className="flex items-center gap-2 pl-2">
+                       <span className="text-[8px] font-bold uppercase tracking-widest opacity-40">URL Slug:</span>
+                       <input 
+                        type="text" 
+                        value={editSlug} 
+                        onChange={(e) => setEditSlug(e.target.value)}
+                        className="bg-transparent border-none outline-none text-[#ffd800] text-[10px] font-black w-[250px] focus:ring-1 focus:ring-[#ffd800]/50 rounded-sm px-1"
+                        placeholder="article-slug"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center text-[10px] font-black uppercase tracking-widest mr-4">
+                    {saveStatus === "saving" && <span className="text-[#ffd800] animate-pulse">Syncing...</span>}
+                    {saveStatus === "success" && <span className="text-green-400 flex items-center"><CheckCircle className="w-3 h-3 mr-1" /> Published</span>}
+                    {saveStatus === "error" && <span className="text-red-400">Sync Failure</span>}
+                  </div>
+                  
+                  <button 
+                    onClick={saveAcademyArticle}
+                    disabled={isSaving}
+                    className="bg-[#ffd800] text-[#022f42] px-6 py-2 rounded-sm font-black uppercase tracking-widest text-[10px] hover:bg-white transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <Save className="w-3.5 h-3.5" /> {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button onClick={() => setEditArticle(null)} className="text-white/60 hover:text-white p-2">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Editor Body */}
+              <div className="flex-1 flex overflow-hidden">
+                {/* Markdown Input */}
+                <div className="flex-1 flex flex-col bg-white border-r border-[#1e4a62]/10">
+                  <div className="bg-[#f2f6fa] px-4 py-2 border-b border-[#1e4a62]/10 text-[9px] font-bold uppercase tracking-widest text-[#1e4a62] flex justify-between">
+                    <span>Markdown Source</span>
+                    <span>UTF-8 Engine</span>
+                  </div>
+                  <textarea
+                    value={markdown}
+                    onChange={(e) => setMarkdown(e.target.value)}
+                    className="flex-1 p-8 outline-none font-mono text-sm leading-relaxed text-[#022f42] resize-none selection:bg-[#ffd800]/30"
+                    placeholder="Start writing the methodology guide..."
+                  />
+                </div>
+
+                {/* Preview Panel */}
+                <div className="flex-1 flex flex-col bg-[#f2f6fa] overflow-hidden hidden lg:flex">
+                  <div className="bg-white/50 px-4 py-2 border-b border-[#1e4a62]/10 text-[9px] font-bold uppercase tracking-widest text-[#1e4a62] flex justify-between">
+                    <span>Live Preview</span>
+                    <span>@tailwindcss/typography</span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-12 bg-white m-8 shadow-inner border border-[#1e4a62]/5 rounded-sm">
+                    <div className="prose prose-blue max-w-none prose-sm">
+                      {/* Very simple markdown-to-text preview until marked is confirmed */}
+                      <div className="whitespace-pre-wrap font-sans text-[#1e4a62]">
+                        {markdown}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer / Meta */}
+              <div className="bg-white p-3 border-t border-[#1e4a62]/10 flex justify-between items-center shrink-0">
+                <div className="flex items-center gap-6">
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-[#1e4a62]/60">Source Module</span>
+                    <span className="text-[10px] font-black text-[#022f42]">{editArticle.source_module}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-[#1e4a62]/60">Target Slug</span>
+                    <span className="text-[10px] font-black text-[#022f42]">{editArticle.slug}</span>
+                  </div>
+                </div>
+                <div className="text-[9px] text-[#1e4a62]/40 font-bold uppercase tracking-widest italic">
+                  Changes manifest immediately on re-render.
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="mb-8 flex flex-col lg:flex-row justify-between lg:items-end border-b border-[#1e4a62]/10 pb-6 gap-6">
         <div>
           <h1 className="text-3xl font-black mb-2 text-[#022f42] tracking-tight flex items-center">
-            {crmMode === "startups" ? <Activity className="w-6 h-6 mr-3 text-[#1e4a62]" /> : <Building className="w-6 h-6 mr-3 text-[#1e4a62]" />}
-            {crmMode === "startups" ? "Startups Master Database" : "Investor Master Database"}
+            {crmMode === "startups" ? <Activity className="w-6 h-6 mr-3 text-[#1e4a62]" /> : crmMode === "investors" ? <Building className="w-6 h-6 mr-3 text-[#1e4a62]" /> : <BookOpen className="w-6 h-6 mr-3 text-[#1e4a62]" />}
+            {crmMode === "startups" ? "Startups Master Database" : crmMode === "investors" ? "Investor Master Database" : "Academy Article CMS"}
           </h1>
-          <p className="text-[#1e4a62] text-sm max-w-2xl">This administrative portal parses all decentralized data objects across the current physical iteration of FundabilityOS.</p>
+          <p className="text-[#1e4a62] text-sm max-w-2xl">
+            {crmMode === "academy" 
+              ? "Modify public educational content and methodology guides directly. These changes are saved as individual Markdown files."
+              : "This administrative portal parses all decentralized data objects across the current physical iteration of FundabilityOS."}
+          </p>
         </div>
       </div>
 
@@ -274,16 +448,51 @@ function AdminDashboardContent() {
         <table className="w-full text-left border-collapse min-w-[1000px]">
           <thead>
             <tr className="bg-[#f2f6fa] border-b border-[#1e4a62]/10 text-[10px] uppercase tracking-widest text-[#1e4a62] font-black">
-              <th className="px-6 py-5">{crmMode === "startups" ? "Startup Entity" : "Investor Firm"}</th>
-              <th className="px-6 py-5">{crmMode === "startups" ? "Founder Record" : "Target Stage"}</th>
-              <th className="px-6 py-5">Registration Date</th>
+              <th className="px-6 py-5">{crmMode === "academy" ? "Article Title" : (crmMode === "startups" ? "Startup Entity" : "Investor Firm")}</th>
+              <th className="px-6 py-5">{crmMode === "academy" ? "Target Slug" : (crmMode === "startups" ? "Founder Record" : "Target Stage")}</th>
+              <th className="px-6 py-5">{crmMode === "academy" ? "Impact Module" : "Registration Date"}</th>
               {crmMode === "startups" && <th className="px-6 py-5 text-center">Score</th>}
               <th className="px-6 py-5">Current Stage Gate</th>
               <th className="px-6 py-5 text-right flex-1">Overrides</th>
             </tr>
           </thead>
           <tbody className="text-sm">
-            {(crmMode === "startups" ? startups : investors).length === 0 ? (
+            {crmMode === "academy" ? (
+              articlesData.map((article, i) => (
+                <tr key={i} className="border-b border-[#1e4a62]/5 hover:bg-[#f2f6fa]/60 transition-colors group">
+                  <td className="px-6 py-4">
+                    <div className="font-black text-[#022f42] flex items-center text-base">
+                      <FileText className="w-4 h-4 text-[#ffd800] mr-2" />
+                      {article.title}
+                    </div>
+                    <div className="text-[9px] text-[#1e4a62]/60 font-bold uppercase tracking-widest mt-1">SEO Optimized Article</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <code className="bg-white px-2 py-0.5 border border-[#1e4a62]/10 rounded-sm text-[10px] font-bold text-[#1e4a62]">
+                      {article.slug}
+                    </code>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-[#022f42] font-bold text-xs uppercase tracking-widest">
+                      {article.source_module}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="bg-[#f2f6fa] text-[#022f42] px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm border border-[#1e4a62]/10">
+                      {article.module_name}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => openAcademyEditor(article)} className="text-[#1e4a62] hover:text-[#022f42] transition-colors p-2 bg-white border border-[#1e4a62]/10 rounded-sm shadow-sm hover:shadow flex items-center gap-2" title="Edit Article Content">
+                        <Edit className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Edit Layout</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (crmMode === "startups" ? startups : investors).length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-24 text-center">
                   <AlertCircle className="w-8 h-8 text-[#1e4a62]/40 mx-auto mb-4" />
