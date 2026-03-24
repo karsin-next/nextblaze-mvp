@@ -24,6 +24,7 @@ export default function MarketOpportunityPage() {
     samPercent: 20, // percentage of TAM
     somPercent: 5,  // percentage of SAM
     cagr: 10,
+    confidence: 70,
     whyNow: "",
     uvpOverride: undefined as string | undefined
   });
@@ -139,10 +140,35 @@ export default function MarketOpportunityPage() {
   };
 
   const acceptAiData = () => {
+    // Generate dynamic TAM based on problem context keywords
+    const context = data.problemContext.toLowerCase();
+    let dynamicTam = 2500000000; // Default $2.5B
+    let dynamicCagr = 12;
+    let confidence = 70;
+
+    if (context.includes("energy") || context.includes("power") || context.includes("grid")) {
+      dynamicTam = 85000000000; // $85B
+      dynamicCagr = 14;
+      confidence = 85;
+    } else if (context.includes("ai") || context.includes("intelligence") || context.includes("data")) {
+      dynamicTam = 150000000000; // $150B
+      dynamicCagr = 28;
+      confidence = 65;
+    } else if (context.includes("saas") || context.includes("software")) {
+      dynamicTam = 4500000000; // $4.5B
+      dynamicCagr = 18;
+      confidence = 90;
+    } else if (context.includes("logistics") || context.includes("shipping")) {
+      dynamicTam = 6500000000; // $6.5B
+      dynamicCagr = 8;
+      confidence = 75;
+    }
+
     setData(prev => ({
       ...prev,
-      tam: "2300000000",
-      cagr: 12,
+      tam: dynamicTam.toString(),
+      cagr: dynamicCagr,
+      confidence: confidence,
       useAiData: true,
       aiSearchComplete: true
     }));

@@ -71,10 +71,22 @@ export default function PainExplorerPage() {
   const handleWhoChange = (field: string, val: string) => {
     const newData = { ...data, [field]: val };
     setData(newData);
-    if (!newData.whoTitle) {
-      setAiFlags(p => ({ ...p, step2: "You haven't specified a decision-maker – investors will ask who signs the cheque." }));
-    } else {
-      setAiFlags(p => ({ ...p, step2: "Strong! Investors love specific B2B titles." }));
+    
+    // Smarter validation for whoTitle
+    if (field === "whoTitle") {
+      const lval = val.toLowerCase();
+      const strongRoles = ["ceo", "cfo", "cto", "coo", "founder", "director", "manager", "vp", "head of"];
+      const isStrong = strongRoles.some(r => lval.includes(r));
+
+      if (!val) {
+        setAiFlags(p => ({ ...p, step2: "You haven't specified a decision-maker – investors will ask who signs the cheque." }));
+      } else if (isStrong) {
+        setAiFlags(p => ({ ...p, step2: `Strong! Investors love seeing specific decision-makers like a ${val}.` }));
+      } else if (val.length < 5) {
+        setAiFlags(p => ({ ...p, step2: "This title is a bit vague. Try to be more specific (e.g., 'Operations Manager' vs 'Staff')." }));
+      } else {
+        setAiFlags(p => ({ ...p, step2: "Good. Ensure this person has the budget authority to solve the problem." }));
+      }
     }
   };
 
