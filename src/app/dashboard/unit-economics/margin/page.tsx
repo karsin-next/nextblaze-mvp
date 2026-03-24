@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
-import { motion, AnimatePresence } from "framer-presence";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ArrowLeft, Info, Activity, Save, 
   Check, DollarSign, TrendingUp, Sparkles, ExternalLink, Calculator, Layers, PieChart
