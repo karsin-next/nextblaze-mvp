@@ -181,7 +181,9 @@ export default function RevenuePage() {
                   {['differentiation', 'criticality'].map(key => (
                     <div key={key} className="p-6 bg-gray-50 border border-gray-100 rounded-sm">
                       <div className="flex justify-between items-center mb-4">
-                        <label className="text-xs font-black uppercase text-gray-400">{key === 'differentiation' ? 'Uniqueness' : 'Workflow Dependency'}</label>
+                        <label className="text-xs font-black uppercase text-gray-400 flex items-center gap-2 cursor-help" title={key === 'differentiation' ? "Can they buy this exact feature set from a direct competitor or substitute?" : "If your software went down today, would their business operations halt? Higher dependency = higher pricing power."}>
+                          {key === 'differentiation' ? 'Uniqueness' : 'Workflow Dependency'} <Info className="w-3 h-3"/>
+                        </label>
                         <span className="text-3xl font-black text-[#022f42]">{data[key as keyof typeof data]}</span>
                       </div>
                       <input type="range" min="1" max="10" value={data[key as keyof typeof data] as number} onChange={e=>setData({...data, [key]: parseInt(e.target.value)})} className="w-full accent-[#022f42]" />

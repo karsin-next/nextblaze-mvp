@@ -1,9 +1,13 @@
 [
   {
-    "title": "The Problem Slide That Wins",
-    "slug": "the-problem-slide-that-wins",
+    "title": "The Problem That Wins",
+    "slug": "the-problem-that-wins",
     "source_module": "1.1.1 Problem& Hypothesis",
-    "module_name": "Pain & Need Explorer"
+    "module_name": "Pain & Need Explorer",
+    "redirects": [
+      "the-problem-slide-that-wins",
+      "the-problem-slide-wins"
+    ]
   },
   {
     "title": "How to Create a Customer Persona That Investors Believe.",

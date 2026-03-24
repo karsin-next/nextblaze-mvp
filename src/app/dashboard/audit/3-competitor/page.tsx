@@ -151,12 +151,12 @@ export default function CompetitorAnalysisPage() {
   };
 
   useEffect(() => {
-    const filledYou = data.dimensions.filter(d => d.you && d.you.length > 3);
-    if (filledYou.length === 0) setAiFlags(p => ({...p, step3: "You listed no advantages in any dimension – investors will see you as a me-too product."}));
+    const filledYou = data.dimensions.filter(d => d.you && d.you.trim().length > 10);
+    if (filledYou.length === 0) setAiFlags(p => ({...p, step3: "You listed no advantages (or they are too brief). Investors will see you as a me-too product. Be specific."}));
     else if (filledYou.length === 1 && filledYou[0].name === "Price") setAiFlags(p => ({...p, step3: "Your only differentiator is price. This is rarely a sustainable advantage. Add non-price features."}));
     else {
       const diffs = filledYou.filter(f => f.name !== "Price");
-      setAiFlags(p => ({...p, step3: `You have strong differentiation points. Highlight "${diffs[0]?.name || 'these'}" in your pitch.`}));
+      setAiFlags(p => ({...p, step3: `You have articulated specific differentiation points. Highlight "${diffs[0]?.name || 'these'}" in your pitch.`}));
     }
   }, [data.dimensions]);
 

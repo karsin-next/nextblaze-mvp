@@ -34,21 +34,27 @@ export default function KeyCriteriaBreakdownPage() {
 
     // Problem
     try {
-      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
+      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
       if (d1) {
-        pScore = Math.round(((parseInt(d1.severity)||1)*4 + (parseInt(d1.frequency)||1)*4 + ((11-(parseInt(d1.alternatives)||10))*2)) * 2);
+        pScore = Math.min(Math.round(((d1.intensity||5) * (d1.frequency||5)) / (11 - (d1.alternatives||5))), 100);
         pRaw = [
-          `Severity level: ${d1.severity}/10`,
-          `Frequency: ${d1.frequency}/10`,
-          `Alternative friction: ${10 - parseInt(d1.alternatives || '5')}/10`
+          `Pain Intensity: ${d1.intensity||5}/10 (Higher = more severe)`,
+          `Pain Frequency: ${d1.frequency||5}/10`,
+          `Alternative Friction: ${d1.alternatives||5}/10 (Higher = worse existing solutions)`
         ];
       }
     } catch(e) {}
 
     // Product
     try {
-      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4") || "{}");
-      if (d4?.score) { prScore = d4.score; prRaw = ["Assessed Product Readiness: MVP state verified.", "Validation Loops checked."]; }
+      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4_v2") || "{}");
+      if (d4?.score) { 
+        prScore = d4.score; 
+        prRaw = [
+          `Product Status: ${d4.data?.status || "Unknown"}`, 
+          `Paying Customers: ${d4.data?.metrics?.paying || 0}`
+        ]; 
+      }
     } catch(e) {}
 
     // Market
@@ -100,8 +106,8 @@ export default function KeyCriteriaBreakdownPage() {
         tooltip: "Investors want to know you're solving something painful and urgent. If the problem isn't severe, they won't invest.",
         rawData: pRaw.length ? pRaw : ["No quantifiable metrics synchronized."],
         insight: pScore >= 70 ? "Your Problem score is strong. The specific pain severity identified signals a potential 'painkiller' opportunity. Ensure target customer personas remain narrowly constrained." : "Problem severity lacks venture-scale urgency. Broaden customer research to isolate the deep organizational friction.",
-        benchmark: pScore >= 60 ? "Your Problem scope is in the top 20% of founders at your stage." : "Below sector averages for problem articulation.",
-        recommendations: [{text: "Refine buyer personas to increase severity mapping.", link: "/dashboard/audit/2-customer"}]
+        benchmark: pScore >= 60 ? "High intensity and frequency scores rank this in the top 20% for problem severity." : "Below sector averages for problem articulation.",
+        recommendations: [{text: "Narrow target persona to those experiencing acute pain to increase severity.", link: "/dashboard/audit/2-customer"}]
       },
       {
         id: "product", name: "Product Readiness", score: prScore, icon: Box, status: getStatus(prScore), color: getColor(prScore), bg: getBg(prScore),
@@ -109,7 +115,7 @@ export default function KeyCriteriaBreakdownPage() {
         tooltip: "Evaluates how closely the MVP mitigates the stated problem payload and measures deployment velocity.",
         rawData: prRaw.length ? prRaw : ["No MVP status flags detected."],
         insight: prScore >= 70 ? "MVP is actively derisked with strong functional validation." : "Product development velocity trails investor expectations. The delta between hypothesis and market deployment is too vast.",
-        benchmark: "Product functionality aligns tightly with Early-Stage SaaS averages.",
+        benchmark: `Product maturity aligns with ${prScore > 50 ? 'Growth-Stage' : 'Early-Stage'} SaaS averages.`,
         recommendations: [{text: "Quantify beta validation loops.", link: "/dashboard/audit/4-product"}]
       },
       {

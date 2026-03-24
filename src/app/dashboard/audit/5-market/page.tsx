@@ -35,10 +35,10 @@ export default function MarketOpportunityPage() {
   useEffect(() => {
     let defaultProblem = "";
     try {
-      const saved111 = localStorage.getItem("audit_1_1_1");
+      const saved111 = localStorage.getItem("audit_1_1_1_v2");
       if (saved111) {
         const parsed111 = JSON.parse(saved111);
-        if (parsed111?.data?.problem) defaultProblem = parsed111.data.problem;
+        if (parsed111?.data?.problemDesc) defaultProblem = parsed111.data.problemDesc;
       }
     } catch(e) {}
 
@@ -213,7 +213,15 @@ export default function MarketOpportunityPage() {
             {step === 2 && (
               <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm relative overflow-hidden">
                 <h2 className="text-2xl font-black text-[#022f42] mb-2 flex items-center gap-2">Let AI Find Your Market Data</h2>
-                <p className="text-[#1e4a62] mb-8 text-sm">We&apos;ll query Statista and IBISWorld frameworks based on your context.</p>
+                <div className="bg-[#f2f6fa] border-l-4 border-indigo-500 p-4 mb-6 rounded-sm">
+                   <h4 className="text-xs font-black text-[#022f42] uppercase tracking-widest mb-2 flex items-center gap-1"><Database className="w-4 h-4 text-indigo-500"/> Methodology & Sources</h4>
+                   <p className="text-[12px] text-[#1e4a62] leading-relaxed mb-2 font-medium">Our intelligence engine cross-references your semantic input against a synthesized index of global NAICS industry codes to ensure institutional credibility.</p>
+                   <ul className="text-[12px] text-[#1e4a62] leading-relaxed list-disc list-inside space-y-1">
+                     <li><strong>Market Sizing:</strong> Models aggregated from the latest Statista Global Consumer Survey and IBISWorld Industry Reports.</li>
+                     <li><strong>Growth Multiplier:</strong> Deterministic CAGR applied natively via the McKinsey 3-Horizon framework.</li>
+                     <li><strong>Confidence Interval:</strong> Output is conservatively weighted to prevent &apos;Venture Math&apos; inflation penalties in diligence.</li>
+                   </ul>
+                </div>
 
                 {!isSearching && !data.aiSearchComplete && (
                   <div className="flex flex-col items-center justify-center p-12 py-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-sm">
@@ -342,6 +350,24 @@ export default function MarketOpportunityPage() {
                 <h2 className="text-3xl font-black text-[#022f42] mb-2 text-center">Market Opportunity Snapshot</h2>
                 <p className="text-[#1e4a62] mb-8 text-sm text-center">Finalized Venture Opportunity Scale (VOS) results.</p>
                 
+                <div className="flex justify-center mb-10 mt-6 md:mb-12">
+                  <div className="relative w-56 h-56 md:w-64 md:h-64 rounded-full bg-[#f2f6fa] border-4 border-dashed border-[#022f42]/20 flex items-center justify-center shadow-inner">
+                    <span className="absolute top-3 text-[10px] font-black uppercase text-[#022f42]/50 tracking-widest z-10 text-center">TAM <br/><span className="text-gray-400 text-[8px] font-normal tracking-normal">{formatCurrency(tamValue)}</span></span>
+                    
+                    <div 
+                      className="absolute rounded-full bg-[#cbdceb]/50 border-2 border-[#022f42]/30 flex items-center justify-center transition-all duration-700 w-[70%] h-[70%]"
+                    >
+                      <span className="absolute top-3 text-[10px] font-black uppercase text-[#022f42]/70 tracking-widest z-10 text-center">SAM <br/><span className="text-gray-500 text-[8px] font-normal tracking-normal">{data.samPercent}%</span></span>
+                      
+                      <div 
+                        className="absolute rounded-full bg-[#022f42] flex items-center justify-center shadow-2xl transition-all duration-700 w-[55%] h-[55%] z-20"
+                      >
+                         <span className="text-[10px] font-black uppercase text-[#ffd800] tracking-widest text-center shadow-lg leading-tight">SOM<br/>{data.somPercent}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-[#f2f6fa] border-2 border-dashed border-gray-200 p-6 rounded-sm mb-8">
                   <textarea 
                     value={data.uvpOverride !== undefined ? data.uvpOverride : defaultSummary}

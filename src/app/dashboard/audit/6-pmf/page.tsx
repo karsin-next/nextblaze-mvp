@@ -118,7 +118,11 @@ export default function PMFPage() {
   };
 
   const milestoneOptions = [
-    "First paying customer", "First $1k MRR", "First $10k MRR", "First 10 customers", "First 100 customers", "Achieved default alive"
+    "SaaS: First $1k MRR", "SaaS: Reached $10k MRR (Seed Standard)",
+    "B2B: Secured Paid Commercial Pilot", "B2B: 5+ Signed Letters of Intent (LOI)",
+    "Consumer: 1,000 Daily Active Users (DAU)", "Consumer: Demonstrated 30-Day Retention > 40%",
+    "Deep-Tech: Core Patent Granted", "Deep-Tech: Clinical Trial / Prototype Validation",
+    "General: Built V1 MVP", "General: Achieved Cash Flow Break-Even"
   ];
 
   if (!isLoaded) return null;
@@ -174,7 +178,10 @@ export default function PMFPage() {
                   {/* Paid */}
                   <div className="p-6 bg-gray-50 border border-gray-100 rounded-sm">
                     <div className="flex justify-between items-end mb-4">
-                      <label className="text-xs font-black uppercase text-gray-400">Paid Adoption Rate</label>
+                      <div>
+                         <label className="text-xs font-black uppercase text-gray-400 block mb-1">Paid Adoption Rate</label>
+                         <span className="text-[10px] font-bold text-gray-400 block max-w-[200px] leading-tight">% of active users who pay. For deep-tech: LOIs signed or paid pilots.</span>
+                      </div>
                       <span className="text-3xl font-black text-[#022f42]">{data.paidPercent}%</span>
                     </div>
                     <input type="range" min="0" max="100" value={data.paidPercent} onChange={e=>setData({...data, paidPercent: parseInt(e.target.value)})} className="w-full accent-[#022f42]" />
@@ -182,7 +189,10 @@ export default function PMFPage() {
                   {/* Retention */}
                   <div className="p-6 bg-gray-50 border border-gray-100 rounded-sm">
                     <div className="flex justify-between items-end mb-4">
-                      <label className="text-xs font-black uppercase text-gray-400">Cohort Retention</label>
+                       <div>
+                         <label className="text-xs font-black uppercase text-gray-400 block mb-1">Cohort Retention</label>
+                         <span className="text-[10px] font-bold text-gray-400 block max-w-[200px] leading-tight">% of users still active after 12 mo. Deep-tech: sustained pilot engagement.</span>
+                       </div>
                       <span className="text-3xl font-black text-[#022f42]">{data.retentionPercent}%</span>
                     </div>
                     <input type="range" min="0" max="100" value={data.retentionPercent} onChange={e=>setData({...data, retentionPercent: parseInt(e.target.value)})} className="w-full accent-[#022f42]" />

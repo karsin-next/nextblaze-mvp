@@ -36,7 +36,6 @@ export default function ProductReadinessPage() {
 
   const [aiFlags, setAiFlags] = useState({ step1: "", step2: "", step3: "", step4: "" });
 
-  // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
     const saved = localStorage.getItem("audit_1_1_4_v2");
     if (saved) {
@@ -48,10 +47,6 @@ export default function ProductReadinessPage() {
     }
     setIsLoaded(true);
   }, []);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_1_1_4_v2", JSON.stringify({ data, step }));
-  }, [data, step, isLoaded]);
 
   // Scoring Logic
   let scoreExistence = 0, scoreTraction = 0, scoreFeedback = 0, scoreValidation = 0, scorePainkiller = 0;
@@ -79,6 +74,10 @@ export default function ProductReadinessPage() {
   else if (data.painkiller === "annoying") scorePainkiller = 5;
 
   const totalScore = scoreExistence + scoreTraction + scoreFeedback + scoreValidation + scorePainkiller;
+
+  useEffect(() => {
+    if (isLoaded) localStorage.setItem("audit_1_1_4_v2", JSON.stringify({ data, step, score: totalScore }));
+  }, [data, step, totalScore, isLoaded]);
 
   // AI Feedback Updates
   useEffect(() => {
@@ -129,7 +128,7 @@ export default function ProductReadinessPage() {
     });
   };
 
-  const defaultSummary = `Our product is currently a ${data.status ? data.status.toLowerCase() : "[phase]"}. We have ${data.metrics.active || "0"} active users and ${data.metrics.paying || "0"} paying customers. ${data.validationExample || "[Validation example]"}. The biggest gap we're addressing next is ${data.gap || "[gap]"}. Based on user analysis, this is a ${data.painkiller === "trouble" ? "painkiller" : data.painkiller === "annoying" ? "vitamin" : "[nice-to-have]"}.`;
+  const defaultSummary = `Our product is currently a ${data.status ? data.status.toLowerCase() : "[phase]"}. We have ${data.metrics.active || "0"} active users and ${data.metrics.paying || "0"} paying customers. Based on user feedback, this solves an active problem as a ${data.painkiller === "trouble" ? "painkiller" : data.painkiller === "annoying" ? "vitamin" : "nice-to-have"}.`;
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);

@@ -95,6 +95,15 @@ export default function TeamScorecardPage() {
     }));
   };
 
+  const addAdvisor = () => {
+    setData(p => ({
+      ...p,
+      team: [...p.team, {
+        id: Date.now().toString(), name: "", role: "Strategic Advisor", commitment: "advisory", experience: "", responsibility: "", linkedin: "", startupExperience: "veteran", education: ""
+      }]
+    }));
+  };
+
   const updateTeam = (id: string, field: keyof TeamMember, val: string) => {
     setData(p => ({ ...p, team: p.team.map(t => t.id === id ? { ...t, [field]: val } : t) }));
   };
@@ -140,9 +149,14 @@ export default function TeamScorecardPage() {
               <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm">
                 <div className="flex justify-between items-center mb-8">
                   <h2 className="text-2xl font-black text-[#022f42]">Build Your Team Roster</h2>
-                  <button onClick={addTeamMember} className="bg-[#022f42] text-white p-2 rounded-sm hover:bg-[#1b4f68] transition-colors shadow-md">
-                    <UserPlus className="w-5 h-5" />
-                  </button>
+                  <div className="flex gap-3">
+                    <button onClick={addTeamMember} className="bg-[#022f42] text-white px-4 py-2 text-sm font-bold rounded-sm hover:bg-[#1b4f68] transition-colors shadow-md flex items-center gap-2">
+                       <UserPlus className="w-4 h-4" /> Add Team Member
+                    </button>
+                    <button onClick={addAdvisor} className="bg-white border-2 border-[#022f42] text-[#022f42] px-4 py-2 text-sm font-bold rounded-sm hover:bg-gray-50 transition-colors shadow-md flex items-center gap-2">
+                       <Sparkles className="w-4 h-4 text-[#ffd800]" /> Add Advisor
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-6">
                   {data.team.map((m) => (
