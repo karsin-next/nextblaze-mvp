@@ -1,4 +1,4 @@
-# The Problem Slide That Wins
+# The Problem That Wins
 
 The problem slide is arguably the most important part of your pitch. If you don't convince the investor that there is a massive, painful problem, they won't care about your solution.
 
