@@ -90,7 +90,7 @@ export default function FundraisingWhatPage() {
             {/* STEP 1: Amount */}
             {step === 1 && (
               <motion.div key="s1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm text-center">
-                <h2 className="text-2xl font-black text-[#022f42] mb-12">Total Capital 'Ask'</h2>
+                <h2 className="text-2xl font-black text-[#022f42] mb-12">Total Capital &apos;Ask&apos;</h2>
                 <div className="max-w-md mx-auto">
                    <div className="p-10 bg-[#022f42] text-white rounded-sm shadow-xl">
                       <label className="text-[10px] font-black uppercase text-[#ffd800] mb-4 block tracking-[0.3em]">Target Funding Goal ($)</label>
@@ -152,7 +152,7 @@ export default function FundraisingWhatPage() {
                       </div>
                    </div>
                    <div className="bg-[#022f42] text-white p-8 rounded-sm flex flex-col justify-center">
-                      <h4 className="text-[10px] font-black uppercase text-[#ffd800] mb-2">Primary 'Impact' Ask</h4>
+                      <h4 className="text-[10px] font-black uppercase text-[#ffd800] mb-2">Primary &apos;Impact&apos; Ask</h4>
                       <div className="text-3xl font-black">${Math.round(data.targetAmount * ((data.allocationRD + data.allocationMarketing)/100)).toLocaleString()}</div>
                       <p className="text-[10px] text-white/40 mt-2 font-medium uppercase">Allocated toward Growth & Product</p>
                    </div>

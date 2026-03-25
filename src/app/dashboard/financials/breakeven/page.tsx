@@ -150,7 +150,7 @@ export default function BreakevenPage() {
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                           <Area type="monotone" dataKey="rev" stroke="#ffd800" fill="#fffbeb" strokeWidth={3} />
                           <Area type="monotone" dataKey="cost" stroke="#022f42" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
-                          <Tooltip hide />
+                          <Tooltip content={<></>} />
                         </AreaChart>
                       </ResponsiveContainer>
                    </div>

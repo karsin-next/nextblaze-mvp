@@ -150,7 +150,7 @@ export default function FundraisingWhenPage() {
                    <div className="relative z-10 flex flex-col items-center">
                       <Clock className="w-10 h-10 text-[#ffd800] mb-4" />
                       <p className="text-lg font-medium max-w-md mx-auto leading-relaxed">
-                        To maintain a "Default Alive" stance, your fundraising process must initiate 
+                        To maintain a &quot;Default Alive&quot; stance, your fundraising process must initiate 
                         <span className="text-[#ffd800] font-black mx-1">{data.expectedCloseMonths + data.bufferMonths} months</span> 
                         prior to your absolute zero-cash date.
                       </p>

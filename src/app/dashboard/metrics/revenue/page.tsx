@@ -127,7 +127,7 @@ export default function GrowthPage() {
                 </div>
                 <div className="bg-white/5 p-6 mt-8 rounded-sm text-center border border-white/10">
                    <h4 className="text-[10px] font-black uppercase text-[#ffd800] mb-1">Growth Persistence</h4>
-                   <p className="text-sm font-medium text-blue-50">"Maintaining a <span className="text-[#ffd800] font-black">{data.growthRate}% MoM</span> growth rate for 12 months will result in <span className="text-emerald-400 font-black">${Math.round(data.currentMRR * Math.pow(1+(data.growthRate/100), 12)).toLocaleString()} MRR</span>."</p>
+                   <p className="text-sm font-medium text-blue-50">&quot;Maintaining a <span className="text-[#ffd800] font-black">{data.growthRate}% MoM</span> growth rate for 12 months will result in <span className="text-emerald-400 font-black">${Math.round(data.currentMRR * Math.pow(1+(data.growthRate/100), 12)).toLocaleString()} MRR</span>.&quot;</p>
                 </div>
               </motion.div>
             )}

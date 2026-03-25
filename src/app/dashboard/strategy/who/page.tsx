@@ -137,7 +137,7 @@ export default function FundraisingWhoPage() {
                       ))}
                    </div>
                    <div className="p-8 bg-gray-50 rounded-sm italic text-[#1e4a62] text-center border-2 border-dashed border-gray-100">
-                      "Targeting <span className="text-[#022f42] font-black">{data.sectorFocus}</span> investors implies we need to lead the narrative with {data.sectorFocus === 'agnostic' ? 'raw unit economics and growth velocity' : 'deep mechanical moats and industry-specific tailwinds'}."
+                      &quot;Targeting <span className="text-[#022f42] font-black">{data.sectorFocus}</span> investors implies we need to lead the narrative with {data.sectorFocus === 'agnostic' ? '&apos;raw unit economics and growth velocity&apos;' : '&apos;deep mechanical moats and industry-specific tailwinds&apos;'}.&quot;
                    </div>
                 </div>
               </motion.div>

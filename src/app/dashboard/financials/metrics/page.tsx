@@ -165,7 +165,7 @@ export default function FinancialMetricsPage() {
             {/* STEP 3: What-If Simulator */}
             {step === 3 && (
               <motion.div key="s3" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="bg-white p-8 md:p-10 shadow-lg border-t-[4px] border-[#ffd800] rounded-sm">
-                <h2 className="text-2xl font-black text-[#022f42] mb-10 text-center">Scenario 'What-If' Stress Test</h2>
+                <h2 className="text-2xl font-black text-[#022f42] mb-10 text-center">Scenario &apos;What-If&apos; Stress Test</h2>
                 
                 <div className="space-y-12 mb-12">
                    <div className="space-y-4">

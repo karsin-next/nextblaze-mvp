@@ -93,7 +93,7 @@ export default function InvestorReportPage() {
     setTimeout(() => {
       window.print();
       setIsPrinting(false);
-    }, 300);
+    }, 600);
   };
 
   const radarData = [
@@ -117,40 +117,51 @@ export default function InvestorReportPage() {
           ═══════════════════════════════════════ */}
       <style>{`
         @media print {
-          /* Hide everything except the print container */
-          body > * { display: none !important; }
-          #__next > * { display: none !important; }
-          nav, header, aside, footer,
-          [data-no-print], .no-print { display: none !important; }
-
-          /* Show only the print report */
-          #investor-print-report,
-          #investor-print-report * { display: revert !important; }
-
-          #investor-print-report {
-            position: fixed !important;
-            top: 0; left: 0;
-            width: 100vw;
-            height: auto;
-            z-index: 99999;
+          /* Reset everything for print */
+          html, body {
+            height: auto !important;
+            overflow: visible !important;
             background: white !important;
-            padding: 0 !important;
-            margin: 0 !important;
+          }
+
+          /* Hide UI elements specifically */
+          nav, header, aside, footer, .no-print, [data-no-print], .screen-only {
+            display: none !important;
+          }
+
+          /* Reset layout containers that might have fixed heights or overflows */
+          main, div {
+             height: auto !important;
+             overflow: visible !important;
+             position: static !important;
+             margin: 0 !important;
+             padding: 0 !important;
+          }
+
+          /* Target the report container specifically */
+          #investor-print-report {
+            display: block !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            background: white !important;
+            z-index: 99999;
           }
 
           /* Page layout */
           @page {
             size: A4;
-            margin: 18mm 20mm;
+            margin: 15mm;
           }
           
           .print-page-break { page-break-before: always; }
           
-          /* Typography fixes */
-          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          
-          /* Hide the non-print page wrapper */
-          .screen-only { display: none !important; }
+          /* Force colors */
+          * { 
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important; 
+          }
         }
         
         @media screen {
@@ -468,7 +479,7 @@ export default function InvestorReportPage() {
                       Your {reportData.companyName} investor report has been compiled with {Object.values(config.sections).filter(Boolean).length} sections active.
                     </p>
                     <p className="text-xs text-gray-400 font-medium mb-12">
-                      Click a button below → your browser's print dialog will open → select "Save as PDF"
+                      Click a button below → your browser&apos;s print dialog will open → select &quot;Save as PDF&quot;
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
@@ -492,7 +503,7 @@ export default function InvestorReportPage() {
 
                     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-sm text-left max-w-2xl mx-auto">
                       <p className="text-xs font-bold text-blue-700">💡 How to save as PDF:</p>
-                      <p className="text-xs text-blue-600 mt-1">When the print dialog opens → Destination → "Save as PDF" → Save. On Mac you can also use <strong>Cmd+P → PDF button</strong>.</p>
+                      <p className="text-xs text-blue-600 mt-1">When the print dialog opens → Destination → &quot;Save as PDF&quot; → Save. On Mac you can also use <strong>Cmd+P → PDF button</strong>.</p>
                     </div>
                   </div>
 

@@ -156,7 +156,7 @@ export default function FundabilityScorePage() {
       nextSteps: `To breach the 80% Institutional Validated mark and unlock your OS Badge, immediately initiate the structural Cap Table and Unit Economics stress tests within Week 2.`
     });
 
-  }, [isLoaded, categories[0].score, categories[1].score, categories[2].score, categories[3].score, categories[4].score, categories[5].score]);
+  }, [isLoaded, categories, stage]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const handleSliderChange = (id: string, val: number) => {
     if (!whatIfMode) return;

@@ -6,7 +6,7 @@ import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ArrowLeft, Info, Activity, Save, 
-  Check, PieChart, Sparkles, ExternalLink, Scissors, Landmark
+  Check, PieChart, Sparkles, ExternalLink, Scissors, Landmark, TrendingUp
 } from "lucide-react";
 import { PieChart as RePieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import Link from "next/link";

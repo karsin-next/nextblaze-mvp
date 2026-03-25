@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,10 +22,13 @@ export default function Header() {
       <div className="max-w-[1280px] mx-auto flex items-center justify-between">
         <div className="logo">
           <Link href="/" className="flex items-center gap-3 group">
-            <img 
+            <Image 
               src="/logo.png" 
               alt="NextBlaze Logo" 
+              width={200}
+              height={56}
               className="h-10 md:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300" 
+              priority
             />
             <div className="flex flex-col border-l border-white/20 pl-3">
               <span className="text-white font-black text-lg md:text-xl tracking-tight leading-none uppercase">NextBlaze</span>

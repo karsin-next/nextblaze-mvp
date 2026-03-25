@@ -6,7 +6,8 @@ import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ArrowLeft, Info, Activity, Save, 
-  Check, Eye, Sparkles, ExternalLink, Share2, Layout, Lock
+  Check, Eye, Sparkles, ExternalLink, Share2, Layout, Lock,
+  TrendingUp
 } from "lucide-react";
 import Link from "next/link";
 
@@ -126,7 +127,7 @@ export default function CustomViewsPage() {
                 </div>
 
                 <div className="mt-8 p-6 bg-white/50 border border-dashed border-[#022f42]/20 text-center italic text-xs text-[#1e4a62]">
-                   "A secure, read-only link will be generated for outside stakeholders."
+                   &quot;A secure, read-only link will be generated for outside stakeholders.&quot;
                 </div>
               </motion.div>
             )}

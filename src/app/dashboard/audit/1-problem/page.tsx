@@ -37,6 +37,7 @@ export default function PainExplorerPage() {
     step5: ""
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const saved = localStorage.getItem("audit_1_1_1_v2");
     if (saved) {
@@ -49,7 +50,7 @@ export default function PainExplorerPage() {
       }
     }
     setIsLoaded(true);
-  }, []);
+  }, []); 
 
   useEffect(() => {
     if (isLoaded) {
@@ -109,11 +110,12 @@ export default function PainExplorerPage() {
     return `${data.whoTitle || "[Customer]"} at ${data.whoCompany || "[Company]"} experiences the problem of ${data.problemDesc.substring(0, 50) || "[problem]"} ${freqWords}. The current alternatives are ${altWords}, and the problem causes ${intWords}. We are building a solution to replace their current ${data.currentSolution || "workarounds"}.`;
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (step === 5 && !data.finalSummary) {
       setData(prev => ({ ...prev, finalSummary: generateSummary() }));
     }
-  }, [step]);
+  }, [step, data.finalSummary, generateSummary]);
 
   // Math calculated to give 0-100 based on founder specs (Higher Intensity & Frequency & Bad Alerts = High Score)
   const getSeverityScore = () => {
@@ -453,7 +455,7 @@ export default function PainExplorerPage() {
                   <span>Education: The Problem Slide →</span>
                   <ExternalLink className="w-3 h-3" />
                 </Link>
-                <p className="text-[10px] text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">View "The Problem Slide That Wins" in Academy</p>
+                <p className="text-[10px] text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">View &quot;The Problem Slide That Wins&quot; in Academy</p>
               </div>
             </div>
           </div>

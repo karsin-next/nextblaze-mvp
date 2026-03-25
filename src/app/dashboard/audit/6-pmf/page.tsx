@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
 import { ModuleHeader } from "@/components/ModuleHeader";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,33 +34,8 @@ export default function PMFPage() {
   const [aiFlags, setAiFlags] = useState({ step1: "", step2a: "", step2b: "", step2c: "", step3a: "", step3b: "", step3c: "", step4: "", step5: "" });
   const [customerContext, setCustomerContext] = useState("[customer type]");
 
-  // Persistence (SOP: Privacy-First Hybrid)
-  useEffect(() => {
-    try {
-      const saved112 = localStorage.getItem("audit_1_1_2_v2");
-      if (saved112) {
-        const parsed = JSON.parse(saved112);
-        if (parsed?.data?.role) setCustomerContext(parsed.data.role);
-      }
-    } catch(e) {}
-
-    const saved = localStorage.getItem("audit_1_1_6");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.data) setData(parsed.data);
-        if (parsed.step) setStep(parsed.step);
-      } catch (e) {}
-    }
-    setIsLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_1_1_6", JSON.stringify({ data, step, score: getPMFScore() }));
-  }, [data, step, isLoaded]);
-
   // Calculations
-  const calcPainkillerWeight = () => {
+  const calcPainkillerWeight = useCallback(() => {
     switch (data.painkillerChoice) {
       case 'A': return 100;
       case 'B': return 62.5;
@@ -68,9 +43,9 @@ export default function PMFPage() {
       case 'D': return 0;
       default: return 0;
     }
-  };
+  }, [data.painkillerChoice]);
 
-  const getPMFScore = () => {
+  const getPMFScore = useCallback(() => {
     const pWeight = calcPainkillerWeight() * 0.30;
     const paidWeight = data.paidPercent * 0.20;
     const retWeight = data.retentionPercent * 0.20;
@@ -79,9 +54,26 @@ export default function PMFPage() {
     const growthCap = Math.max(0, Math.min(100, data.growthRate));
     const growthWeight = growthCap * 0.15;
     return Math.round(pWeight + paidWeight + retWeight + npsWeight + growthWeight);
-  };
+  }, [calcPainkillerWeight, data.paidPercent, data.retentionPercent, data.npsScore, data.growthRate]);
 
   const pmfScore = getPMFScore();
+
+  // Persistence (SOP: Privacy-First Hybrid)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("audit_1_1_6");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.data) setData(parsed.data);
+        if (parsed.step) setStep(parsed.step);
+      }
+    } catch (e) {}
+    setIsLoaded(true);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isLoaded) localStorage.setItem("audit_1_1_6", JSON.stringify({ data, step, score: getPMFScore() }));
+  }, [data, step, isLoaded, getPMFScore]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // AI Feedback Updates
   useEffect(() => {

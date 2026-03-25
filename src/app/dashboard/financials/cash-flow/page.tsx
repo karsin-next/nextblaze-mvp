@@ -59,7 +59,7 @@ export default function CashFlowPage() {
 
     if (data.payroll > (totalOut * 0.70)) setAiFlags(p => ({...p, step2: "Heads up: Payroll accounts for 70%+ of your outflows. This is common for early tech but requires strict talent-density management."}));
     else setAiFlags(p => ({...p, step2: ""}));
-  }, [data]);
+  }, [data, totalOut]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const handleNextStep = () => setStep(Math.min(3, step + 1));
 

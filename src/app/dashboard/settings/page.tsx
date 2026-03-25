@@ -79,6 +79,7 @@ export default function StartupSettingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Merge registration user name if profile is empty
     if (typeof window !== 'undefined' && user?.id) {
@@ -97,7 +98,7 @@ export default function StartupSettingsPage() {
         }));
       }
     }
-  }, [user?.id, user?.email]);
+  }, [user?.id, user?.email, user?.company]); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

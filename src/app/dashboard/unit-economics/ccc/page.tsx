@@ -144,7 +144,7 @@ export default function CCCPage() {
                 {aiFlags.step3 && (
                   <div className="mb-12 p-8 bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-sm text-left">
                      <p className="text-sm font-semibold text-indigo-900 leading-relaxed italic">
-                        "{aiFlags.step3}"
+                        &quot;{aiFlags.step3}&quot;
                      </p>
                   </div>
                 )}

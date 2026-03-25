@@ -237,7 +237,7 @@ export default function RecommendedActionsPage() {
 
              <div className="mt-10 flex justify-end max-w-4xl border-t border-gray-100 pt-6">
                 <button onClick={() => setStep(2)} className="bg-[#022f42] text-white px-8 py-4 font-black text-sm tracking-widest uppercase flex items-center gap-2 rounded-sm hover:bg-[#1b4f68] transition-colors shadow-md">
-                  Confirm Priority <ArrowRight className="w-4 h-4"/>
+                   Confirm Priority <ArrowRight className="w-4 h-4"/>
                 </button>
              </div>
           </motion.div>
@@ -407,13 +407,39 @@ export default function RecommendedActionsPage() {
                <div>
                  <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Export Utilities</h4>
                  <div className="flex flex-wrap gap-3">
-                   <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-gray-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-black uppercase tracking-widest rounded-sm transition-colors">
+                   <button 
+                     onClick={() => window.print()}
+                     className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-gray-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-black uppercase tracking-widest rounded-sm transition-colors"
+                   >
                      <Download className="w-4 h-4"/> Extract PDF
                    </button>
-                   <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-gray-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-black uppercase tracking-widest rounded-sm transition-colors">
+                   <button 
+                     onClick={() => {
+                        const subject = encodeURIComponent(`FundabilityOS: ${gaps[0]?.title || 'Action Plan'} Draft`);
+                        const body = encodeURIComponent(`Hi, I've drafted an action plan to close our fundability gaps. Total projected impact: +${projectedAlpha} points.\n\nPriority Gaps:\n${gaps.map((g,i) => `${i+1}. ${g.title}`).join('\n')}`);
+                        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                     }}
+                     className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-gray-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-xs font-black uppercase tracking-widest rounded-sm transition-colors"
+                   >
                      <Share2 className="w-4 h-4"/> Forward Draft
                    </button>
                  </div>
+               </div>
+
+               <div className="p-6 bg-indigo-50 border border-indigo-100 rounded-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Sparkles className="w-5 h-5 text-indigo-500" />
+                    <h4 className="text-sm font-black text-indigo-950 uppercase tracking-widest">Next Step: Synthesize Report</h4>
+                  </div>
+                  <p className="text-xs text-indigo-900/70 font-medium mb-5 leading-relaxed">
+                    Now that you have your execution plan, generate your institutional-grade <strong>Investor-Ready Report</strong> to show your trajectory to target VCs.
+                  </p>
+                  <Link 
+                    href="/dashboard/gap-report/report"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-sm hover:bg-indigo-700 transition-all shadow-lg"
+                  >
+                    Go to Investor-Ready Report <ArrowRight className="w-4 h-4"/>
+                  </Link>
                </div>
 
                <div className="pt-8 border-t border-gray-100 flex justify-between items-center gap-4 flex-col lg:flex-row">
@@ -427,7 +453,16 @@ export default function RecommendedActionsPage() {
 
              </div>
 
-          </motion.div>
+             <style>{`
+                @media print {
+                  nav, header, aside, footer, .no-print, [data-no-print], button { display: none !important; }
+                  body { background: white !important; }
+                  .bg-white { box-shadow: none !important; border: 1px solid #eee !important; }
+                  main, div { height: auto !important; overflow: visible !important; }
+                }
+             `}</style>
+
+           </motion.div>
         )}
 
       </AnimatePresence>
