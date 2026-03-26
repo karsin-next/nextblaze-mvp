@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
+import { FundabilityBadge } from "@/components/FundabilityBadge";
+import { getFundabilityScores } from "@/utils/scoreCalculation";
 
 interface CategoryScore {
   id: string;
@@ -50,66 +52,13 @@ export default function FundabilityScorePage() {
   const overallScore = Math.round(categories.reduce((acc, cat) => acc + (cat.score * cat.weight), 0));
 
   useEffect(() => {
-    // 1. Fetch Local Storage
-    let pScore = 0, prScore = 0, mScore = 0, pmfScore = 0, revScore = 0, tScore = 0;
-    
-    // Problem (1.1.1)
-    try {
-      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
-      if (d1) pScore = Math.round(((parseInt(d1.severity)||1)*4 + (parseInt(d1.frequency)||1)*4 + ((11-(parseInt(d1.alternatives)||10))*2)) * 2) || 15;
-    } catch(e) {}
-
-    // Product (1.1.4)
-    try {
-      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4_v2") || "{}");
-      if (d4?.score) prScore = d4.score;
-      else prScore = 15;
-    } catch(e) {}
-
-    // Market (1.1.5)
-    try {
-      const d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}");
-      if (d5?.score) mScore = d5.score; // VOS Indicator
-      else mScore = 15;
-    } catch(e) {}
-
-    // PMF (1.1.6)
-    try {
-      const d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}");
-      if (d6?.score) pmfScore = d6.score;
-      else pmfScore = 15;
-    } catch(e) {}
-
-    // Revenue (1.1.7)
-    try {
-      const d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data;
-      if (d7) {
-        const diffP = (d7.differentiation||1) * 4;
-        const critP = (d7.criticality||1) * 4;
-        const churnP = (11-(d7.churnRisk||10)) * 2;
-        revScore = Math.round((diffP + critP + churnP) * 2.5); // 0-100 scale approximation
-      } else revScore = 15;
-    } catch(e) {}
-
-    // Team (1.1.8)
-    try {
-      const d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data;
-      if (d8) tScore = Math.round((d8.industryExpertise + d8.functionalCoverage + d8.executionTrackRecord + d8.founderChemistry) * 2.5);
-      else tScore = 15;
-    } catch(e) {}
-
-    // 2. Adjust Weights based on PMF / revenue stage detection
-    // Simple heuristic: If PMF > 60 and Revenue model is defined, assume early-revenue tier.
-    let s = "pre-revenue";
-    let w = [0.20, 0.20, 0.20, 0.10, 0.10, 0.20];
-    if (pmfScore > 60 && revScore > 30) {
-      s = "early-revenue";
-      w = [0.15, 0.15, 0.15, 0.20, 0.15, 0.20]; // Revenue (<$50k/mo) Shift
-    }
+    // 1. Fetch Local Storage via centralized logic
+    const data = getFundabilityScores();
+    const { pScore, prScore, mScore, pmfScore, revScore, tScore, stage: s, weights: w } = data;
 
     setStage(s);
 
-    // 3. Build Category State
+    // 2. Build Category State
     setCategories([
       { id: "problem", name: "Problem & Persona", score: pScore, originalScore: pScore, icon: Target, link: "/dashboard/audit/1-problem", weight: w[0], 
         insight: pScore > 70 ? "Acute painkiller dynamics mapped perfectly." : "Vague problem statement signals low urgency. Pinpoint the pain.",
@@ -219,16 +168,7 @@ export default function FundabilityScorePage() {
            
            {/* HERO GAUGE */}
            <motion.div initial={{scale:0.95, opacity:0}} animate={{scale:1, opacity:1}} className="bg-white rounded-sm shadow-xl shadow-indigo-500/5 border border-indigo-100 p-8 flex flex-col items-center">
-              <div className="relative w-56 h-56 flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path className="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="2.5" stroke="currentColor"/>
-                  <path className={`${getScoreColor(overallScore)} transition-all duration-1000`} strokeDasharray={`${Math.max(1, overallScore)}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="2.5" stroke="currentColor"/>
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className={`text-7xl font-black tracking-tighter ${getScoreColor(overallScore)}`}>{overallScore}</span>
-                  <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">/ 100</span>
-                </div>
-              </div>
+              <FundabilityBadge score={overallScore} size="xl" className="mb-4" />
               
               <div className={`mt-6 px-4 py-2 border rounded-sm font-black text-xs tracking-widest uppercase text-center w-full ${labelData.c}`}>
                 {labelData.t}
@@ -255,11 +195,8 @@ export default function FundabilityScorePage() {
 
            {/* ACTIONS */}
            <div className="space-y-3">
-             <Link href="/dashboard/gap-analysis" className="w-full bg-[#022f42] hover:bg-[#1b4f68] text-white p-4 rounded-sm font-black uppercase tracking-widest text-sm flex items-center justify-between shadow-md transition-all">
-                Generate Gap Report <ArrowRight className="w-5 h-5"/>
-             </Link>
-             <Link href="/dashboard/investor-snapshot" className="w-full bg-white border-2 border-[#f2f6fa] hover:border-[#1e4a62]/20 text-[#1e4a62] p-4 rounded-sm font-bold uppercase tracking-widest text-sm flex items-center justify-between transition-all">
-                Export Investor Snapshot <Download className="w-4 h-4"/>
+             <Link href="/dashboard/score/breakdown" className="w-full bg-[#022f42] hover:bg-[#1b4f68] text-white p-4 rounded-sm font-black uppercase tracking-widest text-sm flex items-center justify-between shadow-md transition-all">
+                1.2.2 Key Criteria Breakdown <ArrowRight className="w-5 h-5"/>
              </Link>
            </div>
         </div>

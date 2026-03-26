@@ -10,6 +10,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import Link from "next/link";
+import { InvestorDashboardContent } from "@/components/financials/InvestorDashboardContent";
 
 export default function CustomViewsPage() {
   const [step, setStep] = useState(1);
@@ -115,19 +116,23 @@ export default function CustomViewsPage() {
 
             {/* STEP 2: Preview Mock */}
             {step === 2 && (
-              <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-[#f2f6fa] p-8 md:p-10 shadow-lg border-t-[4px] border-[#022f42] rounded-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 bg-[#ffd800] text-[#022f42] font-black text-[10px] uppercase tracking-widest shadow-md">RECIPIENT PREVIEW</div>
-                <h3 className="text-xl font-black text-[#022f42] mb-8">{config.viewName}</h3>
+              <motion.div key="s2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="bg-white p-6 md:p-8 shadow-2xl border-t-[4px] border-[#022f42] rounded-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 bg-[#ffd800] text-[#022f42] font-black text-[10px] uppercase tracking-widest shadow-md z-30">RECIPIENT PREVIEW</div>
                 
-                <div className="grid grid-cols-2 gap-4 opacity-70">
-                   {config.showRunway && <div className="p-10 bg-white border border-gray-200 flex flex-col items-center justify-center"><Activity className="w-8 h-8 text-[#022f42] mb-2" /><div className="text-[10px] font-bold">Runway</div></div>}
-                   {config.showGrowth && <div className="p-10 bg-white border border-gray-200 flex flex-col items-center justify-center"><TrendingUp className="w-8 h-8 text-emerald-500 mb-2" /><div className="text-[10px] font-bold">Growth</div></div>}
-                   {config.showBurn && <div className="p-10 bg-white border border-gray-200 flex flex-col items-center justify-center"><Layout className="w-8 h-8 text-blue-500 mb-2" /><div className="text-[10px] font-bold">Expenses</div></div>}
-                   {config.showUnitEconomics && <div className="p-10 bg-white border border-gray-100 flex flex-col items-center justify-center"><Sparkles className="w-8 h-8 text-[#ffd800] mb-2" /><div className="text-[10px] font-bold">Economics</div></div>}
+                <div className="mb-8 border-b border-gray-100 pb-4">
+                  <h3 className="text-2xl font-black text-[#022f42]">{config.viewName}</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Live Investor Reporting View</p>
                 </div>
 
-                <div className="mt-8 p-6 bg-white/50 border border-dashed border-[#022f42]/20 text-center italic text-xs text-[#1e4a62]">
-                   &quot;A secure, read-only link will be generated for outside stakeholders.&quot;
+                <div className="relative">
+                  <InvestorDashboardContent config={config} />
+                  
+                  {/* Subtle "Preview Only" overlay to prevent interaction confusion */}
+                  <div className="absolute inset-0 bg-white/5 pointer-events-none z-20" />
+                </div>
+
+                <div className="mt-12 p-6 bg-[#f2f6fa] border border-dashed border-[#022f42]/20 text-center italic text-xs text-[#1e4a62] rounded-sm">
+                   &quot;This is exactly how your stakeholders will see the dashboard. Confirmed visibility toggles are active.&quot;
                 </div>
               </motion.div>
             )}

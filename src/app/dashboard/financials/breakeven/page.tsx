@@ -67,6 +67,7 @@ export default function BreakevenPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
+    localStorage.setItem("audit_2_1_2", "completed"); 
     setTimeout(() => window.location.href = "/dashboard/financials/cash-flow", 1000); 
   };
 

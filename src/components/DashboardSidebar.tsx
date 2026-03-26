@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Full sitemap tree structure from Table 1 Methodology
 const siteMap = [
@@ -196,6 +197,11 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const [identity, setIdentity] = useState<any>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const isActive = (href: string) => pathname === href;
+  const isAnyChildActive = (children?: { href: string }[]) =>
+    children?.some(c => pathname === c.href) ?? false;
 
   useEffect(() => {
     if (typeof window !== 'undefined' && user?.id) {
@@ -206,9 +212,21 @@ export function DashboardSidebar() {
     }
   }, [user?.id]);
 
-  const isActive = (href: string) => pathname === href;
-  const isAnyChildActive = (children?: { href: string }[]) =>
-    children?.some(c => pathname === c.href) ?? false;
+  // Set initial expanded section based on pathname
+  useEffect(() => {
+    const activeSection = siteMap.find(section => 
+      section.items.some(item => 
+        isActive(item.href) || isAnyChildActive((item as any).children)
+      )
+    );
+    if (activeSection) {
+      setExpandedSection(activeSection.label);
+    }
+  }, [pathname]);
+
+  const toggleSection = (label: string) => {
+    setExpandedSection(prev => prev === label ? null : label);
+  };
 
   return (
     <div className="w-64 bg-[#022f42] border-r border-[#1b4f68] hidden md:flex flex-col flex-shrink-0 overflow-y-auto min-h-screen">
@@ -233,73 +251,93 @@ export function DashboardSidebar() {
         </div>
 
         {/* Full Sitemap Navigation */}
-        {siteMap.map((section) => (
-          <div key={section.label} className="mt-4">
-            {/* Section header */}
-            <div className="px-4 mb-1">
-              <h3 className="text-[9px] font-black text-[#b0d0e0]/60 uppercase tracking-widest">{section.label}</h3>
+        {siteMap.map((section) => {
+          const isExpanded = expandedSection === section.label;
+          
+          return (
+            <div key={section.label} className="mt-4">
+              {/* Section header */}
+              <button 
+                onClick={() => toggleSection(section.label)}
+                className="w-full px-4 mb-1 flex items-center justify-between group"
+              >
+                <h3 className={`text-[9px] font-black uppercase tracking-widest transition-colors ${isExpanded ? "text-[#ffd800]" : "text-[#b0d0e0]/60 group-hover:text-[#b0d0e0]"}`}>
+                  {section.label}
+                </h3>
+                <ChevronRight className={`w-3 h-3 text-[#b0d0e0]/30 transition-transform duration-300 ${isExpanded ? "rotate-90 text-[#ffd800]" : ""}`} />
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.nav 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="px-2 space-y-0.5 overflow-hidden"
+                  >
+                    {section.items.map((item) => {
+                      const active = isActive(item.href);
+                      const childActive = isAnyChildActive((item as any).children);
+
+                      return (
+                        <div key={item.href}>
+                          {/* Top-level item */}
+                          <Link
+                            href={item.href}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-sm transition-colors text-[12px] group ${
+                              active
+                                ? "bg-[#1b4f68] text-[#ffd800] font-black"
+                                : childActive
+                                ? "text-white font-semibold"
+                                : "text-white/60 hover:text-white hover:bg-white/5"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <item.icon className={`w-3.5 h-3.5 shrink-0 ${active ? "text-[#ffd800]" : childActive ? "text-white/80" : "text-white/40 group-hover:text-white/60"}`} />
+                              <span className={`truncate ${active ? "text-[#ffd800] font-black" : ""}`}>{item.name}</span>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              {(item as any).soon && (
+                                <span className="text-[7px] font-black uppercase tracking-widest text-[#ffd800]/50 bg-[#ffd800]/10 px-1 py-0.5 rounded-sm">Soon</span>
+                              )}
+                              {(item as any).children && (
+                                <ChevronRight className={`w-3 h-3 ${childActive ? "text-[#ffd800]" : "text-white/30"}`} />
+                              )}
+                            </div>
+                          </Link>
+
+                          {/* Sub-items (level 2) */}
+                          {(item as any).children && (
+                            <div className="ml-3 mt-0.5 mb-1 border-l border-[#1b4f68]/60 pl-2 space-y-0.5">
+                              {(item as any).children.map((child: any) => {
+                                const childIsActive = isActive(child.href);
+                                return (
+                                  <Link
+                                    key={child.href}
+                                    href={child.href}
+                                    className={`flex items-center gap-2 px-2 py-1 rounded-sm transition-colors text-[11px] ${
+                                      childIsActive
+                                        ? "bg-[#1b4f68] text-[#ffd800] font-black"
+                                        : "text-white/50 hover:text-white hover:bg-white/5"
+                                    }`}
+                                  >
+                                    <child.icon className={`w-3 h-3 shrink-0 ${childIsActive ? "text-[#ffd800]" : "text-white/30"}`} />
+                                    <span className={childIsActive ? "text-[#ffd800] font-black" : ""}>{child.name}</span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </motion.nav>
+                )}
+              </AnimatePresence>
             </div>
-
-            <nav className="px-2 space-y-0.5">
-              {section.items.map((item) => {
-                const active = isActive(item.href);
-                const childActive = isAnyChildActive((item as any).children);
-
-                return (
-                  <div key={item.href}>
-                    {/* Top-level item */}
-                    <Link
-                      href={item.href}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded-sm transition-colors text-[12px] group ${
-                        active
-                          ? "bg-[#1b4f68] text-[#ffd800] font-black"
-                          : childActive
-                          ? "text-white font-semibold"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <item.icon className={`w-3.5 h-3.5 shrink-0 ${active ? "text-[#ffd800]" : childActive ? "text-white/80" : "text-white/40 group-hover:text-white/60"}`} />
-                        <span className={`truncate ${active ? "text-[#ffd800] font-black" : ""}`}>{item.name}</span>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        {(item as any).soon && (
-                          <span className="text-[7px] font-black uppercase tracking-widest text-[#ffd800]/50 bg-[#ffd800]/10 px-1 py-0.5 rounded-sm">Soon</span>
-                        )}
-                        {(item as any).children && (
-                          <ChevronRight className={`w-3 h-3 ${childActive ? "text-[#ffd800]" : "text-white/30"}`} />
-                        )}
-                      </div>
-                    </Link>
-
-                    {/* Sub-items (level 2) */}
-                    {(item as any).children && (
-                      <div className="ml-3 mt-0.5 mb-1 border-l border-[#1b4f68]/60 pl-2 space-y-0.5">
-                        {(item as any).children.map((child: any) => {
-                          const childIsActive = isActive(child.href);
-                          return (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className={`flex items-center gap-2 px-2 py-1 rounded-sm transition-colors text-[11px] ${
-                                childIsActive
-                                  ? "bg-[#1b4f68] text-[#ffd800] font-black"
-                                  : "text-white/50 hover:text-white hover:bg-white/5"
-                              }`}
-                            >
-                              <child.icon className={`w-3 h-3 shrink-0 ${childIsActive ? "text-[#ffd800]" : "text-white/30"}`} />
-                              <span className={childIsActive ? "text-[#ffd800] font-black" : ""}>{child.name}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

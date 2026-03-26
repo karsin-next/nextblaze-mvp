@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
+import { FundabilityBadge } from "@/components/FundabilityBadge";
+import { getFundabilityScores } from "@/utils/scoreCalculation";
 
 export default function ScoreHistoryPage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -22,16 +24,9 @@ export default function ScoreHistoryPage() {
   const [showAvgTrajectory, setShowAvgTrajectory] = useState(false);
 
   useEffect(() => {
-    // Calculate current live score
-    let pScore = 15, prScore = 15, mScore = 15, pmfScore = 15, revScore = 15, tScore = 15;
-    try { const d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2") || "{}")?.data; if (d1) pScore = Math.round(((parseInt(d1.severity)||1)*4 + (parseInt(d1.frequency)||1)*4 + ((11-(parseInt(d1.alternatives)||10))*2)) * 2); } catch(e) {}
-    try { const d4 = JSON.parse(localStorage.getItem("audit_1_1_4") || "{}"); if (d4?.score) prScore = d4.score; } catch(e) {}
-    try { const d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}"); if (d5?.score) mScore = d5.score; } catch(e) {}
-    try { const d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}"); if (d6?.score) pmfScore = d6.score; } catch(e) {}
-    try { const d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data; if (d7) revScore = Math.round(((d7.differentiation||1)*4 + (d7.criticality||1)*4 + (11-(d7.churnRisk||10))*2) * 2.5); } catch(e) {}
-    try { const d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data; if (d8) tScore = Math.round((d8.industryExpertise + d8.functionalCoverage + d8.executionTrackRecord + d8.founderChemistry) * 2.5); } catch(e) {}
+    const data = getFundabilityScores();
+    const { pScore, prScore, mScore, pmfScore, revScore, tScore, totalScore: total } = data;
 
-    const total = Math.round(pScore*0.2 + prScore*0.2 + mScore*0.2 + pmfScore*0.1 + revScore*0.1 + tScore*0.2);
     setCurrentScore(total);
     setCurrentCategories([
       { name: "Problem", score: pScore },
@@ -49,18 +44,20 @@ export default function ScoreHistoryPage() {
 
   if (!isLoaded) return null;
 
+  const isFresh = currentScore === 0;
+
   // Mocked Timeline History anchored to Current Score
   const timelineData = [
-    { week: "Mod 1.1.1", score: Math.max(12, currentScore - 42), event: "Started FundabilityOS. Initial Audit triggered.", avg: 30, top: 40 },
-    { week: "Mod 1.1.2", score: Math.max(22, currentScore - 30), event: "+10% – Clarified Problem Severity logic.", avg: 34, top: 48 },
-    { week: "Mod 1.1.3", score: Math.max(38, currentScore - 20), event: "+16% – TAM calculated & Founding Team verified.", avg: 38, top: 55 },
-    { week: "Mod 1.1.4", score: Math.max(45, currentScore - 12), event: "+7% – MVP architecture registered.", avg: 42, top: 62 },
-    { week: "Mod 1.1.5", score: Math.max(58, currentScore - 5), event: "+13% – Unit Economics structurally locked.", avg: 48, top: 70 },
-    { week: "Mod 1.2.1", score: currentScore, event: "Current Diagnostic Master Score.", avg: 52, top: 76 }
+    { week: "Mod 1.1.1", score: isFresh ? 0 : Math.max(12, currentScore - 42), event: isFresh ? "No active data." : "Started FundabilityOS. Initial Audit triggered.", avg: 30, top: 40 },
+    { week: "Mod 1.1.2", score: isFresh ? 0 : Math.max(22, currentScore - 30), event: isFresh ? "Awaiting Module." : "+10% – Clarified Problem Severity logic.", avg: 34, top: 48 },
+    { week: "Mod 1.1.3", score: isFresh ? 0 : Math.max(38, currentScore - 20), event: isFresh ? "Awaiting Module." : "+16% – TAM calculated & Founding Team verified.", avg: 38, top: 55 },
+    { week: "Mod 1.1.4", score: isFresh ? 0 : Math.max(45, currentScore - 12), event: isFresh ? "Awaiting Module." : "+7% – MVP architecture registered.", avg: 42, top: 62 },
+    { week: "Mod 1.1.5", score: isFresh ? 0 : Math.max(58, currentScore - 5), event: isFresh ? "Awaiting Module." : "+13% – Unit Economics structurally locked.", avg: 48, top: 70 },
+    { week: "Mod 1.2.1", score: currentScore, event: isFresh ? "Current Diagnostic Baseline (Zero)." : "Current Diagnostic Master Score.", avg: 52, top: 76 }
   ];
 
   // Impact bar chart
-  const impactData = [
+  const impactData = isFresh ? [] : [
     { category: "Basic Setup", impact: 5, fill: "#10b981", full: "+5 pts" },
     { category: "Team Roster", impact: 12, fill: "#10b981", full: "+12 pts" },
     { category: "Unit Economics", impact: 18, fill: "#10b981", full: "+18 pts" },
@@ -102,27 +99,30 @@ export default function ScoreHistoryPage() {
   const radarData = currentCategories.map(c => ({
     subject: c.name,
     user: c.score,
-    avg: Math.min(85, c.score * 0.8 + 10)
+    avg: isFresh ? 0 : Math.min(85, c.score * 0.8 + 10)
   }));
   const bestCategory = currentCategories.reduce((prev, curr) => (curr.score) > (prev?.score || 0) ? curr : prev, currentCategories[0]);
-  const pScore = currentCategories.find(c => c.name === "Problem")?.score || 15;
+  const pScore = currentCategories.find(c => c.name === "Problem")?.score || 0;
 
   return (
     <div className="max-w-7xl mx-auto p-4 lg:p-8 pb-32">
       
       {/* HEADER */}
       <div className="mb-8 border-b border-gray-100 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div>
-          <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block flex items-center gap-2">
-             1.2.4 • Temporal Analytics
-          </span>
-          <h1 className="text-4xl font-black text-[#022f42] tracking-tight mb-2 flex items-center gap-3">
-             <History className="w-9 h-9 text-indigo-500" />
-             Your Improvement Timeline
-          </h1>
-          <p className="text-lg text-[#1e4a62] font-medium max-w-2xl">
-             Visualize score velocity, trace exactly which architectural pivots unlocked institutional value, and gauge longitudinal trajectory against top peers.
-          </p>
+        <div className="flex items-center gap-6">
+          <FundabilityBadge score={currentScore} size="sm" />
+          <div>
+            <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block flex items-center gap-2">
+               1.2.4 • Temporal Analytics
+            </span>
+            <h1 className="text-4xl font-black text-[#022f42] tracking-tight mb-2 flex items-center gap-3">
+               <History className="w-9 h-9 text-indigo-500" />
+               Your Improvement Timeline
+            </h1>
+            <p className="text-lg text-[#1e4a62] font-medium max-w-2xl">
+               Visualize score velocity, trace exactly which architectural pivots unlocked institutional value, and gauge longitudinal trajectory against top peers.
+            </p>
+          </div>
         </div>
         <div className="flex gap-3">
           <Link href="/dashboard/score/overview" className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#022f42] bg-gray-100 hover:bg-gray-200 rounded-sm inline-block">Score Hub</Link>

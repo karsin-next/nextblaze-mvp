@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
+import { FundabilityBadge } from "@/components/FundabilityBadge";
+import { getFundabilityScores } from "@/utils/scoreCalculation";
 
 interface SubMetric {
   name: string;
@@ -45,70 +47,45 @@ export default function BenchmarkComparisonPage() {
   const [overallAvg, setOverallAvg] = useState(56);
 
   useEffect(() => {
-    let pScore = 15, prScore = 15, mScore = 15, pmfScore = 15, revScore = 15, tScore = 15;
-    
-    // Attempt real data extraction
-    let pSev = 5, pFreq = 5, cPersonas = "Not defined", pAlt = 5;
-    try {
-       const d1 = JSON.parse(localStorage.getItem("audit_1_1_1") || localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
-       if (d1) {
-         pScore = Math.round(((parseInt(d1.severity)||1)*4 + (parseInt(d1.frequency)||1)*4 + ((11-(parseInt(d1.alternatives)||10))*2)) * 2);
-         pSev = parseInt(d1.severity)||5;
-         pFreq = parseInt(d1.frequency)||5;
-         pAlt = parseInt(d1.alternatives)||5;
-       }
-    } catch(e) {}
+    const data = getFundabilityScores();
+    const { pScore, prScore, mScore, pmfScore, revScore, tScore, totalScore: total, rawP, rawPr, rawM, rawPmf, rawRev, rawT } = data;
 
-    let prVal = "Concept", prLoop = "None";
-    try {
-      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4") || "{}");
-      if (d4?.score) { 
-        prScore = d4.score; 
-        prVal = d4.data?.productStatus === 'live' ? "Live Product" : d4.data?.productStatus === 'mvp' ? "MVP" : "Concept";
-      }
-    } catch(e) {}
+    let pSev = 5, pFreq = 5, pAlt = 5;
+    if (rawP && Object.keys(rawP).length > 0) {
+      pSev = parseInt(rawP.severity)||5;
+      pFreq = parseInt(rawP.frequency)||5;
+      pAlt = parseInt(rawP.alternatives)||5;
+    }
+
+    let prVal = "Concept";
+    if (rawPr && Object.keys(rawPr).length > 0) {
+      prVal = rawPr.productStatus === 'live' ? "Live Product" : rawPr.productStatus === 'mvp' ? "MVP" : "Concept";
+    }
 
     let mTam = "Unknown", mCagr = "0%";
-    try {
-      const d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}");
-      if (d5?.score) { 
-        mScore = d5.score; 
-        mTam = d5.data?.tam || "Unknown";
-        mCagr = d5.data?.cagr ? `${d5.data.cagr}%` : "0%";
-      }
-    } catch(e) {}
+    if (rawM && Object.keys(rawM).length > 0) {
+      mTam = rawM.tam || "Unknown";
+      mCagr = rawM.cagr ? `${rawM.cagr}%` : "0%";
+    }
 
     let pmfChoice = "Unknown", pmfNps = "N/A";
-    try {
-      const d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}");
-      if (d6?.score) { 
-        pmfScore = d6.score; 
-        pmfChoice = d6.data?.painkillerChoice === 'painkiller' ? "Painkiller" : "Vitamin";
-        pmfNps = d6.data?.nps || "N/A";
-      }
-    } catch(e) {}
+    if (rawPmf && Object.keys(rawPmf).length > 0) {
+      pmfChoice = rawPmf.painkillerChoice === 'painkiller' ? "Painkiller" : "Vitamin";
+      pmfNps = rawPmf.nps || "N/A";
+    }
 
     let rModel = "Unknown", rArpu = "Unknown";
-    try {
-      const d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data;
-      if (d7) {
-        revScore = Math.round(((d7.differentiation||1)*4 + (d7.criticality||1)*4 + (11-(d7.churnRisk||10))*2) * 2.5);
-        rModel = d7.primaryModel || "Unknown";
-        rArpu = `$${d7.priceAmount || 0}/${d7.priceFrequency || 'mo'}`;
-      }
-    } catch(e) {}
+    if (rawRev && Object.keys(rawRev).length > 0) {
+      rModel = rawRev.primaryModel || "Unknown";
+      rArpu = `$${rawRev.priceAmount || 0}/${rawRev.priceFrequency || 'mo'}`;
+    }
 
     let tExp = 5, tChem = 5;
-    try {
-      const d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data;
-      if (d8) {
-        tScore = Math.round((d8.industryExpertise + d8.functionalCoverage + d8.executionTrackRecord + d8.founderChemistry) * 2.5);
-        tExp = d8.industryExpertise || 5;
-        tChem = d8.founderChemistry || 5;
-      }
-    } catch(e) {}
+    if (rawT && Object.keys(rawT).length > 0) {
+      tExp = rawT.industryExpertise || 5;
+      tChem = rawT.founderChemistry || 5;
+    }
 
-    const total = Math.round(pScore*0.2 + prScore*0.2 + mScore*0.2 + pmfScore*0.1 + revScore*0.1 + tScore*0.2);
     setOverallUser(total);
 
     // Mock benchmark logic dependent loosely on industry selection to simulate dynamic shift
@@ -188,11 +165,14 @@ export default function BenchmarkComparisonPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 lg:p-8 pb-32">
-      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-6">
-         <div>
-            <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block">1.2.3 • Market Intelligence</span>
-            <h1 className="text-3xl font-black text-[#022f42] tracking-tight">How You Stack Up</h1>
-            <p className="text-gray-600 font-medium mt-1">Contextualized benchmarking derived from aggregated platform datasets.</p>
+      <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-200 pb-6">
+         <div className="flex items-center gap-6">
+            <FundabilityBadge score={overallUser} size="sm" />
+            <div>
+               <span className="text-[10px] font-black tracking-widest uppercase text-indigo-600 mb-2 block">1.2.3 • Market Intelligence</span>
+               <h1 className="text-3xl font-black text-[#022f42] tracking-tight">How You Stack Up</h1>
+               <p className="text-gray-600 font-medium mt-1">Contextualized benchmarking derived from aggregated platform datasets.</p>
+            </div>
          </div>
          <div className="flex gap-3">
             <Link href="/dashboard/score/breakdown" className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 rounded-sm">Back to Criteria</Link>

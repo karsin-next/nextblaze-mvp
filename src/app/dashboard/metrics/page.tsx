@@ -1,306 +1,240 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, LineChart, Line, ReferenceLine, Legend
-} from "recharts";
-import { Download, DollarSign, Target, Zap, AlertTriangle, ShieldCheck, Sparkles, ArrowRight, Settings, BookOpen, TrendingDown } from "lucide-react";
+import { 
+  Calculator, Activity, Wallet, CheckCircle2, ChevronRight, PlayCircle, 
+  ArrowRight, DollarSign, TrendingUp, RefreshCcw, Landmark, Flame, 
+  Eye, PieChart, LayoutDashboard, Sparkles
+} from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect } from "react";
 
-// Generate month labels starting from a given month index (0=Jan)
-function getMonthLabels(startMonthIndex: number, count: number): string[] {
-  const names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return Array.from({ length: count }, (_, i) => names[(startMonthIndex + i) % 12]);
-}
+const investorModules = [
+  { id: "runway", title: "Runway & Burn Visualizer", icon: Flame, desc: "Monitor your proximity to zero-cash and model survival scenarios.", status: "not_started", time: "5 min", num: "2.2.1" },
+  { id: "revenue", title: "Revenue & Growth Index", icon: TrendingUp, desc: "Track your MoM growth velocity and compounding impact.", status: "locked", time: "4 min", num: "2.2.2" },
+  { id: "expenses", title: "Expense Allocation Audit", icon: PieChart, desc: "Audit your capital efficiency and institutional bucket distribution.", status: "locked", time: "3 min", num: "2.2.3" },
+  { id: "views", title: "Custom Reporting Canvas", icon: Eye, desc: "Launch your personalized investor dashboard and reporting views.", status: "locked", time: "5 min", num: "2.2.4" },
+];
 
-export default function InvestorDashboardPage() {
+export default function InvestorDashboardHubPage() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<any>(null);
+  const [modules, setModules] = useState(investorModules);
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [runway, setRunway] = useState<number | null>(null);
 
   useEffect(() => {
-    if (user?.id && typeof window !== "undefined") {
+    if (typeof window === 'undefined') return;
+    
+    // Read sub-module completion from localStorage
+    const mockState = investorModules.map((m) => {
+      const isCompleted = localStorage.getItem(`audit_2_2_${m.id}`) === "completed" || 
+                          (m.num === "2.2.1" && localStorage.getItem("audit_2_2_1") === "completed") ||
+                          (m.num === "2.2.2" && localStorage.getItem("audit_2_2_2") === "completed") ||
+                          (m.num === "2.2.3" && localStorage.getItem("audit_2_2_3") === "completed") ||
+                          (m.num === "2.2.4" && localStorage.getItem("audit_2_2_4") === "completed");
+      
+      return {
+        ...m,
+        status: isCompleted ? "completed" : "locked"
+      };
+    });
+
+    // Sequential Activation Logic
+    if (mockState[0].status !== "completed") mockState[0].status = "not_started";
+    if (mockState[0].status === "completed" && mockState[1].status !== "completed") mockState[1].status = "not_started";
+    if (mockState[1].status === "completed" && mockState[2].status !== "completed") mockState[2].status = "not_started";
+    if (mockState[2].status === "completed" && mockState[3].status !== "completed") mockState[3].status = "not_started";
+    
+    setModules(mockState);
+    const completedCount = mockState.filter(m => m.status === 'completed').length;
+    setOverallProgress(Math.round((completedCount / investorModules.length) * 100));
+
+    // Get current runway from financial snapshot if available
+    const snapshot = localStorage.getItem("financial_snapshot_v2");
+    if (snapshot) {
       try {
-        const saved = localStorage.getItem(`startup_profile_${user.id}`);
-        if (saved) setProfile(JSON.parse(saved));
-      } catch(e) {}
+        const parsed = JSON.parse(snapshot);
+        const mrr = parsed.metrics?.mrr || 0;
+        const burn = parsed.metrics?.burn || 0;
+        const cash = parsed.metrics?.cash || 0;
+        const netBurn = Math.max(0, burn - mrr);
+        const r = netBurn > 0 ? Math.floor(cash / netBurn) : (mrr >= burn ? 99 : 0);
+        setRunway(r);
+      } catch (e) {}
     }
-  }, [user?.id]);
+  }, []);
 
-  // Pull real values from profile, default to 0
-  const mrr = parseFloat(profile?.mrr || "0") || 0;
-  const burnRate = parseFloat(profile?.burnRate || "0") || 0;
-  const cac = parseFloat(profile?.cac || "0") || 0;
-  const ltv = parseFloat(profile?.ltv || "0") || 0;
-  const initialCash = parseFloat(profile?.initialCash || "0") || 0;
+  const resetModule = () => {
+    if (typeof window === 'undefined') return;
+    if (confirm("Are you sure you want to reset all Investor Dashboard data?")) {
+      localStorage.removeItem("audit_2_2_1");
+      localStorage.removeItem("audit_2_2_2");
+      localStorage.removeItem("audit_2_2_3");
+      localStorage.removeItem("audit_2_2_4");
+      localStorage.removeItem("audit_2_2_runway");
+      localStorage.removeItem("audit_2_2_revenue");
+      localStorage.removeItem("audit_2_2_expenses");
+      localStorage.removeItem("audit_2_2_views");
+      window.location.reload();
+    }
+  };
 
-  // Derived metrics
-  const netBurn = Math.max(burnRate - mrr, 0); // monthly cash consumed
-  const runwayMonths = netBurn > 0 ? +(initialCash / netBurn).toFixed(1) : initialCash > 0 ? 99 : 0;
-  const ltvCac = cac > 0 ? +(ltv / cac).toFixed(1) : 0;
-  const hasData = mrr > 0 || burnRate > 0;
-
-  // Timeline: start from March 2026 (current month) = index 2
-  const TODAY_MONTH_IDX = 2; // March
-  const TODAY_YEAR = 2026;
-  const MONTHS = getMonthLabels(TODAY_MONTH_IDX, 13); // 13 months: Mar → Mar+12
-
-  // Runway Burn Trajectory — starts from this month's initialCash, decreases by netBurn each month
-  const runwayData = MONTHS.map((month, i) => {
-    const balance = initialCash - netBurn * i;
-    return { month, balance: Math.round(balance) };
-  });
-
-  // Expenses Over Revenue Map — each month shows MRR (flat) vs Burn
-  const burnVsRevenueData = MONTHS.slice(0, 12).map((month) => ({
-    month,
-    revenue: mrr,
-    expense: burnRate,
-  }));
-
-  // EBDAT Breakeven — project when cumulative revenue overtakes cumulative cost
-  const ebdatData = MONTHS.slice(0, 12).map((month, i) => ({
-    month,
-    revenue: Math.round(mrr * (1 + i * 0.05)), // gentle 5% growth assumption
-    totalCost: burnRate,
-  }));
-  const breakevenMonth = ebdatData.find(d => d.revenue >= d.totalCost);
-
-  // Cash out date
-  const cashOutMonths = runwayMonths < 99 ? Math.floor(runwayMonths) : null;
-  const cashOutDate = cashOutMonths !== null
-    ? getMonthLabels(TODAY_MONTH_IDX + cashOutMonths, 1)[0] + " " + (cashOutMonths >= (12 - TODAY_MONTH_IDX) ? TODAY_YEAR + 1 : TODAY_YEAR)
-    : "Not applicable";
-
-  const hasNoFinancialSetup = !profile || (mrr === 0 && burnRate === 0);
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case "completed": return "bg-emerald-50 text-emerald-700 border-emerald-100";
+      case "not_started": return "bg-white text-[#022f42] border-[rgba(2,47,66,0.1)] hover:border-[#022f42]";
+      default: return "bg-[#fcfdfd] text-[#1e4a62] border-[rgba(2,47,66,0.05)] opacity-50";
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 lg:p-8 text-[#022f42]">
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4 border-b border-[rgba(2,47,66,0.12)] pb-6">
-        <div>
-          <div className="inline-block bg-[#ffd800] text-[#022f42] font-bold px-3 py-1 mb-2 text-[10px] uppercase tracking-widest">Module 2.2</div>
-          <h1 className="text-3xl font-bold text-[#022f42]">Investor Dashboard</h1>
-          <p className="text-sm text-[#1e4a62] mt-1">
-            All charts are calculated from your financial inputs in{" "}
-            <Link href="/dashboard/settings" className="underline font-bold hover:text-[#022f42]">Company Settings</Link>.
-            Timeline starts <strong>March 2026</strong> (current month) and projects forward 12 months.
-          </p>
+    <div className="max-w-6xl mx-auto p-4 lg:p-8">
+      
+      {/* Premium Hub Header */}
+      <div className="mb-8 bg-[#022f42] text-white p-10 shadow-2xl relative overflow-hidden group border-b-8 border-[#ffd800] rounded-sm">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#ffd800] rounded-full blur-[120px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+        <div className="inline-block bg-[#ffd800] text-[#022f42] font-black px-4 py-1 mb-5 text-[10px] uppercase tracking-[0.3em] relative z-10">
+          Module 2.2
         </div>
-        <Link href="/dashboard/financials" className="flex items-center gap-2 px-5 py-2.5 bg-[#022f42] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#ffd800] hover:text-[#022f42] transition-all rounded-sm">
-          <Download className="w-3.5 h-3.5" /> Connect Financial Data
-        </Link>
+        <h1 className="text-4xl font-black mb-3 relative z-10 tracking-tight">INVESTOR DASHBOARD</h1>
+        <p className="text-[#b0d0e0] text-sm max-w-2xl leading-relaxed relative z-10 font-medium opacity-80">
+          Consolidate your financial narrative into high-fidelity visualizations. 
+          Use these sub-modules to audit your burn, growth, and capital efficiency before generating your live reporting views.
+        </p>
+        
+        <div className="mt-10 bg-white/5 p-6 border border-white/10 relative z-10 shadow-inner">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex-1 w-full">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-[#ffd800] mb-3">
+                <span>Narrative Completion</span>
+                <span>{overallProgress}%</span>
+              </div>
+              <div className="h-1.5 bg-white/10 overflow-hidden rounded-full">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${overallProgress}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-[#ffd800]"
+                ></motion.div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4 shrink-0">
+               <div className="text-right border-r border-white/20 pr-6 hidden md:block">
+                  <span className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Current Runway</span>
+                  <span className="text-3xl font-black text-white leading-none">{runway === null ? "--" : runway === 99 ? "∞" : `${runway} MO`}</span>
+               </div>
+               <div className="flex flex-col sm:flex-row gap-2">
+                 <button onClick={resetModule} title="Reset Audit" className="p-3 bg-white/5 text-white/40 hover:text-rose-400 hover:bg-rose-400/10 transition-all rounded-sm">
+                   <RefreshCcw className="w-4 h-4" />
+                 </button>
+                 <Link href={modules.find(m => m.status === 'not_started')?.id ? `/dashboard/metrics/${modules.find(m => m.status === 'not_started')?.id}` : '/dashboard/metrics/runway'} className="px-8 py-3 bg-[#ffd800] text-[#022f42] font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                   {overallProgress === 100 ? "Review Dashboard" : "Resume Audit"} <ArrowRight className="w-3 h-3" />
+                 </Link>
+               </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* No data warning */}
-      {hasNoFinancialSetup && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-yellow-50 border border-yellow-200 border-l-4 border-l-yellow-500 p-5 rounded-sm flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-          <div>
-            <div className="text-xs font-black uppercase tracking-widest text-yellow-700 mb-1">No Financial Data Detected</div>
-            <p className="text-xs text-yellow-800 leading-relaxed">
-              Your MRR, Burn Rate, and other metrics are currently at zero. The charts below are based on <strong>RM 0</strong> inputs.
-              Go to <Link href="/dashboard/settings" className="underline font-bold">Company Settings</Link> to enter your actual numbers — everything will update automatically.
-            </p>
-          </div>
+      {/* Module Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {modules.map((mod, index) => {
+          const isLocked = mod.status === "locked";
+          const isCompleted = mod.status === "completed";
+          const href = isLocked ? "#" : `/dashboard/metrics/${mod.id}`;
+          
+          return (
+            <Link key={mod.id} href={href} className={`group block p-6 border-2 transition-all duration-300 relative rounded-sm ${getStatusColor(mod.status)} ${isLocked ? "cursor-not-allowed opacity-50" : "hover:scale-[1.02] hover:shadow-2xl cursor-pointer"}`}>
+               {isCompleted && (
+                 <div className="absolute -top-3 -right-3 bg-emerald-500 text-white p-1 rounded-full shadow-lg z-20">
+                    <CheckCircle2 className="w-5 h-5" />
+                 </div>
+               )}
+               
+               <div className="flex justify-between items-start mb-6">
+                 <div className="w-10 h-10 bg-[#022f42] text-[#ffd800] flex items-center justify-center font-black rounded-sm shadow-md group-hover:bg-[#ffd800] group-hover:text-[#022f42] transition-colors">
+                   <mod.icon className="w-5 h-5" />
+                 </div>
+                 <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#1e4a62]/40 bg-[#f2f6fa] px-2 py-1 rounded-sm">
+                   {mod.time}
+                 </div>
+               </div>
+               
+               <div className="mb-4 min-h-[140px]">
+                 <div className="text-[10px] font-black text-[#1e4a62]/40 uppercase tracking-widest mb-1">{mod.num}</div>
+                 <h3 className="font-black text-[#022f42] leading-tight text-lg mb-2">{mod.title}</h3>
+                 <p className="text-[11px] text-[#1e4a62]/80 leading-relaxed">{mod.desc}</p>
+               </div>
+
+               {!isLocked ? (
+                 <div className="flex items-center gap-2 text-[#022f42] font-black text-[10px] uppercase tracking-widest group-hover:gap-4 transition-all pt-4 border-t border-[rgba(2,47,66,0.05)]">
+                   {isCompleted ? "Edit Metrics" : "Begin Audit"} <ArrowRight className="w-3 h-3" />
+                 </div>
+               ) : (
+                 <div className="pt-4 border-t border-gray-50">
+                    <div className="flex items-center gap-1 text-gray-400 font-black text-[8px] uppercase tracking-widest mb-1">
+                      Locked By Dependency
+                    </div>
+                 </div>
+               )}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Actionable CTA for Dashboard Launch */}
+      {overallProgress >= 75 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white border-4 border-[#022f42] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl rounded-sm">
+           <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-[#ffd800] flex items-center justify-center rounded-sm shrink-0">
+                 <LayoutDashboard className="w-8 h-8 text-[#022f42]" />
+              </div>
+              <div>
+                 <h2 className="text-xl font-black text-[#022f42] uppercase tracking-tight">Consolidated View Ready</h2>
+                 <p className="text-xs text-[#1e4a62] font-medium max-w-md">Your financial narrative is sufficiently complete to generate custom reporting views for stakeholders.</p>
+              </div>
+           </div>
+           <Link href="/dashboard/metrics/views" className="bg-[#022f42] text-white px-10 py-5 font-black uppercase tracking-widest text-sm hover:bg-[#ffd800] hover:text-[#022f42] transition-all flex items-center gap-3 shadow-xl">
+              Launch Custom Canvas <Eye className="w-4 h-4" />
+           </Link>
         </motion.div>
       )}
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-5 border-l-4 border-l-[#022f42] shadow-sm rounded-sm">
-          <div className="text-[#1e4a62] text-[10px] font-bold uppercase tracking-widest mb-1 flex justify-between">
-            Monthly Revenue <DollarSign className="w-3.5 h-3.5 opacity-50" />
+      {/* AI Strategy Insights */}
+      <div className="mt-12 bg-[#f2f6fa] p-8 border border-[rgba(2,47,66,0.1)] relative overflow-hidden rounded-sm">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-[#ffd800]"></div>
+        <div className="flex flex-col md:flex-row items-start gap-8">
+          <div className="bg-white p-4 shadow-md shrink-0 border border-gray-50">
+             <Sparkles className="w-6 h-6 text-[#ffd800]" />
           </div>
-          <div className="text-2xl font-black text-[#022f42] mt-2">
-            {mrr > 0 ? `RM ${mrr.toLocaleString()}` : "RM 0"}
-          </div>
-          <p className="text-[10px] text-[#1e4a62] mt-1">{mrr === 0 ? "No revenue entered yet" : "From Company Settings"}</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white p-5 border-l-4 border-l-red-400 shadow-sm rounded-sm">
-          <div className="text-[#1e4a62] text-[10px] font-bold uppercase tracking-widest mb-1 flex justify-between">
-            Monthly Burn <TrendingDown className="w-3.5 h-3.5 text-red-400" />
-          </div>
-          <div className="text-2xl font-black text-[#022f42] mt-2">
-            {burnRate > 0 ? `RM ${burnRate.toLocaleString()}` : "RM 0"}
-          </div>
-          <p className="text-[10px] text-[#1e4a62] mt-1">Net burn: RM {netBurn.toLocaleString()}/mo</p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`p-5 border-l-4 shadow-xl rounded-sm ${runwayMonths < 6 ? "bg-red-600 border-l-red-300" : "bg-[#022f42] border-l-[#ffd800]"}`}>
-          <div className="text-[#b0d0e0] text-[10px] font-bold uppercase tracking-widest mb-1">Runway Remaining</div>
-          <div className="text-3xl font-black text-white mt-2 leading-none">
-            {initialCash > 0 && netBurn === 0 ? "∞" : runwayMonths > 0 ? `${runwayMonths}` : "0"}
-            <span className="text-sm ml-1 text-[#b0d0e0] font-medium lowercase">months</span>
-          </div>
-          <div className="mt-2 text-[10px] font-bold text-[#b0d0e0]">
-            {cashOutMonths !== null && cashOutMonths > 0 ? `Cash out: ${cashOutDate}` : initialCash === 0 ? "Enter cash balance in Settings" : "Runway uncapped"}
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white p-5 border-l-4 border-l-green-500 shadow-sm rounded-sm">
-          <div className="text-[#1e4a62] text-[10px] font-bold uppercase tracking-widest mb-1 flex justify-between">
-            LTV : CAC Ratio <Zap className="w-3.5 h-3.5 text-green-500" />
-          </div>
-          <div className={`text-2xl font-black mt-2 ${ltvCac >= 3 ? "text-green-600" : ltvCac > 0 ? "text-yellow-600" : "text-[#1e4a62]"}`}>
-            {ltvCac > 0 ? `${ltvCac}x` : "—"}
-          </div>
-          <p className="text-[10px] text-[#1e4a62] mt-1">{ltvCac >= 3 ? "Healthy (target: >3x)" : ltvCac > 0 ? "Below target (aim for >3x)" : "Enter LTV & CAC in Settings"}</p>
-        </motion.div>
-      </div>
-
-      {/* AI Explanation Banner */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mb-6 bg-[#022f42] border-l-4 border-[#ffd800] p-5 flex items-start gap-3 rounded-sm shadow-md">
-        <Sparkles className="w-5 h-5 text-[#ffd800] shrink-0 mt-0.5" />
-        <div>
-          <div className="text-[9px] font-black uppercase tracking-widest text-[#ffd800] mb-2">AI Assisted — How These Charts Work</div>
-          <div className="text-xs text-[#b0d0e0] leading-relaxed space-y-2">
-            <p><strong className="text-white">📅 Timeline:</strong> All charts start from <strong className="text-white">March 2026</strong> (current month) and project <strong className="text-white">12 months forward</strong> to February 2027. The x-axis shows months in sequence.</p>
-            <p><strong className="text-white">🔥 Runway Burn Trajectory:</strong> Calculated as <code className="bg-white/10 px-1 rounded text-[#ffd800]">Cash Balance − (Net Burn × Month)</code>. Net Burn = Burn Rate − MRR. The red line at RM 0 is the danger threshold. When the curve crosses it, cash runs out.</p>
-            <p><strong className="text-white">📊 Expenses Over Revenue Map:</strong> Shows your monthly Burn Rate vs MRR side by side. The gap between these two bars = your monthly cash consumption. To survive, the Revenue bar must eventually exceed the Expense bar.</p>
-            <p><strong className="text-white">📈 EBDAT Breakeven:</strong> Projects when Revenue line crosses the Cost line. A 5% monthly revenue growth assumption is applied. Investors want to see this crossover within 18 months.</p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* EBDAT Chart */}
-      <motion.div initial={{ opacity: 0, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="mb-8 border-2 border-[#022f42] bg-[#f2f6fa] p-1 shadow-md rounded-sm">
-        <div className="bg-white p-6 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between md:items-start mb-6 border-b border-[rgba(2,47,66,0.08)] pb-4 gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-[#022f42] flex items-center">
-                <Target className="w-5 h-5 mr-2 text-[#ffd800]" />
-                EBDAT Breakeven Projection
-              </h2>
-              <p className="text-xs text-[#1e4a62] mt-1 max-w-xl leading-relaxed">
-                This chart projects when your <strong>Monthly Revenue</strong> will exceed your <strong>Total Operating Costs</strong>.
-                A 5% monthly growth rate is applied to your current MRR as an optimistic base case.
+          <div>
+            <h4 className="text-sm font-black text-[#022f42] uppercase tracking-widest mb-2 flex items-center gap-2">
+              Investor Communication Framework
+            </h4>
+            <div className="text-xs text-[#1e4a62] leading-relaxed max-w-4xl space-y-4 font-medium opacity-80">
+              <p>
+                Module 2.2 transforms raw numbers into **investor-ready storytelling**. While qualitative audit responses establish trust, the **Investor Dashboard** provides the quantitative backbone required for term sheet negotiations.
               </p>
-            </div>
-            <div className="text-right shrink-0">
-              {breakevenMonth ? (
-                <div className="bg-green-50 border border-green-200 px-4 py-2 rounded-sm">
-                  <div className="text-[9px] font-black uppercase tracking-widest text-green-700">Projected Breakeven</div>
-                  <div className="text-lg font-black text-green-600">{breakevenMonth.month}</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <div className="bg-white p-4 border border-gray-100 shadow-sm">
+                  <h5 className="font-black text-[9px] uppercase tracking-widest mb-2 text-[#022f42]">Growth Signal</h5>
+                  <p className="text-[10px]">Your MoM growth rate is the primary proxy for Product-Market Fit velocity.</p>
                 </div>
-              ) : (
-                <div className="bg-red-50 border border-red-100 px-4 py-2 rounded-sm">
-                  <div className="text-[9px] font-black uppercase tracking-widest text-red-700">Breakeven</div>
-                  <div className="text-sm font-black text-red-500">{mrr === 0 && burnRate === 0 ? "No Data" : "Beyond 12 months"}</div>
+                <div className="bg-white p-4 border border-gray-100 shadow-sm">
+                  <h5 className="font-black text-[9px] uppercase tracking-widest mb-2 text-[#022f42]">Burn Logic</h5>
+                  <p className="text-[10px]">Capital efficiency audit ensures you aren&apos;t leaking cash into low-ROI overhead.</p>
                 </div>
-              )}
+                <div className="bg-white p-4 border border-gray-100 shadow-sm">
+                  <h5 className="font-black text-[9px] uppercase tracking-widest mb-2 text-[#022f42]">Reporting Standards</h5>
+                  <p className="text-[10px]">Custom views allow you to control the data narrative for different investor types.</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="h-[320px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={ebdatData} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(2,47,66,0.1)" />
-                <XAxis dataKey="month" stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => `RM ${(val/1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={{ borderRadius: '2px', fontSize: '11px' }} formatter={(val: number) => [`RM ${val.toLocaleString()}`, ""]} />
-                <Legend wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }} />
-                {breakevenMonth && <ReferenceLine x={breakevenMonth.month} stroke="#22c55e" strokeDasharray="3 3" label={{ position: 'top', value: 'BREAKEVEN', fill: '#22c55e', fontSize: 9, fontWeight: 'bold' }} />}
-                <Line type="monotone" name="Monthly Revenue" dataKey="revenue" stroke="#22c55e" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" name="Monthly Costs" dataKey="totalCost" stroke="#022f42" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          {/* AI Tips */}
-          <div className="mt-4 bg-[#f2f6fa] p-4 rounded-sm border-l-4 border-[#ffd800]">
-            <div className="text-[9px] font-black uppercase tracking-widest text-[#022f42] mb-2 flex items-center"><BookOpen className="w-3 h-3 mr-1.5 text-[#ffd800]" /> What Investors Look For</div>
-            <p className="text-xs text-[#1e4a62] leading-relaxed">Investors expect to see a clear breakeven trajectory within <strong>18 months at seed stage</strong>. If your revenue line is flat (MRR = 0), focus on your first paying customer before your next investor meeting. Even RM 1 of recurring revenue signals commercial viability.</p>
           </div>
         </div>
-      </motion.div>
-
-      {/* Secondary Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
-        {/* Runway Burn Trajectory */}
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }} className="bg-white p-6 shadow-sm border border-[rgba(2,47,66,0.08)] flex flex-col rounded-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-bold text-[#022f42]">Runway Burn Trajectory</h3>
-            <p className="text-xs text-[#1e4a62] mt-1 leading-relaxed">
-              Starting from <strong>March 2026</strong> with your current cash balance of <strong>RM {initialCash.toLocaleString()}</strong>.
-              Each month, your net burn of <strong>RM {netBurn.toLocaleString()}</strong> is deducted.
-              The red line at RM 0 is when cash runs out.
-            </p>
-          </div>
-          <div className="h-[260px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={runwayData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorBal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#022f42" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#022f42" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(2,47,66,0.1)" />
-                <XAxis dataKey="month" stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `RM ${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => [`RM ${v.toLocaleString()}`, "Balance"]} contentStyle={{ fontSize: '11px', borderRadius: '2px' }} />
-                <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} label={{ value: "Cash Zero", position: "right", fill: "#ef4444", fontSize: 9 }} />
-                <Area type="monotone" dataKey="balance" stroke="#ffd800" strokeWidth={3} fillOpacity={1} fill="url(#colorBal)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-3 p-3 bg-[#f2f6fa] rounded-sm border-l-4 border-[#ffd800] text-xs text-[#1e4a62] leading-relaxed">
-            <strong className="text-[#022f42]">Formula:</strong> Balance = Initial Cash − (Net Burn × Month). Net Burn = Burn Rate − MRR. Enter your cash balance in <Link href="/dashboard/settings" className="underline font-bold">Settings</Link> to activate this chart.
-          </div>
-        </motion.div>
-
-        {/* Expenses Over Revenue */}
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="bg-white p-6 shadow-sm border border-[rgba(2,47,66,0.08)] flex flex-col rounded-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-bold text-[#022f42]">Expenses Over Revenue Map</h3>
-            <p className="text-xs text-[#1e4a62] mt-1 leading-relaxed">
-              Month-by-month comparison of your <strong>MRR (Revenue)</strong> vs <strong>Burn Rate (Expenses)</strong>.
-              The blue bars represent your revenue; the red bars represent spending.
-              The gap is your monthly cash consumption.
-            </p>
-          </div>
-          <div className="h-[260px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={burnVsRevenueData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(2,47,66,0.1)" />
-                <XAxis dataKey="month" stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#1e4a62" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `RM ${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => [`RM ${v.toLocaleString()}`, ""]} contentStyle={{ fontSize: '11px', borderRadius: '2px' }} />
-                <Legend wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }} />
-                <Bar dataKey="revenue" name="Revenue (MRR)" fill="#022f42" radius={[2,2,0,0]} />
-                <Bar dataKey="expense" name="Expenses (Burn)" fill="#ef4444" opacity={0.8} radius={[2,2,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-3 p-3 bg-[#f2f6fa] rounded-sm border-l-4 border-[#ffd800] text-xs text-[#1e4a62] leading-relaxed">
-            <strong className="text-[#022f42]">Target:</strong> Revenue bar should exceed the Expense bar. If both bars are equal height, you are breakeven. Update your MRR and Burn Rate in <Link href="/dashboard/settings" className="underline font-bold">Settings</Link> to see real data.
-          </div>
-        </motion.div>
       </div>
-
-      {/* CTA Row */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-white border border-[#1e4a62]/10 p-6 rounded-sm shadow-sm">
-        <div className="text-[9px] font-black uppercase tracking-widest text-[#1e4a62] mb-4 flex items-center">
-          <Sparkles className="w-3.5 h-3.5 mr-1.5 text-[#ffd800]" /> AI Assisted — Recommended Next Steps
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/dashboard/settings" className="inline-flex items-center bg-[#022f42] text-white px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#ffd800] hover:text-[#022f42] transition-all rounded-sm">
-            <Settings className="w-3.5 h-3.5 mr-2" /> Update Financial Settings
-          </Link>
-          <Link href="/dashboard/financials" className="inline-flex items-center bg-white border-2 border-[#022f42] text-[#022f42] px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#022f42] hover:text-white transition-all rounded-sm">
-            <ArrowRight className="w-3.5 h-3.5 mr-2" /> Connect Real Financial Data
-          </Link>
-          <Link href="/dashboard/unit-economics" className="inline-flex items-center bg-white border-2 border-[#1e4a62]/20 text-[#1e4a62] px-5 py-3 text-xs font-bold uppercase tracking-widest hover:border-[#022f42] hover:text-[#022f42] transition-all rounded-sm">
-            <ArrowRight className="w-3.5 h-3.5 mr-2" /> Run Unit Economics Analysis
-          </Link>
-          <Link href="/dashboard/afn-calculator" className="inline-flex items-center bg-white border-2 border-[#1e4a62]/20 text-[#1e4a62] px-5 py-3 text-xs font-bold uppercase tracking-widest hover:border-[#022f42] hover:text-[#022f42] transition-all rounded-sm">
-            <ArrowRight className="w-3.5 h-3.5 mr-2" /> Calculate How Much to Raise (AFN)
-          </Link>
-        </div>
-      </motion.div>
 
     </div>
   );

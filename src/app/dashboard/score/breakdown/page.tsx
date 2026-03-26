@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Target, Box, Map, Zap, BarChart3, Users, ChevronDown, ChevronUp, AlertCircle, ArrowRight, Lightbulb, TrendingUp, Presentation, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { AIAssistedInsight } from "@/components/AIAssistedInsight";
+import { FundabilityBadge } from "@/components/FundabilityBadge";
+import { getFundabilityScores } from "@/utils/scoreCalculation";
 
 interface CriteriaNode {
   id: string;
@@ -29,69 +31,33 @@ export default function KeyCriteriaBreakdownPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    let pScore = 15, prScore = 15, mScore = 15, pmfScore = 15, revScore = 15, tScore = 15;
+    const data = getFundabilityScores();
+    const { pScore, prScore, mScore, pmfScore, revScore, tScore, totalScore: total, rawP, rawPr, rawM, rawPmf, rawRev, rawT } = data;
+
     let pRaw: string[] = [], prRaw: string[] = [], mRaw: string[] = [], pmfRaw: string[] = [], revRaw: string[] = [], tRaw: string[] = [];
 
-    // Problem
-    try {
-      const d1 = JSON.parse(localStorage.getItem("audit_1_1_1_v2") || "{}")?.data;
-      if (d1) {
-        pScore = Math.min(Math.round(((d1.intensity||5) * (d1.frequency||5)) / (11 - (d1.alternatives||5))), 100);
-        pRaw = [
-          `Pain Intensity: ${d1.intensity||5}/10 (Higher = more severe)`,
-          `Pain Frequency: ${d1.frequency||5}/10`,
-          `Alternative Friction: ${d1.alternatives||5}/10 (Higher = worse existing solutions)`
-        ];
-      }
-    } catch(e) {}
-
-    // Product
-    try {
-      const d4 = JSON.parse(localStorage.getItem("audit_1_1_4_v2") || "{}");
-      if (d4?.score) { 
-        prScore = d4.score; 
-        prRaw = [
-          `Product Status: ${d4.data?.status || "Unknown"}`, 
-          `Paying Customers: ${d4.data?.metrics?.paying || 0}`
-        ]; 
-      }
-    } catch(e) {}
-
-    // Market
-    try {
-      const d5 = JSON.parse(localStorage.getItem("audit_1_1_5") || "{}");
-      if (d5?.score) { mScore = d5.score; mRaw = ["Market TAM quantified.", `CAGR trajectory active: ${d5.data?.cagr || 0}%`]; }
-    } catch(e) {}
-
-    // PMF
-    try {
-      const d6 = JSON.parse(localStorage.getItem("audit_1_1_6") || "{}");
-      if (d6?.score) { pmfScore = d6.score; pmfRaw = [d6.data?.painkillerChoice === 'painkiller' ? "Painkiller status verified" : "Vitamin warning flag triggered", "Usage metrics aggregated"]; }
-    } catch(e) {}
-
-    // Revenue
-    try {
-      const d7 = JSON.parse(localStorage.getItem("audit_1_1_7") || "{}")?.data;
-      if (d7) {
-        revScore = Math.round(((d7.differentiation||1)*4 + (d7.criticality||1)*4 + (11-(d7.churnRisk||10))*2) * 2.5);
-        revRaw = [`Primary model logic: ${d7.primaryModel || "TBD"}`, `ARPU Pricing mechanics logged.`];
-      }
-    } catch(e) {}
-
-    // Team
-    try {
-      const d8 = JSON.parse(localStorage.getItem("audit_1_1_8") || "{}")?.data;
-      if (d8) {
-        tScore = Math.round((d8.industryExpertise + d8.functionalCoverage + d8.executionTrackRecord + d8.founderChemistry) * 2.5);
-        tRaw = [`Industry Expert Index: ${d8.industryExpertise}/10`, `Execution Record: ${d8.executionTrackRecord}/10`];
-      }
-    } catch(e) {}
-
-    const weightMap = [0.2, 0.2, 0.2, 0.1, 0.1, 0.2];
-    const total = Math.round(
-      pScore * weightMap[0] + prScore * weightMap[1] + mScore * weightMap[2] + 
-      pmfScore * weightMap[3] + revScore * weightMap[4] + tScore * weightMap[5]
-    );
+    if (rawP && Object.keys(rawP).length > 0) {
+      pRaw = [
+        `Pain Intensity: ${rawP.intensity||5}/10 (Higher = more severe)`,
+        `Pain Frequency: ${rawP.frequency||5}/10`,
+        `Alternative Friction: ${rawP.alternatives||5}/10`
+      ];
+    }
+    if (rawPr && Object.keys(rawPr).length > 0) {
+      prRaw = [`Product Status: ${rawPr.status || "Unknown"}`, `Paying Customers: ${rawPr.metrics?.paying || 0}`];
+    }
+    if (rawM && Object.keys(rawM).length > 0) {
+      mRaw = ["Market TAM quantified.", `CAGR trajectory active: ${rawM.cagr || 0}%`];
+    }
+    if (rawPmf && Object.keys(rawPmf).length > 0) {
+      pmfRaw = [rawPmf.painkillerChoice === 'painkiller' ? "Painkiller status verified" : "Vitamin warning flag triggered", "Usage metrics aggregated"];
+    }
+    if (rawRev && Object.keys(rawRev).length > 0) {
+      revRaw = [`Primary model logic: ${rawRev.primaryModel || "TBD"}`, `ARPU Pricing mechanics logged.`];
+    }
+    if (rawT && Object.keys(rawT).length > 0) {
+      tRaw = [`Industry Expert Index: ${rawT.industryExpertise||0}/10`, `Execution Record: ${rawT.executionTrackRecord||0}/10`];
+    }
 
     setOverallScore(total);
 
@@ -174,10 +140,13 @@ export default function KeyCriteriaBreakdownPage() {
          <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500 rounded-full blur-[100px] opacity-20"></div>
          
          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-            <div>
-              <h1 className="text-[10px] uppercase font-black tracking-widest text-[#b0d0e0] mb-2">1.2.2 Key Investor Criteria</h1>
-              <div className="text-3xl font-black text-white flex items-center gap-3">
-                 Fundability Score: <span className="text-[#ffd800]">{overallScore}%</span>
+            <div className="flex items-center gap-6">
+              <FundabilityBadge score={overallScore} size="sm" />
+              <div>
+                <h1 className="text-[10px] uppercase font-black tracking-widest text-[#b0d0e0] mb-2">1.2.2 Key Investor Criteria</h1>
+                <div className="text-3xl font-black text-white flex items-center gap-3">
+                   Diagnostic Breakdown
+                </div>
               </div>
             </div>
             <div className="bg-white/10 border border-white/20 p-4 rounded-sm max-w-sm backdrop-blur-sm">

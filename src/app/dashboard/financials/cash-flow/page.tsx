@@ -65,6 +65,7 @@ export default function CashFlowPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
+    localStorage.setItem("audit_2_1_3", "completed");
     setTimeout(() => window.location.href = "/dashboard/financials", 1000); 
   };
 
