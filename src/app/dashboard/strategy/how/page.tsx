@@ -27,7 +27,7 @@ export default function FundraisingHowPage() {
 
   // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
-    const saved = localStorage.getItem("audit_2_4_5");
+    const saved = localStorage.getItem("audit_2_4_4");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -39,7 +39,7 @@ export default function FundraisingHowPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_2_4_5", JSON.stringify({ data, step }));
+    if (isLoaded) localStorage.setItem("audit_2_4_4", JSON.stringify({ data, step }));
   }, [data, step, isLoaded]);
 
   // AI Feedback Updates
@@ -52,7 +52,8 @@ export default function FundraisingHowPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/strategy", 1000); 
+    localStorage.setItem("audit_2_4_4", "completed");
+    setTimeout(() => window.location.href = "/dashboard/strategy/who", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -60,7 +61,7 @@ export default function FundraisingHowPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.4.5 STRATEGY: How?"
+        badge="2.4.4 STRATEGY: How?"
         title="Process Design"
         description="Engineer the operational 'How' of your campaign—from outreach mix to confidentiality protocols."
       />

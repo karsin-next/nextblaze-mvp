@@ -14,7 +14,6 @@ const investorModules = [
   { id: "runway", title: "Runway & Burn Visualizer", icon: Flame, desc: "Monitor your proximity to zero-cash and model survival scenarios.", status: "not_started", time: "5 min", num: "2.2.1" },
   { id: "revenue", title: "Revenue & Growth Index", icon: TrendingUp, desc: "Track your MoM growth velocity and compounding impact.", status: "locked", time: "4 min", num: "2.2.2" },
   { id: "expenses", title: "Expense Allocation Audit", icon: PieChart, desc: "Audit your capital efficiency and institutional bucket distribution.", status: "locked", time: "3 min", num: "2.2.3" },
-  { id: "views", title: "Custom Reporting Canvas", icon: Eye, desc: "Launch your personalized investor dashboard and reporting views.", status: "locked", time: "5 min", num: "2.2.4" },
 ];
 
 export default function InvestorDashboardHubPage() {
@@ -44,7 +43,6 @@ export default function InvestorDashboardHubPage() {
     if (mockState[0].status !== "completed") mockState[0].status = "not_started";
     if (mockState[0].status === "completed" && mockState[1].status !== "completed") mockState[1].status = "not_started";
     if (mockState[1].status === "completed" && mockState[2].status !== "completed") mockState[2].status = "not_started";
-    if (mockState[2].status === "completed" && mockState[3].status !== "completed") mockState[3].status = "not_started";
     
     setModules(mockState);
     const completedCount = mockState.filter(m => m.status === 'completed').length;
@@ -185,19 +183,19 @@ export default function InvestorDashboardHubPage() {
       </div>
 
       {/* Actionable CTA for Dashboard Launch */}
-      {overallProgress >= 75 && (
+      {overallProgress === 100 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white border-4 border-[#022f42] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl rounded-sm">
            <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-[#ffd800] flex items-center justify-center rounded-sm shrink-0">
                  <LayoutDashboard className="w-8 h-8 text-[#022f42]" />
               </div>
               <div>
-                 <h2 className="text-xl font-black text-[#022f42] uppercase tracking-tight">Consolidated View Ready</h2>
-                 <p className="text-xs text-[#1e4a62] font-medium max-w-md">Your financial narrative is sufficiently complete to generate custom reporting views for stakeholders.</p>
+                 <h2 className="text-xl font-black text-[#022f42] uppercase tracking-tight">Metrics Audit Complete</h2>
+                 <p className="text-xs text-[#1e4a62] font-medium max-w-md">Your financial metrics are ready. Proceed to Unit Economics to finalize your Investor Report.</p>
               </div>
            </div>
-           <Link href="/dashboard/metrics/views" className="bg-[#022f42] text-white px-10 py-5 font-black uppercase tracking-widest text-sm hover:bg-[#ffd800] hover:text-[#022f42] transition-all flex items-center gap-3 shadow-xl">
-              Launch Custom Canvas <Eye className="w-4 h-4" />
+           <Link href="/dashboard/unit-economics" className="bg-[#022f42] text-white px-10 py-5 font-black uppercase tracking-widest text-sm hover:bg-[#ffd800] hover:text-[#022f42] transition-all flex items-center gap-3 shadow-xl">
+              Proceed to Unit Economics <ArrowRight className="w-4 h-4" />
            </Link>
         </motion.div>
       )}

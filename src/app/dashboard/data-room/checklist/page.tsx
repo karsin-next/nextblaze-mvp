@@ -71,7 +71,8 @@ export default function DataRoomChecklistPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/data-room/score", 1000); 
+    localStorage.setItem("audit_2_5_2", "completed");
+    setTimeout(() => window.location.href = "/dashboard/data-room/simulator", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -79,8 +80,8 @@ export default function DataRoomChecklistPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.5.2 DATA ROOM: Checklist"
-        title="Document Readiness Tracker"
+        badge="2.5.2 ACTIVATE: Data Room"
+        title="Document Checklist"
         description="Verify exactly which documents are prepped and identify 'Deal-Killer' gaps before sharing your link."
       />
 

@@ -80,7 +80,6 @@ const siteMap = [
           { name: "2.2.1 Runway & Burn", href: "/dashboard/metrics/runway", icon: Flame },
           { name: "2.2.2 Revenue & Growth", href: "/dashboard/metrics/revenue", icon: TrendingUp },
           { name: "2.2.3 Expense Breakdown", href: "/dashboard/metrics/expenses", icon: PieChart },
-          { name: "2.2.4 Custom Views", href: "/dashboard/metrics/views", icon: Eye },
         ],
       },
       {
@@ -92,6 +91,7 @@ const siteMap = [
           { name: "2.3.2 LTV Estimator", href: "/dashboard/unit-economics/ltv", icon: Infinity },
           { name: "2.3.3 Gross Margin", href: "/dashboard/unit-economics/margin", icon: Percent },
           { name: "2.3.4 Cash Conversion Cycle", href: "/dashboard/unit-economics/ccc", icon: RefreshCw },
+          { name: "2.3.5 Investor Report", href: "/dashboard/unit-economics/report", icon: LayoutDashboard },
         ],
       },
       {
@@ -104,6 +104,7 @@ const siteMap = [
           { name: "2.4.3 WHEN: Timing & Runway", href: "/dashboard/strategy/when", icon: Clock },
           { name: "2.4.4 HOW: Cash Flow Projection", href: "/dashboard/strategy/how", icon: LineChart },
           { name: "2.4.5 WHO: Investor Matching", href: "/dashboard/strategy/who", icon: Users },
+          { name: "2.4.6 Fundraising Roadmap", href: "/dashboard/strategy/roadmap", icon: Map },
         ],
       },
       {
@@ -115,6 +116,7 @@ const siteMap = [
           { name: "2.5.2 Document Checklist", href: "/dashboard/data-room/checklist", icon: ListChecks },
           { name: "2.5.3 Investor Access Simulator", href: "/dashboard/data-room/simulator", icon: Lock },
           { name: "2.5.4 Readiness Score", href: "/dashboard/data-room/score", icon: ShieldCheck },
+          { name: "2.5.5 Data Room Builder", href: "/dashboard/data-room/builder", icon: FolderOpen },
         ],
       },
     ],

@@ -27,7 +27,7 @@ export default function FundraisingWhoPage() {
 
   // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
-    const saved = localStorage.getItem("audit_2_4_4");
+    const saved = localStorage.getItem("audit_2_4_5");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -39,7 +39,7 @@ export default function FundraisingWhoPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_2_4_4", JSON.stringify({ data, step }));
+    if (isLoaded) localStorage.setItem("audit_2_4_5", JSON.stringify({ data, step }));
   }, [data, step, isLoaded]);
 
   // AI Feedback Updates
@@ -60,7 +60,8 @@ export default function FundraisingWhoPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/strategy/how", 1000); 
+    localStorage.setItem("audit_2_4_5", "completed");
+    setTimeout(() => window.location.href = "/dashboard/strategy/roadmap", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -68,7 +69,7 @@ export default function FundraisingWhoPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.4.4 STRATEGY: Who?"
+        badge="2.4.5 STRATEGY: Who?"
         title="Investor Archetypes"
         description="Identify and profile the ideal capital partners based on your sector, stage, and strategic growth requirements."
       />

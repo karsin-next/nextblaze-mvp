@@ -27,7 +27,7 @@ export default function WhyRaisePage() {
 
   // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
-    const saved = localStorage.getItem("audit_2_4_1");
+    const saved = localStorage.getItem("audit_2_4_2");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -39,7 +39,7 @@ export default function WhyRaisePage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_2_4_1", JSON.stringify({ data, step }));
+    if (isLoaded) localStorage.setItem("audit_2_4_2", JSON.stringify({ data, step }));
   }, [data, step, isLoaded]);
 
   // AI Feedback Updates
@@ -52,7 +52,8 @@ export default function WhyRaisePage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/strategy/what", 1000); 
+    localStorage.setItem("audit_2_4_2", "completed");
+    setTimeout(() => window.location.href = "/dashboard/strategy/when", 1000); 
   };
 
   const defaultSummary = `We are raising primarily to ${data.intent === 'scale' ? 'accelerate existing market traction' : 'secure a strategic foothold'}. Core milestones include: ${data.milestone1 || '[Milestone 1]'} and ${data.milestone2 || '[Milestone 2]'}. This round is timed to capitalize on our recent unit economic stability.`;
@@ -62,7 +63,7 @@ export default function WhyRaisePage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.4.1 STRATEGY: Why?"
+        badge="2.4.2 STRATEGY: Why?"
         title="The Strategic Intent"
         description="Define the core logic behind your capital request. Why are you raising, and why now?"
       />

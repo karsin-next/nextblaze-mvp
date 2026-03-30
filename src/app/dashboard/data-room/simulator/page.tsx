@@ -26,7 +26,7 @@ export default function DataRoomSimulatorPage() {
 
   // Persistence (SOP: Privacy-First Hybrid)
   useEffect(() => {
-    const saved = localStorage.getItem("audit_2_5_4");
+    const saved = localStorage.getItem("audit_2_5_3");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -38,14 +38,15 @@ export default function DataRoomSimulatorPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem("audit_2_5_4", JSON.stringify({ data: simulation, step }));
+    if (isLoaded) localStorage.setItem("audit_2_5_3", JSON.stringify({ data: simulation, step }));
   }, [simulation, step, isLoaded]);
 
   const handleNextStep = () => setStep(Math.min(3, step + 1));
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard", 1000); 
+    localStorage.setItem("audit_2_5_3", "completed");
+    setTimeout(() => window.location.href = "/dashboard/data-room/score", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -53,8 +54,8 @@ export default function DataRoomSimulatorPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.5.4 DATA ROOM: Simulator"
-        title="Investor Experience Simulation"
+        badge="2.5.3 ACTIVATE: Data Room"
+        title="Investor Access Simulator"
         description="View your collective data room through the lens of a VC analyst to identify UI friction and logic gaps."
       />
 

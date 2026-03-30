@@ -68,7 +68,8 @@ export default function DataRoomScorePage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/data-room/simulator", 1000); 
+    localStorage.setItem("audit_2_5_4", "completed");
+    setTimeout(() => window.location.href = "/dashboard/data-room/builder", 1000); 
   };
 
   if (!isLoaded) return null;
@@ -76,8 +77,8 @@ export default function DataRoomScorePage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.5.3 DATA ROOM: Health"
-        title="Due Diligence Scoring"
+        badge="2.5.4 ACTIVATE: Data Room"
+        title="Readiness Score"
         description="Synthesize your structure and checklist readiness into a single institutional health metric."
       />
 

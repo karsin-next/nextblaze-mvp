@@ -66,7 +66,8 @@ export default function ExpensesPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/metrics/views", 1000); 
+    localStorage.setItem("audit_2_2_3", "completed");
+    setTimeout(() => window.location.href = "/dashboard/unit-economics", 1000); 
   };
 
   if (!isLoaded) return null;

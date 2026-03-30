@@ -57,6 +57,7 @@ export default function DataRoomStructurePage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
+    localStorage.setItem("audit_2_5_1", "completed");
     setTimeout(() => window.location.href = "/dashboard/data-room/checklist", 1000); 
   };
 
@@ -65,8 +66,8 @@ export default function DataRoomStructurePage() {
   return (
     <div className="p-6 max-w-7xl mx-auto pb-32">
       <ModuleHeader 
-        badge="2.5.1 DATA ROOM: Structure"
-        title="Investor-Ready Taxonomy"
+        badge="2.5.1 ACTIVATE: Data Room"
+        title="Structure Template"
         description="Establish a professional folder hierarchy that matches institutional due diligence standards."
       />
 

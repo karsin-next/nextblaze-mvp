@@ -57,7 +57,8 @@ export default function FundraisingWhenPage() {
 
   const handleSaveAndContinue = () => {
     setSavedSuccess(true);
-    setTimeout(() => window.location.href = "/dashboard/strategy/who", 1000); 
+    localStorage.setItem("audit_2_4_3", "completed");
+    setTimeout(() => window.location.href = "/dashboard/strategy/how", 1000); 
   };
 
   if (!isLoaded) return null;
